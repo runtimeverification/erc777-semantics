@@ -3,22 +3,12 @@ module ERC777
 configuration
 <erc777>
   <k> $PGM:K </k>
-  <balances> initBalances </balances> // holder -> balance
-  <operators> initOperators </operators> // operator -> 2^holder
-  <senderHooks> initSenderHooks </senderHooks> // holder -> senderHook
-  <receiverHooks> initReceiverHooks </receiverHooks> // holder -> receiverHook
+  <balances> initBalances ( #holders ) </balances> // holder -> balance
+  <operators> initOperators ( #holders ,  #defaultOperators ) </operators> // holder -> 2^operator
+  <senderHooks> initSenderHooks ( #holders ) </senderHooks> // holder -> senderHook
+  <receiverHooks> initReceiverHooks ( #holders ) </receiverHooks> // holder -> receiverHook
   <log> .List </log> // event*
 </erc777>
-
-////
-
-rule <k> init ( DefaultOperators ) => initDefaultOperators ( DefaultOperators ) ... </k>
-     <defaultOperators> .Set => DefaultOperators </defaultOperators>
-
-rule <k> initDefaultOperators ( DefaultOperator DefaultOperators ) => initDefaultOperators ( DefaultOperators ) ... </k>
-     <operators> ... DefaultOperator |-> ( _ => #top ) ... </operators>
-
-rule <k> initDefaultOperators ( .DefaultOperators ) => . ... </k>
 
 ////
 
@@ -27,19 +17,19 @@ rule <k> totalSupply ( ) => #sum ( values(Balances) ) ... </k>
 
 ////
 
-rule <k> isOperatorFor ( Operator , Holder ) => Holder in Holders ... </k>
-     <operators> ... Operator |-> Holders ... </operators>
+rule <k> isOperatorFor ( Operator , Holder ) => Operator in Operators ... </k>
+     <operators> ... Holder |-> Operators ... </operators>
 
 ////
 
 rule <k> Holder . authorizeOperator ( Operator ) => . ... </k>
-     <operators> ... Operator |-> ( Holders => Holders U { Holder } ) ... </operators>
+     <operators> ... Holder |-> ( Operators => Operators U { Operator } ) ... </operators>
      <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
 
 ////
 
 rule <k> Holder . revokeOperator ( Operator ) => . ... </k>
-     <operators> ... Operator |-> ( Holders => Holders \ { Holder } ) ... </operators>
+     <operators> ... Holder |-> ( Operators => Operators \ { Operator } ) ... </operators>
      <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
 
 ////

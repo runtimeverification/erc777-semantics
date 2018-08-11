@@ -13,4 +13,6 @@ rule #top => #rangeSet ( 0 .. #max )
 
 rule #max => #pow256 -Int 1
 
+rule #holders => ...
+
 endmodule
