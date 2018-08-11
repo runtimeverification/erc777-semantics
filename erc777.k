@@ -12,9 +12,9 @@ configuration
 ////
 
 rule <k> init ( DefaultOperators )
-      => initBalances
-      ~> initOperators
-      ~> initHooks
+      => initBalances ( #max )
+      ~> initOperators ( #max )
+      ~> initHooks ( #max )
       ~> initDefaultOperators ( DefaultOperators )
      ... </k>
      <defaultOperators> .Set => DefaultOperators </defaultOperators>
@@ -48,7 +48,9 @@ rule <k> initDefaultOperators ( DefaultOperator DefaultOperators ) => initDefaul
 
 rule <k> initDefaultOperators ( .DefaultOperators ) => . ... </k>
 
-rule #top => #rangeSet ( 0 .. #pow256 -Int 1 )
+rule #top => #rangeSet ( 0 .. #max )
+
+rule #max => #pow256 -Int 1
 
 ////
 
