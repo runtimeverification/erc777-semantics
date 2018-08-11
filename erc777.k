@@ -3,54 +3,22 @@ module ERC777
 configuration
 <erc777>
   <k> $PGM:K </k>
-  <balances> .Map </balances> // holder -> balance
-  <operators> .Map </operators> // operator -> 2^holder
-  <hooks> .Map </hooks> // holder -> (hookSender, hookReceiver)
+  <balances> initBalances </balances> // holder -> balance
+  <operators> initOperators </operators> // operator -> 2^holder
+  <senderHooks> initSenderHooks </senderHooks> // holder -> senderHook
+  <receiverHooks> initReceiverHooks </receiverHooks> // holder -> receiverHook
   <log> .List </log> // event*
 </erc777>
 
 ////
 
-rule <k> init ( DefaultOperators )
-      => initBalances ( #max )
-      ~> initOperators ( #max )
-      ~> initHooks ( #max )
-      ~> initDefaultOperators ( DefaultOperators )
-     ... </k>
+rule <k> init ( DefaultOperators ) => initDefaultOperators ( DefaultOperators ) ... </k>
      <defaultOperators> .Set => DefaultOperators </defaultOperators>
-
-rule <k> initBalances ( Holder => Holder -Int 1 ) ... </k>
-     <balances> Balances => Balances [ Holder <- 0 ] </balances>
-     requires Holder >Int 0
-
-rule <k> initBalances ( Holder ) => . ... </k>
-     <balances> Balances => Balances [ Holder <- 0 ] </balances>
-     requires Holder ==Int 0
-
-rule <k> initOperators ( Holder => Holder -Int 1 ) ... </k>
-     <operators> Operators => Operators [ Holder <- { Holder } ] </hooks>
-     requires Holder >Int 0
-
-rule <k> initOperators ( Holder ) => . ... </k>
-     <operators> Operators => Operators [ Holder <- { Holder } ] </hooks>
-     requires Holder ==Int 0
-
-rule <k> initHooks ( Holder => Holder -Int 1 ) ... </k>
-     <hooks> Hooks => Hooks [ Holder <- ( None , None ) ] </hooks>
-     requires Holder >Int 0
-
-rule <k> initHooks ( Holder ) => . ... </k>
-     <hooks> Hooks => Hooks [ Holder <- ( None , None ) ] </hooks>
-     requires Holder ==Int 0
 
 rule <k> initDefaultOperators ( DefaultOperator DefaultOperators ) => initDefaultOperators ( DefaultOperators ) ... </k>
      <operators> ... DefaultOperator |-> ( _ => #top ) ... </operators>
 
 rule <k> initDefaultOperators ( .DefaultOperators ) => . ... </k>
-
-rule #top => #rangeSet ( 0 .. #max )
-
-rule #max => #pow256 -Int 1
 
 ////
 
@@ -103,21 +71,25 @@ rule #check ( Operator , From , To , Value , Data ) => .
 
 rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-     <hooks> ... From |-> ( Some(Hook) , _ ) ... </hooks>
+     <senderHooks> ... From |-> Hook ... </senderHooks>
+     requires Hook >Int 0
 
 rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
-     <hooks> ... From |-> ( None , _ ) ... </hooks>
+     <senderHooks> ... From |-> Hook ... </senderHooks>
+     requires Hook ==Int 0
 
 rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
       => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-     <hooks> ... To |-> ( _ , Some(Hook) ) ... </hooks>
+     <receiverHooks> ... To |-> Hook ... </receiverHooks>
+     requires Hook >Int 0
 
 rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
       => #if #isContractAddress ( To )
          #then #revert
          #else .
          #fi ... </k>
-     <hooks> ... To |-> ( _ , None ) ... </hooks>
+     <receiverHooks> ... To |-> Hook ... </receiverHooks>
+     requires Hook ==Int 0
 
 rule <k> #update ( From , To , Value ) => . ... </k>
      <balances> ...
