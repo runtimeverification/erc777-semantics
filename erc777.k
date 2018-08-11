@@ -25,12 +25,20 @@ rule <k> isOperatorFor ( Operator , Holder ) => Operator in Operators ... </k>
 rule <k> Holder . authorizeOperator ( Operator ) => . ... </k>
      <operators> ... Holder |-> ( Operators => Operators U { Operator } ) ... </operators>
      <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
+     requires Holder =/=Int Operator
+
+rule <k> Holder . authorizeOperator ( Operator ) => #revert ... </k>
+     requires Holder ==Int Operator
 
 ////
 
 rule <k> Holder . revokeOperator ( Operator ) => . ... </k>
      <operators> ... Holder |-> ( Operators => Operators \ { Operator } ) ... </operators>
      <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
+     requires Holder =/=Int Operator
+
+rule <k> Holder . revokeOperator ( Operator ) => #revert ... </k>
+     requires Holder ==Int Operator
 
 ////
 
