@@ -64,15 +64,13 @@ rule #check ( Operator , From , To , Value , Data ) =>
      andBool To =/=Int 0
      andBool #isMultipleOf ( Value , Granularity )
 
-rule #require ( B ) => .        requires B
-rule #require ( B ) => #revert  requires notBool B
-
 rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
      <senderHooks> ... From |-> Hook ... </senderHooks>
      requires Hook >Int 0
 
-rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
+rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
+      => #mayRevert ... </k>
      <senderHooks> ... From |-> Hook ... </senderHooks>
      requires Hook ==Int 0
 
@@ -82,10 +80,7 @@ rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
      requires Hook >Int 0
 
 rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-      => #if #isContractAddress ( To )
-         #then #revert
-         #else .
-         #fi ... </k>
+      => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
      <receiverHooks> ... To |-> Hook ... </receiverHooks>
      requires Hook ==Int 0
 
