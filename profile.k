@@ -1,3 +1,10 @@
+module PARAMETERS
+
+rule #defaultOperators => ?_
+
+endmodule
+
+
 module UNDEF
 
 rule #senderHook ( Holder ) => ?_
