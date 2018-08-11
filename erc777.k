@@ -23,17 +23,25 @@ rule <k> Holder . revokeOperator ( Operator ) => . ... </k>
 rule <k> Holder .         send (          To , Value , Data      )
       => Holder . operatorSend ( Holder , To , Value , Data , "" ) ... </k>
 
+rule <k> Operator . operatorSend ( From     , To , Value , Data , OperatorData )
+      => Operator . operatorSend ( Operator , To , Value , Data , OperatorData )
+     requires From ==Int 0
+
 rule <k> Operator . operatorSend ( From , To , Value , Data , OperatorData )
       => #check ( Operator , From , To , Value , Data )
       ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       ~> #update ( From , To , Value )
       ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
       ~> #log ( Operator , From , To , Value , Data , OperatorData ) ... </k>
+     requires From =/=Int 0
 
 rule #check ( Operator , From , To , Value , Data ) => .
-     requires isOperatorFor ( Operator , From )
-      andBool To =/=Int 0
-      andBool #isMultipleOf ( Value , Granularity )
+     #if       isOperatorFor ( Operator , From )
+       andBool To =/=Int 0
+       andBool #isMultipleOf ( Value , Granularity )
+     #then .
+     #else #revert
+     #fi
 
 rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
