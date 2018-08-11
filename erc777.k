@@ -52,20 +52,20 @@ rule <k> Operator . operatorSend ( From     , To , Value , Data , OperatorData )
      requires From ==Int 0
 
 rule <k> Operator . operatorSend ( From , To , Value , Data , OperatorData )
-      => #check ( Operator , From , To , Value , Data )
+      => #require ( #check ( Operator , From , To , Value , Data ) )
       ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       ~> #update ( From , To , Value )
       ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
       ~> #log ( Operator , From , To , Value , Data , OperatorData ) ... </k>
      requires From =/=Int 0
 
-rule #check ( Operator , From , To , Value , Data ) => .
-     #if       isOperatorFor ( Operator , From )
-       andBool To =/=Int 0
-       andBool #isMultipleOf ( Value , Granularity )
-     #then .
-     #else #revert
-     #fi
+rule #check ( Operator , From , To , Value , Data ) =>
+     isOperatorFor ( Operator , From )
+     andBool To =/=Int 0
+     andBool #isMultipleOf ( Value , Granularity )
+
+rule #require ( B ) => .        requires B
+rule #require ( B ) => #revert  requires notBool B
 
 rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
       => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
