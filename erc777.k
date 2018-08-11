@@ -3,10 +3,10 @@ module ERC777
 configuration
 <erc777>
   <k> $PGM:K </k>
-  <balances> initBalances ( #holders ) </balances> // holder -> balance
-  <operators> initOperators ( #holders ,  #defaultOperators ) </operators> // holder -> 2^operator
-  <senderHooks> initSenderHooks ( #holders ) </senderHooks> // holder -> senderHook
-  <receiverHooks> initReceiverHooks ( #holders ) </receiverHooks> // holder -> receiverHook
+  <balances> #initBalances ( #holders ) </balances> // holder -> balance
+  <operators> #initOperators ( #holders ,  #defaultOperators ) </operators> // holder -> 2^operator
+  <senderHooks> #initSenderHooks ( #holders ) </senderHooks> // holder -> senderHook
+  <receiverHooks> #initReceiverHooks ( #holders ) </receiverHooks> // holder -> receiverHook
   <log> .List </log> // event*
 </erc777>
 
