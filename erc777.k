@@ -9,19 +9,75 @@ configuration
   <log> .List </log> // event*
 </erc777>
 
+////
+
+rule <k> init ( DefaultOperators )
+      => initBalances
+      ~> initOperators
+      ~> initHooks
+      ~> initDefaultOperators ( DefaultOperators )
+     ... </k>
+     <defaultOperators> .Set => DefaultOperators </defaultOperators>
+
+rule <k> initBalances ( Holder => Holder -Int 1 ) ... </k>
+     <balances> Balances => Balances [ Holder <- 0 ] </balances>
+     requires Holder >Int 0
+
+rule <k> initBalances ( Holder ) => . ... </k>
+     <balances> Balances => Balances [ Holder <- 0 ] </balances>
+     requires Holder ==Int 0
+
+rule <k> initOperators ( Holder => Holder -Int 1 ) ... </k>
+     <operators> Operators => Operators [ Holder <- { Holder } ] </hooks>
+     requires Holder >Int 0
+
+rule <k> initOperators ( Holder ) => . ... </k>
+     <operators> Operators => Operators [ Holder <- { Holder } ] </hooks>
+     requires Holder ==Int 0
+
+rule <k> initHooks ( Holder => Holder -Int 1 ) ... </k>
+     <hooks> Hooks => Hooks [ Holder <- ( None , None ) ] </hooks>
+     requires Holder >Int 0
+
+rule <k> initHooks ( Holder ) => . ... </k>
+     <hooks> Hooks => Hooks [ Holder <- ( None , None ) ] </hooks>
+     requires Holder ==Int 0
+
+rule <k> initDefaultOperators ( DefaultOperator DefaultOperators ) => initDefaultOperators ( DefaultOperators ) ... </k>
+     <operators> ... DefaultOperator |-> ( _ => #top ) ... </operators>
+
+rule <k> initDefaultOperators ( .DefaultOperators ) => . ... </k>
+
+rule #top => #rangeSet ( 0 .. #pow256 -Int 1 )
+
+////
+
+rule <k> totalSupply ( ) => #sum ( values(Balances) ) ... </k>
+     <balances> Balances </balances>
+
+////
+
 rule <k> isOperatorFor ( Operator , Holder ) => Holder in Holders ... </k>
      <operators> ... Operator |-> Holders ... </operators>
+
+////
 
 rule <k> Holder . authorizeOperator ( Operator ) => . ... </k>
      <operators> ... Operator |-> ( Holders => Holders U { Holder } ) ... </operators>
      <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
 
+////
+
 rule <k> Holder . revokeOperator ( Operator ) => . ... </k>
      <operators> ... Operator |-> ( Holders => Holders \ { Holder } ) ... </operators>
      <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
 
+////
+
 rule <k> Holder .         send (          To , Value , Data      )
       => Holder . operatorSend ( Holder , To , Value , Data , "" ) ... </k>
+
+////
 
 rule <k> Operator . operatorSend ( From     , To , Value , Data , OperatorData )
       => Operator . operatorSend ( Operator , To , Value , Data , OperatorData )
