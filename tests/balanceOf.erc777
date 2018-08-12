@@ -1,0 +1,5 @@
+#init();
+#print(balanceOf(0));
+#print(balanceOf(1));
+#print(balanceOf(9));
+;;
