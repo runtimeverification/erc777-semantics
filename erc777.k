@@ -61,27 +61,27 @@ module ERC777
 
   ////
 
-/*
-  rule <k> Holder . authorizeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators U { Operator } ) ... </operators>
+  rule <k> Holder : authorizeOperator ( Operator ) => . ... </k>
+       <operators> ... Holder |-> ( Operators => Operators SetItem(Operator) ) ... </operators>
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
+       requires Holder =/=Address Operator
 
-  rule <k> Holder . authorizeOperator ( Operator ) => #revert ... </k>
-       requires Holder ==Int Operator
+  rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
+       requires Holder ==Address Operator
 
   ////
 
-  rule <k> Holder . revokeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators \ { Operator } ) ... </operators>
+  rule <k> Holder : revokeOperator ( Operator ) => . ... </k>
+       <operators> ... Holder |-> ( Operators => Operators -Set SetItem(Operator) ) ... </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
+       requires Holder =/=Address Operator
 
-  rule <k> Holder . revokeOperator ( Operator ) => #revert ... </k>
-       requires Holder ==Int Operator
+  rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
+       requires Holder ==Address Operator
 
   ////
 
+/*
   rule <k> Holder .         send (          To , Value , Data      )
         => Holder . operatorSend ( Holder , To , Value , Data , "" ) ... </k>
 
