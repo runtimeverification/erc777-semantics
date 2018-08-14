@@ -3,6 +3,7 @@ require "erc777-syntax.k"
 module ERC777
 
   imports ERC777-SYNTAX
+  imports BOOL
 
   configuration
      <ERC777>
@@ -98,29 +99,32 @@ module ERC777
 
   ////
 
-/*
-  rule <k> Holder .         send (          To , Value , Data      )
-        => Holder . operatorSend ( Holder , To , Value , Data , "" ) ... </k>
+  rule <k> Holder :         send (          To , Value , Data         )
+        => Holder : operatorSend ( Holder , To , Value , Data , .Data ) ... </k>
 
   ////
 
-  rule <k> Operator . operatorSend ( From     , To , Value , Data , OperatorData )
-        => Operator . operatorSend ( Operator , To , Value , Data , OperatorData )
-       requires From ==Int 0
+  rule <k> Operator : operatorSend ( From     , To , Value , Data , OperatorData )
+        => Operator : operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
+       requires From ==Address #zero
 
-  rule <k> Operator . operatorSend ( From , To , Value , Data , OperatorData )
-        => #require ( #check ( Operator , From , To , Value , Data ) )
-        ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        ~> #update ( From , To , Value )
-        ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-        ~> #log ( Operator , From , To , Value , Data , OperatorData ) ... </k>
-       requires From =/=Int 0
+  rule <k> Operator : operatorSend ( From , To , Value , Data , OperatorData )
+        => #atomicBegin
+        ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
+//      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
+//      ~> #update ( From , To , Value )
+//      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
+//      ~> #log ( Operator , From , To , Value , Data , OperatorData )
+        ~> #atomicEnd ... </k>
+       requires From =/=Address #zero
 
   rule #check ( Operator , From , To , Value , Data ) =>
-       isOperatorFor ( Operator , From )
-       andBool To =/=Int 0
-       andBool #isMultipleOf ( Value , Granularity )
+       #and ( isOperatorFor ( Operator , From )
+            , To =/=Address #zero
+            , #isMultipleOf ( Value , #granularity )
+            )
 
+/*
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <senderHooks> ... From |-> Hook ... </senderHooks>
@@ -155,8 +159,43 @@ module ERC777
 
   rule <k> #log ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
        <log> Log => Log Sent ( Operator , From , To , Value , Data , OperatorData ) </log>
-
-  rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
 */
+
+  //
+  // Utils
+  //
+
+//rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
+
+  rule #ensure ( B:Bool ) => .        requires B
+  rule #ensure ( B:Bool ) => #revert  requires notBool B
+
+  rule #ite ( B:Bool , T , F ) => T  requires B
+  rule #ite ( B:Bool , T , F ) => F  requires notBool B
+
+  rule #and ( A:Bool , B:Bool          ) => A andBool B
+  rule #and ( A:Bool , B:Bool , C:Bool ) => A andBool B andBool C
+
+  rule #mayRevert => #revert
+  rule #mayRevert => .
+
+  rule <k> #revert ... </k>
+       <balances> _ => Balances </balances>
+       <operators> _ => Operators </operators>
+       <senderHooks> _ => SenderHooks </senderHooks>
+       <receiverHooks> _ => ReceiverHooks </receiverHooks>
+       <log> _ => Log </log>
+       <atomic> #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) => .K </atomic>
+
+  rule <k> #atomicBegin => . ... </k>
+       <balances> Balances </balances>
+       <operators> Operators </operators>
+       <senderHooks> SenderHooks </senderHooks>
+       <receiverHooks> ReceiverHooks </receiverHooks>
+       <log> Log </log>
+       <atomic> .K => #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) </atomic>
+
+  rule <k> #atomicEnd => . ... </k>
+       <atomic> _ => .K </atomic>
 
 endmodule

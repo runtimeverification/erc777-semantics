@@ -15,8 +15,8 @@ module ERC777-TEST-SYNTAX
 
   //
 
-  syntax Exp ::= Function | Event
-               | Int | Bool | String
+//syntax Exp ::= Function | Event
+//             | Int | Bool | String
 
   syntax Exp ::= #print ( Exp ) [strict]
 
@@ -73,5 +73,11 @@ module ERC777-TEST
 
   rule X  ==Address Y => X  ==Int Y
   rule X =/=Address Y => X =/=Int Y
+
+  rule .Data => ""
+
+  rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
+
+  rule #zero => 0
 
 endmodule

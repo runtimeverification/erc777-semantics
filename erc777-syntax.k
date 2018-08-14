@@ -47,6 +47,10 @@ module ERC777-SYNTAX
   // Semantics Internal
   //
 
+  syntax Exp ::= Function | Event
+               | Number | Address | Data
+               | Bool | String
+
   syntax Exp ::= Address ":" Function
 
   syntax Exp ::= #init ( )
@@ -66,6 +70,23 @@ module ERC777-SYNTAX
   syntax Bool ::= Address  "==Address" Address [function]
                 | Address "=/=Address" Address [function]
 
-  syntax KItem ::= "#revert"
+  syntax Exp ::= "#revert"
+               | "#mayRevert"
+
+  syntax Exp ::= #ensure ( Exp ) [strict]
+               | #ite ( Exp , Exp , Exp ) [strict(1)]
+               | #check ( Address , Address , Address , Number , Data )
+               | #isMultipleOf ( Number , Number )
+
+  syntax Exp ::= "#and" "(" Exp "," Exp ")"         [strict]
+               | "#and" "(" Exp "," Exp "," Exp ")" [strict]
+
+  syntax KItem ::= "#atomicBegin"
+                 | "#atomicEnd"
+                 | #snapshot ( Map , Map , Map , Map , EventLog )
+
+  syntax Data ::= ".Data"
+
+  syntax Address ::= "#zero"
 
 endmodule
