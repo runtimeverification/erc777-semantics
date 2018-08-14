@@ -12,6 +12,7 @@ module ERC777
        <senderHooks> .Map </senderHooks> // holder -> senderHook
        <receiverHooks> .Map </receiverHooks> // holder -> receiverHook
        <log> Events: </log> // event*
+       <atomic> .K </atomic>
      </ERC777>
 
   ////
