@@ -14,3 +14,7 @@
   krun --smt none tests/isOperatorFor.erc777 -o none
   krun --smt none tests/authorizeOperator.erc777 # -o none
   krun --smt none tests/revokeOperator.erc777 # -o none
+
+  krun --smt none tests/send.erc777 # -o none
+  krun --smt none tests/operatorSend.erc777 # -o none
+  krun --smt none tests/operatorSend2.erc777 # -o none

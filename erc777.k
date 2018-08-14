@@ -114,7 +114,7 @@ module ERC777
 //      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
 //      ~> #update ( From , To , Value )
 //      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-//      ~> #log ( Operator , From , To , Value , Data , OperatorData )
+        ~> #log ( Operator , From , To , Value , Data , OperatorData )
         ~> #atomicEnd ... </k>
        requires From =/=Address #zero
 
@@ -156,10 +156,10 @@ module ERC777
 
   rule <k> #update ( From , To , Value ) => . ... </k>
        requires From ==Int To
+*/
 
   rule <k> #log ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
        <log> Log => Log Sent ( Operator , From , To , Value , Data , OperatorData ) </log>
-*/
 
   //
   // Utils

@@ -237,3 +237,273 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
 </TEST>
++ krun --smt none tests/send.erc777
+<TEST>
+  <ERC777>
+    <k>
+      ;;
+    </k>
+    <balances>
+      0 |-> 0
+      1 |-> 0
+      2 |-> 0
+      3 |-> 0
+      4 |-> 0
+      5 |-> 0
+      6 |-> 0
+      7 |-> 0
+      8 |-> 0
+      9 |-> 0
+    </balances>
+    <operators>
+      0 |-> SetItem ( 0 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      1 |-> SetItem ( 1 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      2 |-> SetItem ( 2 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      3 |-> SetItem ( 3 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      4 |-> SetItem ( 4 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      5 |-> SetItem ( 5 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      6 |-> SetItem ( 6 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      7 |-> SetItem ( 7 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      8 |-> SetItem ( 8 )
+      SetItem ( 9 )
+      9 |-> SetItem ( 8 )
+      SetItem ( 9 )
+    </operators>
+    <senderHooks>
+      0 |-> 6
+      1 |-> 6
+      2 |-> 6
+      3 |-> 6
+      4 |-> 6
+      5 |-> 6
+      6 |-> 6
+      7 |-> 6
+      8 |-> 6
+      9 |-> 6
+    </senderHooks>
+    <receiverHooks>
+      0 |-> 7
+      1 |-> 7
+      2 |-> 7
+      3 |-> 7
+      4 |-> 7
+      5 |-> 7
+      6 |-> 7
+      7 |-> 7
+      8 |-> 7
+      9 |-> 7
+    </receiverHooks>
+    <log>
+      Events: Sent ( 3 , 3 , 4 , 0 , "" , .Data )
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>
++ krun --smt none tests/operatorSend.erc777
+<TEST>
+  <ERC777>
+    <k>
+      #revert ~> #log ( 3 , 4 , 5 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
+    </k>
+    <balances>
+      0 |-> 0
+      1 |-> 0
+      2 |-> 0
+      3 |-> 0
+      4 |-> 0
+      5 |-> 0
+      6 |-> 0
+      7 |-> 0
+      8 |-> 0
+      9 |-> 0
+    </balances>
+    <operators>
+      0 |-> SetItem ( 0 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      1 |-> SetItem ( 1 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      2 |-> SetItem ( 2 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      3 |-> SetItem ( 3 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      4 |-> SetItem ( 4 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      5 |-> SetItem ( 5 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      6 |-> SetItem ( 6 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      7 |-> SetItem ( 7 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      8 |-> SetItem ( 8 )
+      SetItem ( 9 )
+      9 |-> SetItem ( 8 )
+      SetItem ( 9 )
+    </operators>
+    <senderHooks>
+      0 |-> 6
+      1 |-> 6
+      2 |-> 6
+      3 |-> 6
+      4 |-> 6
+      5 |-> 6
+      6 |-> 6
+      7 |-> 6
+      8 |-> 6
+      9 |-> 6
+    </senderHooks>
+    <receiverHooks>
+      0 |-> 7
+      1 |-> 7
+      2 |-> 7
+      3 |-> 7
+      4 |-> 7
+      5 |-> 7
+      6 |-> 7
+      7 |-> 7
+      8 |-> 7
+      9 |-> 7
+    </receiverHooks>
+    <log>
+      Events: Sent ( 8 , 4 , 5 , 0 , "" , "" )
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>
++ krun --smt none tests/operatorSend2.erc777
+<TEST>
+  <ERC777>
+    <k>
+      #revert ~> #log ( 8 , 4 , 0 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
+    </k>
+    <balances>
+      0 |-> 0
+      1 |-> 0
+      2 |-> 0
+      3 |-> 0
+      4 |-> 0
+      5 |-> 0
+      6 |-> 0
+      7 |-> 0
+      8 |-> 0
+      9 |-> 0
+    </balances>
+    <operators>
+      0 |-> SetItem ( 0 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      1 |-> SetItem ( 1 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      2 |-> SetItem ( 2 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      3 |-> SetItem ( 3 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      4 |-> SetItem ( 4 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      5 |-> SetItem ( 5 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      6 |-> SetItem ( 6 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      7 |-> SetItem ( 7 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      8 |-> SetItem ( 8 )
+      SetItem ( 9 )
+      9 |-> SetItem ( 8 )
+      SetItem ( 9 )
+    </operators>
+    <senderHooks>
+      0 |-> 6
+      1 |-> 6
+      2 |-> 6
+      3 |-> 6
+      4 |-> 6
+      5 |-> 6
+      6 |-> 6
+      7 |-> 6
+      8 |-> 6
+      9 |-> 6
+    </senderHooks>
+    <receiverHooks>
+      0 |-> 7
+      1 |-> 7
+      2 |-> 7
+      3 |-> 7
+      4 |-> 7
+      5 |-> 7
+      6 |-> 7
+      7 |-> 7
+      8 |-> 7
+      9 |-> 7
+    </receiverHooks>
+    <log>
+      Events:
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>

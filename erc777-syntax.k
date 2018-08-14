@@ -77,6 +77,7 @@ module ERC777-SYNTAX
                | #ite ( Exp , Exp , Exp ) [strict(1)]
                | #check ( Address , Address , Address , Number , Data )
                | #isMultipleOf ( Number , Number )
+               | #log ( Address , Address , Address , Number , Data , Data )
 
   syntax Exp ::= "#and" "(" Exp "," Exp ")"         [strict]
                | "#and" "(" Exp "," Exp "," Exp ")" [strict]
@@ -87,6 +88,6 @@ module ERC777-SYNTAX
 
   syntax Data ::= ".Data"
 
-  syntax Address ::= "#zero"
+  syntax Address ::= "#zero" [function]
 
 endmodule
