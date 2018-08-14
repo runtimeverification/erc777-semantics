@@ -1,0 +1,239 @@
++ set -e
++ rm -rf erc777-test-kompiled
++ kompile --backend java erc777-test.k --syntax-module ERC777-TEST-SYNTAX
++ krun --smt none tests/name.erc777 -o none
+RVToken
++ krun --smt none tests/symbol.erc777 -o none
+RVT
++ krun --smt none tests/granularity.erc777 -o none
+1
++ krun --smt none tests/defaultOperators.erc777
+<TEST>
+  <ERC777>
+    <k>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </k>
+    <balances>
+      .Map
+    </balances>
+    <operators>
+      .Map
+    </operators>
+    <senderHooks>
+      .Map
+    </senderHooks>
+    <receiverHooks>
+      .Map
+    </receiverHooks>
+    <log>
+      Events:
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>
++ krun --smt none tests/totalSupply.erc777 -o none
+0
++ krun --smt none tests/balanceOf.erc777 -o none
+0
+0
+0
++ krun --smt none tests/isOperatorFor.erc777 -o none
+true
+false
+true
++ krun --smt none tests/authorizeOperator.erc777
+false
+true
+false
+<TEST>
+  <ERC777>
+    <k>
+      #revert ~> ;;
+    </k>
+    <balances>
+      0 |-> 0
+      1 |-> 0
+      2 |-> 0
+      3 |-> 0
+      4 |-> 0
+      5 |-> 0
+      6 |-> 0
+      7 |-> 0
+      8 |-> 0
+      9 |-> 0
+    </balances>
+    <operators>
+      0 |-> SetItem ( 0 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      1 |-> SetItem ( 1 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      2 |-> SetItem ( 2 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      3 |-> SetItem ( 3 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      4 |-> SetItem ( 4 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      5 |-> SetItem ( 5 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      6 |-> SetItem ( 6 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      7 |-> SetItem ( 7 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      8 |-> SetItem ( 8 )
+      SetItem ( 9 )
+      9 |-> SetItem ( 8 )
+      SetItem ( 9 )
+    </operators>
+    <senderHooks>
+      0 |-> 6
+      1 |-> 6
+      2 |-> 6
+      3 |-> 6
+      4 |-> 6
+      5 |-> 6
+      6 |-> 6
+      7 |-> 6
+      8 |-> 6
+      9 |-> 6
+    </senderHooks>
+    <receiverHooks>
+      0 |-> 7
+      1 |-> 7
+      2 |-> 7
+      3 |-> 7
+      4 |-> 7
+      5 |-> 7
+      6 |-> 7
+      7 |-> 7
+      8 |-> 7
+      9 |-> 7
+    </receiverHooks>
+    <log>
+      Events: AuthorizedOperator ( 2 , 1 ) RevokedOperator ( 2 , 1 )
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>
++ krun --smt none tests/revokeOperator.erc777
+<TEST>
+  <ERC777>
+    <k>
+      #revert ~> ;;
+    </k>
+    <balances>
+      0 |-> 0
+      1 |-> 0
+      2 |-> 0
+      3 |-> 0
+      4 |-> 0
+      5 |-> 0
+      6 |-> 0
+      7 |-> 0
+      8 |-> 0
+      9 |-> 0
+    </balances>
+    <operators>
+      0 |-> SetItem ( 0 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      1 |-> SetItem ( 1 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      2 |-> SetItem ( 2 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      3 |-> SetItem ( 3 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      4 |-> SetItem ( 4 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      5 |-> SetItem ( 5 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      6 |-> SetItem ( 6 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      7 |-> SetItem ( 7 )
+      SetItem ( 8 )
+      SetItem ( 9 )
+      8 |-> SetItem ( 8 )
+      SetItem ( 9 )
+      9 |-> SetItem ( 8 )
+      SetItem ( 9 )
+    </operators>
+    <senderHooks>
+      0 |-> 6
+      1 |-> 6
+      2 |-> 6
+      3 |-> 6
+      4 |-> 6
+      5 |-> 6
+      6 |-> 6
+      7 |-> 6
+      8 |-> 6
+      9 |-> 6
+    </senderHooks>
+    <receiverHooks>
+      0 |-> 7
+      1 |-> 7
+      2 |-> 7
+      3 |-> 7
+      4 |-> 7
+      5 |-> 7
+      6 |-> 7
+      7 |-> 7
+      8 |-> 7
+      9 |-> 7
+    </receiverHooks>
+    <log>
+      Events:
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+</TEST>
