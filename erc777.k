@@ -66,6 +66,14 @@ module ERC777
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
        requires Holder =/=Address Operator
 
+  /*
+  // May reject when authorizing an already-authorized-address
+  rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
+       <operators> ... Holder |-> Operators ... </operators>
+       requires Holder =/=Address Operator
+        andBool Operator in Operators
+  */
+
   rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
        requires Holder ==Address Operator
 
@@ -75,6 +83,14 @@ module ERC777
        <operators> ... Holder |-> ( Operators => Operators -Set SetItem(Operator) ) ... </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
        requires Holder =/=Address Operator
+
+  /*
+  // May reject when revoking a non-authorized-address
+  rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
+       <operators> ... Holder |-> Operators ... </operators>
+       requires Holder =/=Address Operator
+        andBool Operator in Operators
+  */
 
   rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
        requires Holder ==Address Operator
