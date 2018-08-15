@@ -9,13 +9,16 @@ module ERC777-SYNTAX
   // Token API
   //
 
-  syntax Exp ::= name ( )                              // String
-               | symbol ( )                            // String
-               | totalSupply ( )                       // Number
-               | balanceOf ( Address )                 // Number
-               | granularity ( )                       // Number
-               | defaultOperators ( )                  // Addresses
-               | isOperatorFor ( Address , Address )   // Bool
+  syntax String ::= name ( )
+                  | symbol ( )
+
+  syntax Number ::= totalSupply ( )
+                  | balanceOf ( Address )
+                  | granularity ( )
+
+  syntax Addresses ::= defaultOperators ( )
+
+  syntax Bool ::= isOperatorFor ( Address , Address )
 
   syntax Cmd ::= authorizeOperator ( Address )
                | revokeOperator ( Address )
@@ -29,6 +32,20 @@ module ERC777-SYNTAX
                  | Burned ( Address , Address , Number , Data , Data )
                  | AuthorizedOperator ( Address , Address )
                  | RevokedOperator ( Address , Address )
+
+  //
+  // ERC20 compatibility
+  //
+
+  syntax Number ::= allowance ( Address , Address )
+
+  syntax Bool ::= approve ( Address , Number )
+                | transfer ( Address , Number )
+                | transferFrom ( Address , Number )
+
+  syntax Event ::= Transfer ( Address , Address , Number)
+                 | Approval ( Address , Address , Number)
+
 
   //
   // Token Parameters

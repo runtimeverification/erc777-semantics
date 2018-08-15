@@ -1,0 +1,3 @@
+[submodule "erc20-semantics"]
+	path = erc20-semantics
+	url = https://github.com/runtimeverification/erc20-semantics
