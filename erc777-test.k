@@ -27,6 +27,8 @@ module ERC777-TEST
 
   // Test Setup
 
+  rule #this => 5
+
   rule #addresses => 0 1 2 3 4 5 6 7 8 9 .Addresses // NOTE: 0 1 2 ... 2^160 - 1
 
   rule #defaultOperators => SetItem(8) SetItem(9)
@@ -36,6 +38,8 @@ module ERC777-TEST
   rule #receiverHook ( _ ) => 7
 
   rule #maxNumber => 1024 // NOTE: 2^256 - 1
+
+  rule #isContractAddress ( _ ) => true
 
   // Test Harness
 

@@ -58,6 +58,10 @@ module ERC777-SYNTAX
 
   syntax Int ::= "#maxNumber" [function]
 
+  syntax Address ::= "#this" [function]
+
+  syntax Bool ::= #isContractAddress ( Address ) [function]
+
   syntax Stmt ::= #init ( )
 
 endmodule

@@ -145,33 +145,36 @@ module ERC777
        requires From =/=Int 0
 
   syntax Exp ::= #check ( Address , Address , Address , Number , Data )
+
   rule #check ( Operator , From , To , Value , Data )
     => #and ( isOperatorFor ( Operator , From )
             , To =/=Int 0
             , #isMultipleOf ( Value , #granularity )
             )
 
-/*
+  syntax Stmt ::= #hookFrom ( Address , Address , Address , Number , Data , Data )
+
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <senderHooks> ... From |-> Hook ... </senderHooks>
-       requires Hook >Int 0
+       requires Hook =/=Int 0
 
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         => #mayRevert ... </k>
        <senderHooks> ... From |-> Hook ... </senderHooks>
        requires Hook ==Int 0
 
+  syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data )
+
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-        => Token . #call ( Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <receiverHooks> ... To |-> Hook ... </receiverHooks>
-       requires Hook >Int 0
+       requires Hook =/=Int 0
 
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
         => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
        <receiverHooks> ... To |-> Hook ... </receiverHooks>
        requires Hook ==Int 0
-*/
 
   syntax Stmt ::= #update ( Address , Address , Number )
 
@@ -195,6 +198,11 @@ module ERC777
   syntax Exp ::= #isMultipleOf ( Number , Number )
 
   rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
+
+  syntax Stmt ::= #call ( Address , Address , Address , Address , Address , Number , Data , Data )
+
+  // TODO: more fine-grained input
+  rule #call ( _ , _ , _ , _ , _ , _ , _ , _ ) => #mayRevert
 
   //
   // Utils
