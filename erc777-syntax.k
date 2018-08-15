@@ -56,6 +56,8 @@ module ERC777-SYNTAX
   syntax Address ::= #senderHook ( Address ) [function]
                    | #receiverHook ( Address ) [function]
 
+  syntax Int ::= "#maxNumber" [function]
+
   syntax Stmt ::= #init ( )
 
 endmodule

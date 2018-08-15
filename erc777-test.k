@@ -27,13 +27,15 @@ module ERC777-TEST
 
   // Test Setup
 
-  rule #addresses => 0 1 2 3 4 5 6 7 8 9 .Addresses
+  rule #addresses => 0 1 2 3 4 5 6 7 8 9 .Addresses // NOTE: 0 1 2 ... 2^160 - 1
 
   rule #defaultOperators => SetItem(8) SetItem(9)
 
   rule #senderHook ( _ ) => 6
 
   rule #receiverHook ( _ ) => 7
+
+  rule #maxNumber => 1024 // NOTE: 2^256 - 1
 
   // Test Harness
 

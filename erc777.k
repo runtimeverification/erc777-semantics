@@ -138,7 +138,7 @@ module ERC777
         => #atomicBegin
         ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
 //      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-//      ~> #update ( From , To , Value )
+        ~> #update ( From , To , Value )
 //      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
         ~> #log ( Operator , From , To , Value , Data , OperatorData )
         ~> #atomicEnd ... </k>
@@ -171,6 +171,9 @@ module ERC777
         => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
        <receiverHooks> ... To |-> Hook ... </receiverHooks>
        requires Hook ==Int 0
+*/
+
+  syntax Stmt ::= #update ( Address , Address , Number )
 
   rule <k> #update ( From , To , Value ) => . ... </k>
        <balances> ...
@@ -179,11 +182,10 @@ module ERC777
        ... </balances>
        requires From =/=Int To
         andBool ValueFrom -Int Value >=Int 0
-        andBool ValueTo   +Int Value  <Int #pow256
+        andBool ValueTo   +Int Value  <Int #maxNumber
 
   rule <k> #update ( From , To , Value ) => . ... </k>
        requires From ==Int To
-*/
 
   syntax Stmt ::= #log ( Address , Address , Address , Number , Data , Data )
 

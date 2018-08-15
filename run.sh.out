@@ -331,7 +331,7 @@ false
 <TEST>
   <ERC777>
     <k>
-      #revert ~> #log ( 3 , 4 , 5 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
+      #revert ~> #update ( 4 , 5 , 0 ) ~> #log ( 3 , 4 , 5 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
     </k>
     <balances>
       0 |-> 0
@@ -421,7 +421,7 @@ false
 <TEST>
   <ERC777>
     <k>
-      #revert ~> #log ( 8 , 4 , 0 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
+      #revert ~> #update ( 4 , 0 , 0 ) ~> #log ( 8 , 4 , 0 , 0 , "" , "" ) ~> #atomicEnd ~> ;;
     </k>
     <balances>
       0 |-> 0
