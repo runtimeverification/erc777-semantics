@@ -5,22 +5,9 @@ module ERC777-TEST-SYNTAX
   imports ERC777-SYNTAX
   imports DOMAINS-SYNTAX
 
-  // Sorts
+  syntax Stmt ::= #print ( Exp ) [strict]
 
-  syntax Number ::= Int
-
-  syntax Address ::= Int
-
-  syntax Data ::= String
-
-  //
-
-//syntax Exp ::= Function | Event
-//             | Int | Bool | String
-
-  syntax Exp ::= #print ( Exp ) [strict]
-
-  syntax Exps ::= Exp ";" Exps | ";;"
+  syntax Stmts ::= Stmt ";" Stmts | ";;"
 
 endmodule
 
@@ -59,8 +46,6 @@ module ERC777-TEST
 
   syntax KResult ::= Int | Bool | String
 
-  rule E:Exp ; Es:Exps => E ~> Es
-
   rule <k> #print ( V ) => . ... </k>
        <output> ... .List => ListItem(V) ListItem("\n") </output>
        requires isInt(V) orBool isString(V)
@@ -68,16 +53,6 @@ module ERC777-TEST
   rule #print ( true )  => #print ( "true" )
   rule #print ( false ) => #print ( "false" )
 
-  rule #sum ( ListItem(I:Int) S ) => I +Int #sum ( S )
-  rule #sum ( .List ) => 0
-
-  rule X  ==Address Y => X  ==Int Y
-  rule X =/=Address Y => X =/=Int Y
-
-  rule .Data => ""
-
-  rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
-
-  rule #zero => 0
+  rule S:Stmt ; Ss:Stmts => S ~> Ss
 
 endmodule

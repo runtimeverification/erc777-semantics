@@ -310,7 +310,7 @@ false
       9 |-> 7
     </receiverHooks>
     <log>
-      Events: Sent ( 3 , 3 , 4 , 0 , "" , .Data )
+      Events: Sent ( 3 , 3 , 4 , 0 , "" , "" )
     </log>
     <atomic>
       .
