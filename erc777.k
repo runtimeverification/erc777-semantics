@@ -238,6 +238,145 @@ module ERC777
   // TODO: more fine-grained input
   rule #call ( _ , _ , _ , _ , _ , _ , _ , _ ) => #mayRevert
 
+
+  //
+  // ERC20 compatibility
+  //
+
+  // TODO; hooks
+  // TODO; Check compatibility?
+
+  rule <k> allowance(Owner, Spender) => Allowance ...</k>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> Allowance </amount>
+
+  rule <k> decimals() => 18 </k>
+
+  rule <k> approve(Spender, Allowance) => true ...</k>
+       <caller> Owner </caller>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> _ => Allowance </amount>
+       <log> Log => Log Approval(Owner, Spender, Allowance) </log>
+    requires Allowance >=Int 0
+
+  rule <k> approve(_, Allowance) => #revert ...</k>
+    requires Allowance <Int 0
+
+  rule <k> transfer(To, Value) => true ...</k>
+       <caller> From </caller>
+       <account>
+         <id> From </id>
+         <balance> BalanceFrom => BalanceFrom -Int Value </balance>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> BalanceTo => BalanceTo +Int Value </balance>
+         ...
+       </account>
+       <log> Log => Log Transfer(From, To, Value) </log>
+    requires To =/=Int From    // sanity check
+     andBool Value >=Int 0
+     andBool Value <=Int BalanceFrom
+     andBool BalanceTo +Int Value <=Int #maxNumber
+
+  rule <k> transfer(From, Value) => true ...</k>
+       <caller> From </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+       <log> Log => Log Transfer(From, From, Value) </log>
+    requires Value >=Int 0
+     andBool Value <=Int BalanceFrom
+
+  rule <k> transfer(To, Value) => #revert ...</k>
+       <caller> From </caller>
+       <account>
+         <id> From </id>
+         <balance> BalanceFrom </balance>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> BalanceTo </balance>
+         ...
+       </account>
+    requires To =/=Int From   // sanity check
+     andBool (Value <Int 0
+      orBool Value >Int BalanceFrom
+      orBool BalanceTo +Int Value >Int #maxNumber)
+
+  rule <k> transfer(From, Value) => #revert ...</k>
+       <caller> From </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+    requires Value <Int 0
+      orBool Value >Int BalanceFrom
+
+  rule <k> transferFrom(From, To, Value) => true ...</k>
+       <caller> Caller </caller>
+       <account>
+         <id> From </id>
+         <balance> BalanceFrom => BalanceFrom -Int Value </balance>
+         <spender> Caller </spender>
+         <amount> Allowance => Allowance -Int Value </amount>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> BalanceTo => BalanceTo +Int Value </balance>
+         ...
+       </account>
+       <log> Log => Log Transfer(From, To, Value) </log>
+    requires To =/=Int From    // sanity check
+     andBool Value >=Int 0
+     andBool Value <=Int BalanceFrom
+     andBool Value <=Int Allowance   // `transfer` does not check allowance
+     andBool BalanceTo +Int Value <=Int #maxNumber
+
+  rule <k> transferFrom(From, From, Value) => true ...</k>
+       <caller> Caller </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+       <spender> Caller </spender>
+       <amount> Allowance => Allowance -Int Value </amount>
+       <log> Log => Log Transfer(From, From, Value) </log>
+    requires Value >=Int 0
+     andBool Value <=Int BalanceFrom
+     andBool Value <=Int Allowance   // `transfer` does not check allowance
+
+  rule <k> transferFrom(From, To, Value) => #revert ...</k>
+       <caller> Caller </caller>
+       <account>
+         <id> From </id>
+         <balance> BalanceFrom </balance>
+         <spender> Caller </spender>
+         <amount> Allowance </amount>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> BalanceTo </balance>
+         ...
+       </account>
+    requires To =/=Int From    // sanity check
+     andBool (Value <Int 0
+      orBool Value >Int BalanceFrom
+      orBool Value >Int Allowance
+      orBool BalanceTo +Int Value >Int #maxNumber)
+
+  rule <k> transferFrom(From, From, Value) => #revert ...</k>
+       <caller> Caller </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+       <spender> Caller </spender>
+       <amount> Allowance </amount>
+    requires Value <Int 0
+      orBool Value >Int BalanceFrom
+      orBool Value >Int Allowance   // `transfer` does not check allowance
+
+
   //
   // Utils
   //
