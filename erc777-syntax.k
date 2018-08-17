@@ -41,7 +41,7 @@ module ERC777-SYNTAX
 
   syntax Bool ::= approve ( Address , Number )
                 | transfer ( Address , Number )
-                | transferFrom ( Address , Number )
+                | transferFrom ( Address , Address , Number )
 
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)

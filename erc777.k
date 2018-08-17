@@ -12,11 +12,24 @@ module ERC777
 
   configuration
      <ERC777>
+       <caller> 0 </caller>
        <k> $PGM:K </k>
-       <balances> .Map </balances> // holder -> balance
-       <operators> .Map </operators> // holder -> 2^operator
-       <senderHooks> .Map </senderHooks> // holder -> senderHook
-       <receiverHooks> .Map </receiverHooks> // holder -> receiverHook
+       <accounts>
+         <account multiplicity="*">
+           <id> 0 </id>
+           <balance> 0 </balance>
+           <operators> .Set </operators> // holder -> 2^operator
+           <senderHook> 0 </senderHook> // holder -> senderHook
+           <receiverHook> 0 </receiverHook> // holder -> receiverHook
+           <allowances>
+             <allow multiplicity="*">
+               <spender> 0 </spender>
+               <amount> 0 </amount>
+             </allow>
+           </allowances>
+         </account>
+       </accounts>
+       <supply> 0 </supply>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -69,22 +82,26 @@ module ERC777
   // Simplely defined, but non-trivial properties to be ensured by token implementations
   //
 
-  rule <k> totalSupply ( ) => #sum ( values(Balances) ) ... </k>
-       <balances> Balances </balances>
+  rule <k> totalSupply ( ) => TotalSupply ... </k>
+       <supply> TotalSupply </supply>
 
   rule <k> balanceOf ( Holder ) => Balance ... </k>
-       <balances> ... Holder |-> Balance ... </balances>
+       <id> Holder </id>
+       <balance> Balance </balance>
 
   rule <k> isOperatorFor ( Operator , Holder ) => Operator in Operators ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
+       <id> Holder </id>
+       <operators> Operators:Set </operators>
 
   //
   // authorizeOperator / revokeOperator
   //
 
   // Non-deterministically allow to authorize an already-authorized-operator
-  rule <k> Holder : authorizeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators SetItem(Operator) ) ... </operators>
+  rule <k> authorizeOperator ( Operator ) => . ... </k>
+       <caller> Holder </caller>
+       <id> Holder </id>
+       <operators> Operators => Operators SetItem(Operator) </operators>
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator
 
@@ -97,14 +114,17 @@ module ERC777
 */
 
   // Reject to authorize itself -- TODO: too strong??
-  rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
+  rule <k> authorizeOperator ( Operator ) => #revert ... </k>
+       <caller> Holder </caller>
        requires Holder ==Int Operator
 
   ////
 
   // Non-deterministically allow to revoke a non-authorized-operator
-  rule <k> Holder : revokeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators -Set SetItem(Operator) ) ... </operators>
+  rule <k> revokeOperator ( Operator ) => . ... </k>
+       <caller> Holder </caller>
+       <id> Holder </id>
+       <operators> Operators => Operators -Set SetItem(Operator) </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator
 
@@ -117,24 +137,27 @@ module ERC777
 */
 
   // Reject to revoke itself -- an address must be an operator for itself
-  rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
+  rule <k> revokeOperator ( Operator ) => #revert ... </k>
+       <caller> Holder </caller>
        requires Holder ==Int Operator
 
   //
   // send / operatorSend
   //
 
-  rule <k> Holder :         send (          To , Value , Data      )
-        => Holder : operatorSend ( Holder , To , Value , Data , "" ) ... </k>
+  rule <k>         send (          To , Value , Data      )
+        => operatorSend ( Holder , To , Value , Data , "" ) ... </k>
+       <caller> Holder </caller>
 
   ////
 
   // 'From == 0' implies 'From == Operator' -- TODO: what's the intuition? may be vulnerable
-  rule <k> Operator : operatorSend ( From     , To , Value , Data , OperatorData )
-        => Operator : operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
+  rule <k> operatorSend ( From     , To , Value , Data , OperatorData )
+        => operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
+       <caller> Operator </caller>
        requires From ==Int 0
 
-  rule <k> Operator : operatorSend ( From , To , Value , Data , OperatorData )
+  rule <k> operatorSend ( From , To , Value , Data , OperatorData )
         => #atomicBegin
         ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
 //      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
@@ -142,6 +165,7 @@ module ERC777
 //      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
         ~> #log ( Operator , From , To , Value , Data , OperatorData )
         ~> #atomicEnd ... </k>
+       <caller> Operator </caller>
        requires From =/=Int 0
 
   syntax Exp ::= #check ( Address , Address , Address , Number , Data )
@@ -156,33 +180,43 @@ module ERC777
 
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-       <senderHooks> ... From |-> Hook ... </senderHooks>
+       <id> From </id>
+       <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
 
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         => #mayRevert ... </k>
-       <senderHooks> ... From |-> Hook ... </senderHooks>
+       <id> From </id>
+       <senderHook> Hook </senderHook>
        requires Hook ==Int 0
 
   syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data )
 
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
         => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-       <receiverHooks> ... To |-> Hook ... </receiverHooks>
+       <id> To </id>
+       <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
         => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
-       <receiverHooks> ... To |-> Hook ... </receiverHooks>
+       <id> To </id>
+       <receiverHook> Hook </receiverHook>
        requires Hook ==Int 0
 
   syntax Stmt ::= #update ( Address , Address , Number )
 
   rule <k> #update ( From , To , Value ) => . ... </k>
-       <balances> ...
-         From |-> ValueFrom -Int Value
-         To   |-> ValueTo   +Int Value
-       ... </balances>
+       <account>
+         <id> From </id>
+         <balance> ValueFrom => ValueFrom -Int Value </balance>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> ValueTo => ValueTo +Int Value </balance>
+         ...
+       </account>
        requires From =/=Int To
         andBool ValueFrom -Int Value >=Int 0
         andBool ValueTo   +Int Value  <Int #maxNumber
@@ -237,24 +271,18 @@ module ERC777
   syntax Stmt ::= "#revert"
 
   rule <k> #revert ... </k>
-       <balances> _ => Balances </balances>
-       <operators> _ => Operators </operators>
-       <senderHooks> _ => SenderHooks </senderHooks>
-       <receiverHooks> _ => ReceiverHooks </receiverHooks>
+       <accounts> _ => Accounts </accounts>
        <log> _ => Log </log>
-       <atomic> #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) => .K </atomic>
+       <atomic> #snapshot ( Accounts , Log ) => .K </atomic>
 
   syntax KItem ::= "#atomicBegin"
                  | "#atomicEnd"
-                 | #snapshot ( Map , Map , Map , Map , EventLog )
+                 | #snapshot ( K , EventLog )
 
   rule <k> #atomicBegin => . ... </k>
-       <balances> Balances </balances>
-       <operators> Operators </operators>
-       <senderHooks> SenderHooks </senderHooks>
-       <receiverHooks> ReceiverHooks </receiverHooks>
+       <accounts> Accounts </accounts>
        <log> Log </log>
-       <atomic> .K => #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) </atomic>
+       <atomic> .K => #snapshot ( Accounts , Log ) </atomic>
 
   rule <k> #atomicEnd => . ... </k>
        <atomic> _ => .K </atomic>
