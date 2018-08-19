@@ -24,12 +24,12 @@ module ERC777-SYNTAX
                | revokeOperator ( Address )
                | send ( Address , Number , Data )
                | operatorSend ( Address , Address , Number , Data , Data )
-               | burn ( Number , Data )
-               | operatorBurn ( Address , Number , Data , Data )
+               | burn ( Number )
+               | operatorBurn ( Address , Number , Data )
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
-                 | Minted ( Address , Address , Number , Data )
-                 | Burned ( Address , Address , Number , Data , Data )
+                 | Minted ( Address , Address , Number , Data , Data )
+                 | Burned ( Address , Address , Number , Data )
                  | AuthorizedOperator ( Address , Address )
                  | RevokedOperator ( Address , Address )
 
@@ -38,6 +38,7 @@ module ERC777-SYNTAX
   //
 
   syntax Number ::= allowance ( Address , Address )
+                  | decimals ( )
 
   syntax Bool ::= approve ( Address , Number )
                 | transfer ( Address , Number )

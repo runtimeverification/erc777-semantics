@@ -37,30 +37,6 @@ module ERC777
   //
   // Configuration initialization -- all addresses should be initialized
   // - parameterized by: #addresses, #defaultOperators, #senderHook, #receiverHook
-  //
-
-  rule <k> #init ( ) => . ... </k>
-       <balances>      _ => #initBalances      ( #addresses )                     </balances>
-       <operators>     _ => #initOperators     ( #addresses , #defaultOperators ) </operators>
-       <senderHooks>   _ => #initSenderHooks   ( #addresses )                     </senderHooks>
-       <receiverHooks> _ => #initReceiverHooks ( #addresses )                     </receiverHooks>
-
-  syntax Map ::= #initBalances ( Addresses ) [function]
-               | #initOperators ( Addresses , Set ) [function]
-               | #initSenderHooks ( Addresses ) [function]
-               | #initReceiverHooks ( Addresses ) [function]
-
-  rule #initBalances ( Holder Holders ) => Holder |-> 0  #initBalances ( Holders )
-  rule #initBalances ( .Addresses ) => .Map
-
-  rule #initOperators ( Holder Holders , DefaultOperators ) => Holder |-> SetItem(Holder) DefaultOperators  #initOperators ( Holders , DefaultOperators )
-  rule #initOperators ( .Addresses , _ ) => .Map
-
-  rule #initSenderHooks ( Holder Holders ) => Holder |-> #senderHook ( Holder )  #initSenderHooks ( Holders )
-  rule #initSenderHooks ( .Addresses ) => .Map
-
-  rule #initReceiverHooks ( Holder Holders ) => Holder |-> #receiverHook ( Holder )  #initReceiverHooks ( Holders )
-  rule #initReceiverHooks ( .Addresses ) => .Map
 
   //
   // Constant functions
@@ -89,7 +65,8 @@ module ERC777
        <id> Holder </id>
        <balance> Balance </balance>
 
-  rule <k> isOperatorFor ( Operator , Holder ) => Operator in Operators ... </k>
+  rule <k> isOperatorFor ( Operator , Holder )
+        => Operator in (Operators #defaultOperators) ... </k>
        <id> Holder </id>
        <operators> Operators:Set </operators>
 
@@ -143,7 +120,7 @@ module ERC777
 
   //
   // send / operatorSend
-  //
+  // TODO: ERC20 compatibility
 
   rule <k>         send (          To , Value , Data      )
         => operatorSend ( Holder , To , Value , Data , "" ) ... </k>
@@ -238,19 +215,94 @@ module ERC777
   // TODO: more fine-grained input
   rule #call ( _ , _ , _ , _ , _ , _ , _ , _ ) => #mayRevert
 
+  //
+  // burn / operatorBurn
+  // TODO: inconsistencies in the standards and reference implementation
+
+  // NOTE: contract MAY prevent some/all holders from burning for any reason
+  // vs Tokens MAY be burned from any holder address
+
+  rule <k>         burn(        Amount)
+        => operatorBurn(Holder, Amount, "") ... </k>
+       <caller> Holder </caller>
+
+  rule <k> operatorBurn(Holder, Amount, OperatorData)
+        => #atomicBegin
+        ~> #ensure(#and(isOperatorFor(Operator, Holder),
+                        #isMultipleOf(Balance -Int Amount, #granularity),
+                        Balance >=Int Amount,
+                        Holder =/=Int 0))
+        ~> #burn(Holder, Amount)
+        ~> #hookTo(Operator, Holder, 0, Amount, "", OperatorData)
+        ~> #log(Burned(Operator, Holder, Amount, OperatorData))
+        ~> #log(Transfer(Holder, 0, Amount)) // ERC20
+        ~> #atomicEnd ... </k>
+       <caller> Operator </caller>
+       <id> Holder </id>
+       <balance> Balance </balance>
+
+  syntax Stmt ::= #burn ( Address , Number )
+
+  rule <k> #burn(Holder, Amount) => . ... </k>
+       <account>
+         <id> Holder </id>
+         <balance> Balance => Balance -Int Amount </balance>
+         ...
+       </account>
+       <supply> Supply => Supply -Int Amount </supply>
+       requires Balance >=Int Amount andBool Supply >=Int Amount
+
+  // general version
+  syntax Stmt ::= #log(Event)
+
+  rule <k> #log(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
+
+
+  //
+  // mint -> no function spec, but rules
+  // TODO: `event Minted` signature inconsistency in standard
+
+  syntax Stmt ::= #mint ( Address , Number , Data , Data )
+                | #mintAux ( Address , Number )
+
+  rule <k> #mint(Holder, Amount, Data, OperatorData)
+        => #atomicBegin
+        ~> #ensure(#and(#isMultipleOf(Balance +Int Amount, #granularity),
+                        Holder =/=Int 0))
+        ~> #mintAux(Holder, Amount)
+        ~> #hookTo(Operator, 0, Holder, Amount, Data,  OperatorData)
+        ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
+        ~> #log(Transfer(0, Holder, Amount))
+        ~> #atomicEnd ... </k>
+       <caller> Operator </caller>
+       <id> Holder </id>
+       <balance> Balance </balance>
+
+  rule <k> #mintAux(Holder, Amount) => . ... </k>
+       <account>
+         <id> Holder </id>
+         <balance> Balance => Balance +Int Amount </balance>
+         ...
+       </account>
+       <supply> Supply => Supply +Int Amount </supply>
+       requires Balance +Int Amount <=Int #maxNumber
+
+  //
+  // TODO: Hooks: check if registered via ERC820?
+  //
 
   //
   // ERC20 compatibility
-  //
-
-  // TODO; hooks
-  // TODO; Check compatibility?
+  // TODO: hooks for ERC20 functions
+  // TODO: Check compatibility on/off?
 
   rule <k> allowance(Owner, Spender) => Allowance ...</k>
        <id> Owner </id>
        <spender> Spender </spender>
        <amount> Allowance </amount>
 
+  // TODO: MUST be implemented? MAY implement?
   rule <k> decimals() => 18 </k>
 
   rule <k> approve(Spender, Allowance) => true ...</k>
@@ -396,11 +448,13 @@ module ERC777
   rule #ite ( B:Bool , T , F ) => T  requires B
   rule #ite ( B:Bool , T , F ) => F  requires notBool B
 
-  syntax Exp ::= "#and" "(" Exp "," Exp ")"         [strict]
-               | "#and" "(" Exp "," Exp "," Exp ")" [strict]
+  syntax Exp ::= "#and" "(" Exp "," Exp ")"                 [strict]
+               | "#and" "(" Exp "," Exp "," Exp ")"         [strict]
+               | "#and" "(" Exp "," Exp "," Exp "," Exp ")" [strict]
 
   rule #and ( A:Bool , B:Bool          ) => A andBool B
   rule #and ( A:Bool , B:Bool , C:Bool ) => A andBool B andBool C
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool ) => A andBool B andBool C andBool D
 
   syntax Stmt ::= "#mayRevert"
 
@@ -409,6 +463,7 @@ module ERC777
 
   syntax Stmt ::= "#revert"
 
+  // TODO: #revert ~> ... ~> #atomicEnd
   rule <k> #revert ... </k>
        <accounts> _ => Accounts </accounts>
        <log> _ => Log </log>
