@@ -12,24 +12,24 @@ module ERC777
 
   configuration
      <ERC777>
-       <caller> 0 </caller>
+       <caller> 0:Address </caller>
        <k> $PGM:K </k>
        <accounts>
          <account multiplicity="*">
-           <id> 0 </id>
-           <balance> 0 </balance>
+           <id> 0:Address </id>
+           <balance> 0:Number </balance>
            <operators> .Set </operators> // holder -> 2^operator
-           <senderHook> 0 </senderHook> // holder -> senderHook
-           <receiverHook> 0 </receiverHook> // holder -> receiverHook
+           <senderHook> 0:Address </senderHook> // holder -> senderHook
+           <receiverHook> 0:Address </receiverHook> // holder -> receiverHook
            <allowances>
              <allow multiplicity="*">
-               <spender> 0 </spender>
-               <amount> 0 </amount>
+               <spender> 0:Address </spender>
+               <amount> 0:Number </amount>
              </allow>
            </allowances>
          </account>
        </accounts>
-       <supply> 0 </supply>
+       <supply> 0:Number </supply>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -37,6 +37,37 @@ module ERC777
   //
   // Configuration initialization -- all addresses should be initialized
   // - parameterized by: #addresses, #defaultOperators, #senderHook, #receiverHook
+
+  rule <k> #init() => #initAccounts(#addresses, #addresses) ... </k>
+
+  rule <k> #initAccounts(Holder Rest, Accounts)
+        => #initAllowances(Holder, Accounts) ~> #initAccounts(Rest, Accounts) ... </k>
+       <accounts> (.Bag =>
+         <account>
+           <id> Holder </id>
+           <balance> 0 </balance>
+           <operators> SetItem(Holder) #defaultOperators </operators>
+           <senderHook> #senderHook(Holder) </senderHook>
+           <receiverHook> #receiverHook(Holder) </receiverHook>
+           <allowances> .Bag </allowances>
+         </account>)
+         ...
+       </accounts>
+
+  rule <k> #initAccounts(.Addresses, _) => . ... </k>
+
+  rule <k> #initAllowances(Holder, Spender Rest)
+        => #initAllowances(Holder, Rest) ... </k>
+       <id> Holder </id>
+       <allowances> (.Bag =>
+         <allow>
+           <spender> Spender </spender>
+           <amount> 0 </amount>
+         </allow>)
+         ...
+       </allowances>
+
+  rule <k> #initAllowances(_, .Addresses) => . ... </k>
 
   //
   // Constant functions
@@ -66,7 +97,7 @@ module ERC777
        <balance> Balance </balance>
 
   rule <k> isOperatorFor ( Operator , Holder )
-        => Operator in (Operators #defaultOperators) ... </k>
+        => Operator in Operators ... </k>
        <id> Holder </id>
        <operators> Operators:Set </operators>
 

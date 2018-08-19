@@ -81,5 +81,7 @@ module ERC777-SYNTAX
   syntax Bool ::= #isContractAddress ( Address ) [function]
 
   syntax Stmt ::= #init ( )
+                | #initAccounts ( Addresses , Addresses )
+                | #initAllowances ( Address , Addresses )
 
 endmodule
