@@ -170,7 +170,7 @@ module ERC777
         ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
 //      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         ~> #update ( From , To , Value )
-//      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
+//      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData , true )
         ~> #log ( Operator , From , To , Value , Data , OperatorData )
         ~> #atomicEnd ... </k>
        <caller> Operator </caller>
@@ -198,19 +198,26 @@ module ERC777
        <senderHook> Hook </senderHook>
        requires Hook ==Int 0
 
-  syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data )
+  syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data , Bool )
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
+  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , _ )
         => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
+  // TODO: why #mayRevert?
+  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
         => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
-       requires Hook ==Int 0
+       requires Hook ==Int 0 andBool PreventLocking
+
+  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
+        => #mayRevert  ... </k>
+       <id> To </id>
+       <receiverHook> Hook </receiverHook>
+       requires Hook ==Int 0 andBool notBool PreventLocking
 
   syntax Stmt ::= #update ( Address , Address , Number )
 
@@ -264,7 +271,7 @@ module ERC777
                         Balance >=Int Amount,
                         Holder =/=Int 0))
         ~> #burn(Holder, Amount)
-        ~> #hookTo(Operator, Holder, 0, Amount, "", OperatorData)
+        ~> #hookTo(Operator, Holder, 0, Amount, "", OperatorData, true)
         ~> #log(Burned(Operator, Holder, Amount, OperatorData))
         ~> #log(Transfer(Holder, 0, Amount)) // ERC20
         ~> #atomicEnd ... </k>
@@ -302,7 +309,7 @@ module ERC777
         ~> #ensure(#and(#isMultipleOf(Balance +Int Amount, #granularity),
                         Holder =/=Int 0))
         ~> #mintAux(Holder, Amount)
-        ~> #hookTo(Operator, 0, Holder, Amount, Data,  OperatorData)
+        ~> #hookTo(Operator, 0, Holder, Amount, Data,  OperatorData, true)
         ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
         ~> #log(Transfer(0, Holder, Amount))
         ~> #atomicEnd ... </k>
@@ -342,16 +349,43 @@ module ERC777
        <spender> Spender </spender>
        <amount> _ => Allowance </amount>
        <log> Log => Log Approval(Owner, Spender, Allowance) </log>
-    requires Allowance >=Int 0
 
-  rule <k> approve(_, Allowance) => #revert ...</k>
-    requires Allowance <Int 0
-
-  rule <k> transfer(To, Value) => true ...</k>
+  rule <k> transfer(To, Value)
+        => #atomicBegin
+        ~> #ensure(BalanceFrom >=Int Value)
+        ~> #hookFrom(From, From, To, Value, "", "")
+        ~> #update(From, To, Value)
+        ~> #hookTo(From, From, To, Value, "", "", false) // should accept even if To isn't registered and To is contract )
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
+        ~> #atomicEnd
+        ~> true ... </k>
        <caller> From </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+
+  rule <k> transferFrom(From, To, Value)
+        => #atomicBegin
+        ~> #ensure(#and(BalanceFrom >=Int Value, Allowed >=Int Value))
+        ~> #hookFrom(Operator, From, To, Value, "", "")
+        ~> #updateWithAllowance(Operator, From, To, Value)
+        ~> #hookTo(Operator, From, To, Value, "", "", false)
+        ~> #atomicEnd
+        ~> true ... </k>
+       <caller> Operator </caller>
+       <id> From </id>
+       <balance> BalanceFrom </balance>
+       <spender> Operator </spender>
+       <amount> Allowed </amount>
+
+  syntax Stmt ::= #updateWithAllowance ( Address , Address , Address , Number )
+
+  rule <k> #updateWithAllowance(Operator, From, To, Value) => . ... </k>
        <account>
          <id> From </id>
          <balance> BalanceFrom => BalanceFrom -Int Value </balance>
+         <spender> Operator </spender>
+         <amount> Allowed => Allowed -Int Value </amount>
          ...
        </account>
        <account>
@@ -359,106 +393,21 @@ module ERC777
          <balance> BalanceTo => BalanceTo +Int Value </balance>
          ...
        </account>
-       <log> Log => Log Transfer(From, To, Value) </log>
-    requires To =/=Int From    // sanity check
-     andBool Value >=Int 0
-     andBool Value <=Int BalanceFrom
-     andBool BalanceTo +Int Value <=Int #maxNumber
+       requires From =/=Int To
+        andBool BalanceFrom -Int Value >=Int 0
+        andBool BalanceTo   +Int Value  <Int #maxNumber
+        andBool Allowed >=Int Value
 
-  rule <k> transfer(From, Value) => true ...</k>
-       <caller> From </caller>
-       <id> From </id>
-       <balance> BalanceFrom </balance>
-       <log> Log => Log Transfer(From, From, Value) </log>
-    requires Value >=Int 0
-     andBool Value <=Int BalanceFrom
-
-  rule <k> transfer(To, Value) => #revert ...</k>
-       <caller> From </caller>
+  rule <k> #updateWithAllowance(Operator, From, To, Value) => . ... </k>
        <account>
          <id> From </id>
-         <balance> BalanceFrom </balance>
+         <balance> Balance </balance>
+         <spender> Operator </spender>
+         <amount> Allowed => Allowed -Int Value </amount>
          ...
        </account>
-       <account>
-         <id> To </id>
-         <balance> BalanceTo </balance>
-         ...
-       </account>
-    requires To =/=Int From   // sanity check
-     andBool (Value <Int 0
-      orBool Value >Int BalanceFrom
-      orBool BalanceTo +Int Value >Int #maxNumber)
-
-  rule <k> transfer(From, Value) => #revert ...</k>
-       <caller> From </caller>
-       <id> From </id>
-       <balance> BalanceFrom </balance>
-    requires Value <Int 0
-      orBool Value >Int BalanceFrom
-
-  rule <k> transferFrom(From, To, Value) => true ...</k>
-       <caller> Caller </caller>
-       <account>
-         <id> From </id>
-         <balance> BalanceFrom => BalanceFrom -Int Value </balance>
-         <spender> Caller </spender>
-         <amount> Allowance => Allowance -Int Value </amount>
-         ...
-       </account>
-       <account>
-         <id> To </id>
-         <balance> BalanceTo => BalanceTo +Int Value </balance>
-         ...
-       </account>
-       <log> Log => Log Transfer(From, To, Value) </log>
-    requires To =/=Int From    // sanity check
-     andBool Value >=Int 0
-     andBool Value <=Int BalanceFrom
-     andBool Value <=Int Allowance   // `transfer` does not check allowance
-     andBool BalanceTo +Int Value <=Int #maxNumber
-
-  rule <k> transferFrom(From, From, Value) => true ...</k>
-       <caller> Caller </caller>
-       <id> From </id>
-       <balance> BalanceFrom </balance>
-       <spender> Caller </spender>
-       <amount> Allowance => Allowance -Int Value </amount>
-       <log> Log => Log Transfer(From, From, Value) </log>
-    requires Value >=Int 0
-     andBool Value <=Int BalanceFrom
-     andBool Value <=Int Allowance   // `transfer` does not check allowance
-
-  rule <k> transferFrom(From, To, Value) => #revert ...</k>
-       <caller> Caller </caller>
-       <account>
-         <id> From </id>
-         <balance> BalanceFrom </balance>
-         <spender> Caller </spender>
-         <amount> Allowance </amount>
-         ...
-       </account>
-       <account>
-         <id> To </id>
-         <balance> BalanceTo </balance>
-         ...
-       </account>
-    requires To =/=Int From    // sanity check
-     andBool (Value <Int 0
-      orBool Value >Int BalanceFrom
-      orBool Value >Int Allowance
-      orBool BalanceTo +Int Value >Int #maxNumber)
-
-  rule <k> transferFrom(From, From, Value) => #revert ...</k>
-       <caller> Caller </caller>
-       <id> From </id>
-       <balance> BalanceFrom </balance>
-       <spender> Caller </spender>
-       <amount> Allowance </amount>
-    requires Value <Int 0
-      orBool Value >Int BalanceFrom
-      orBool Value >Int Allowance   // `transfer` does not check allowance
-
+       requires From ==Int To
+        andBool Allowed >=Int Value
 
   //
   // Utils
