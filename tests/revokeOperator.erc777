@@ -1,3 +1,4 @@
 #init();
-3 : revokeOperator(3);
+#setCaller(3);
+revokeOperator(3);
 ;;

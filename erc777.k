@@ -171,7 +171,7 @@ module ERC777
 //      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
         ~> #update ( From , To , Value )
 //      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData , true )
-        ~> #log ( Operator , From , To , Value , Data , OperatorData )
+        ~> #log( Sent(Operator , From , To , Value , Data , OperatorData) )
         ~> #atomicEnd ... </k>
        <caller> Operator </caller>
        requires From =/=Int 0
@@ -238,11 +238,6 @@ module ERC777
 
   rule <k> #update ( From , To , Value ) => . ... </k>
        requires From ==Int To
-
-  syntax Stmt ::= #log ( Address , Address , Address , Number , Data , Data )
-
-  rule <k> #log ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
-       <log> Log => Log Sent ( Operator , From , To , Value , Data , OperatorData ) </log>
 
   syntax Exp ::= #isMultipleOf ( Number , Number )
 

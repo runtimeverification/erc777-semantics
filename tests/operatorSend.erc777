@@ -1,4 +1,6 @@
 #init();
-8 : operatorSend(4, 5, 0, "", "");
-3 : operatorSend(4, 5, 0, "", "");
+#setCaller(8);
+operatorSend(4, 5, 0, "", "");
+#setCaller(3);
+operatorSend(4, 5, 0, "", "");
 ;;

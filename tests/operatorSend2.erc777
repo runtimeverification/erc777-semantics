@@ -1,3 +1,4 @@
 #init();
-8 : operatorSend(4, 0, 0, "", "");
+#setCaller(8);
+operatorSend(4, 0, 0, "", "");
 ;;
