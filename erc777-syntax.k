@@ -9,23 +9,27 @@ module ERC777-SYNTAX
   // Token API
   //
 
-  syntax String ::= name ( )
-                  | symbol ( )
+  // String
+  syntax Exp ::= name ( )
+               | symbol ( )
 
-  syntax Number ::= totalSupply ( )
-                  | balanceOf ( Address )
-                  | granularity ( )
+  // Number
+  syntax Exp ::= totalSupply ( )
+               | balanceOf ( Address )
+               | granularity ( )
 
-  syntax Addresses ::= defaultOperators ( )
+  // Addresses
+  syntax Exp ::= defaultOperators ( )
 
-  syntax Bool ::= isOperatorFor ( Address , Address )
+  // Bool
+  syntax Exp ::= isOperatorFor ( Address , Address )
 
-  syntax Cmd ::= authorizeOperator ( Address )
-               | revokeOperator ( Address )
-               | send ( Address , Number , Data )
-               | operatorSend ( Address , Address , Number , Data , Data )
-               | burn ( Number )
-               | operatorBurn ( Address , Number , Data )
+  syntax Stmt ::= authorizeOperator ( Address )
+                | revokeOperator ( Address )
+                | send ( Address , Number , Data )
+                | operatorSend ( Address , Address , Number , Data , Data )
+                | burn ( Number )
+                | operatorBurn ( Address , Number , Data )
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
                  | Minted ( Address , Address , Number , Data , Data )
@@ -37,12 +41,14 @@ module ERC777-SYNTAX
   // ERC20 compatibility
   //
 
-  syntax Number ::= allowance ( Address , Address )
-                  | decimals ( )
+  // Number
+  syntax Exp ::= allowance ( Address , Address )
+               | decimals ( )
 
-  syntax Bool ::= approve ( Address , Number )
-                | transfer ( Address , Number )
-                | transferFrom ( Address , Address , Number )
+  // Bool
+  syntax Exp ::= approve ( Address , Number )
+               | transfer ( Address , Number )
+               | transferFrom ( Address , Address , Number )
 
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)
@@ -66,8 +72,6 @@ module ERC777-SYNTAX
   syntax Exp ::= Event
                | Number | Address | Data
                | Bool | String
-
-  syntax Stmt ::= Address ":" Cmd
 
   syntax Addresses ::= "#addresses" [function]
 

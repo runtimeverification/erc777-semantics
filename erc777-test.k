@@ -6,6 +6,7 @@ module ERC777-TEST-SYNTAX
   imports DOMAINS-SYNTAX
 
   syntax Stmt ::= #print ( Exp ) [strict]
+                | #setCaller ( Address )
 
   syntax Stmts ::= Stmt ";" Stmts | ";;"
 
@@ -51,6 +52,9 @@ module ERC777-TEST
      </TEST>
 
   syntax KResult ::= Int | Bool | String
+
+  rule <k> #setCaller ( Addr ) => . ... </k>
+       <caller> _ => Addr </caller>
 
   rule <k> #print ( V ) => . ... </k>
        <output> ... .List => ListItem(V) ListItem("\n") </output>
