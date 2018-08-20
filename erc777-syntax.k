@@ -10,26 +10,28 @@ module ERC777-SYNTAX
   //
 
   // String
+  syntax Exp ::= AExp | BExp
+
   syntax Exp ::= name ( )
                | symbol ( )
 
   // Number
-  syntax Exp ::= totalSupply ( )
-               | balanceOf ( Address )
+  syntax AExp ::= totalSupply ( )
+               | balanceOf ( AExp )
                | granularity ( )
 
   // Addresses
   syntax Exp ::= defaultOperators ( )
 
   // Bool
-  syntax Exp ::= isOperatorFor ( Address , Address )
+  syntax BExp ::= isOperatorFor ( AExp , AExp )
 
-  syntax Stmt ::= authorizeOperator ( Address )
-                | revokeOperator ( Address )
-                | send ( Address , Number , Data )
-                | operatorSend ( Address , Address , Number , Data , Data )
-                | burn ( Number )
-                | operatorBurn ( Address , Number , Data )
+  syntax Stmt ::= authorizeOperator ( AExp )
+                | revokeOperator ( AExp )
+                | send ( AExp , AExp , Data )
+                | operatorSend ( AExp , AExp , AExp , Data , Data )
+                | burn ( AExp )
+                | operatorBurn ( AExp , AExp , Data )
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
                  | Minted ( Address , Address , Number , Data , Data )
@@ -42,13 +44,14 @@ module ERC777-SYNTAX
   //
 
   // Number
-  syntax Exp ::= allowance ( Address , Address )
+  syntax AExp ::= allowance ( AExp , AExp )
                | decimals ( )
 
   // Bool
-  syntax Exp ::= approve ( Address , Number )
-               | transfer ( Address , Number )
-               | transferFrom ( Address , Address , Number )
+  syntax BExp ::= approve ( AExp , AExp )
+               | transfer ( AExp , AExp )
+               | transferFrom ( AExp , AExp , AExp )
+               | "throw"
 
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)

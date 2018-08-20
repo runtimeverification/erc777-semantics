@@ -1,10 +1,9 @@
 #init();
-#print(isOperatorFor(2,1));
-#setCaller(1);
+print(isOperatorFor(2,1));
+makeCaller(1);
 authorizeOperator(2);
-#print(isOperatorFor(2,1));
+print(isOperatorFor(2,1));
 revokeOperator(2);
-#print(isOperatorFor(2,1));
-#setCaller(3);
+print(isOperatorFor(2,1));
+makeCaller(3);
 authorizeOperator(3);
-;;

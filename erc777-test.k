@@ -1,14 +1,11 @@
 require "erc777.k"
+require "imp.k"
 
 module ERC777-TEST-SYNTAX
 
+  imports IMP
   imports ERC777-SYNTAX
   imports DOMAINS-SYNTAX
-
-  syntax Stmt ::= #print ( Exp ) [strict]
-                | #setCaller ( Address )
-
-  syntax Stmts ::= Stmt ";" Stmts | ";;"
 
 endmodule
 
@@ -41,28 +38,5 @@ module ERC777-TEST
   rule #maxNumber => 1024 // NOTE: 2^256 - 1
 
   rule #isContractAddress ( _ ) => true
-
-  // Test Harness
-
-  configuration
-     <TEST>
-       initERC777Cell(Init)
-       <input stream="stdin"> .List </input>
-       <output stream="stdout"> .List </output>
-     </TEST>
-
-  syntax KResult ::= Int | Bool | String
-
-  rule <k> #setCaller ( Addr ) => . ... </k>
-       <caller> _ => Addr </caller>
-
-  rule <k> #print ( V ) => . ... </k>
-       <output> ... .List => ListItem(V) ListItem("\n") </output>
-       requires isInt(V) orBool isString(V)
-
-  rule #print ( true )  => #print ( "true" )
-  rule #print ( false ) => #print ( "false" )
-
-  rule S:Stmt ; Ss:Stmts => S ~> Ss
 
 endmodule

@@ -1,14 +1,7 @@
-+ set -e
-+ rm -rf erc777-test-kompiled
-+ kompile --backend java erc777-test.k --syntax-module ERC777-TEST-SYNTAX
-+ krun --smt none tests/name.erc777 -o none
 RVToken
-+ krun --smt none tests/symbol.erc777 -o none
 RVT
-+ krun --smt none tests/granularity.erc777 -o none
 1
-+ krun --smt none tests/defaultOperators.erc777
-<TEST>
+<IMP>
   <ERC777>
     <caller>
       0
@@ -30,6 +23,9 @@ RVT
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -40,28 +36,30 @@ RVT
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
-+ krun --smt none tests/totalSupply.erc777 -o none
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
 0
-+ krun --smt none tests/balanceOf.erc777 -o none
 0
 0
 0
-+ krun --smt none tests/isOperatorFor.erc777 -o none
 true
 false
 true
-+ krun --smt none tests/authorizeOperator.erc777
 false
 true
 false
-<TEST>
+<IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert ~> ;;
+      #revert
     </k>
     <accounts>
       <account>
@@ -984,6 +982,9 @@ false
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -994,15 +995,20 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
-+ krun --smt none tests/revokeOperator.erc777
-<TEST>
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
+<IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert ~> ;;
+      #revert
     </k>
     <accounts>
       <account>
@@ -1925,6 +1931,9 @@ false
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -1935,15 +1944,20 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
-+ krun --smt none tests/send.erc777
-<TEST>
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
+<IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      ;;
+      .
     </k>
     <accounts>
       <account>
@@ -2866,6 +2880,9 @@ false
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -2876,15 +2893,20 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
-+ krun --smt none tests/operatorSend.erc777
-<TEST>
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
+<IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert ~> #update ( 4 , 5 , 0 ) ~> #log ( Sent ( 3 , 4 , 5 , 0 , "" , "" ) ) ~> #atomicEnd ~> ;;
+      #revert ~> #update ( 4 , 5 , 0 ) ~> #log ( Sent ( 3 , 4 , 5 , 0 , "" , "" ) ) ~> #atomicEnd
     </k>
     <accounts>
       <account>
@@ -3807,6 +3829,9 @@ false
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -3817,15 +3842,20 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
-+ krun --smt none tests/operatorSend2.erc777
-<TEST>
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
+<IMP>
   <ERC777>
     <caller>
       8
     </caller>
     <k>
-      #revert ~> #update ( 4 , 0 , 0 ) ~> #log ( Sent ( 8 , 4 , 0 , 0 , "" , "" ) ) ~> #atomicEnd ~> ;;
+      #revert ~> #update ( 4 , 0 , 0 ) ~> #log ( Sent ( 8 , 4 , 0 , 0 , "" , "" ) ) ~> #atomicEnd
     </k>
     <accounts>
       <account>
@@ -4748,6 +4778,9 @@ false
       .
     </atomic>
   </ERC777>
+  <state>
+    .Map
+  </state>
   <input>
     ListItem ( #buffer ( "" ) )
     ListItem ( "on" )
@@ -4758,4 +4791,10 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-</TEST>
+  <throwAsPrint>
+    false
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>

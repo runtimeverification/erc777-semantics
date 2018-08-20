@@ -21,6 +21,7 @@ endmodule
  */
 module ERC777-SORTS
 
+  imports DOMAINS
   imports ERC777-SORTS-SIGNATURE
   imports INT-SYNTAX
   imports STRING-SYNTAX
@@ -30,5 +31,9 @@ module ERC777-SORTS
   syntax Address ::= Int
 
   syntax Data ::= String
+
+  syntax Value ::= Int  // this can be changed
+  syntax AExp  ::= Value | Address
+  syntax BExp  ::= Bool
 
 endmodule

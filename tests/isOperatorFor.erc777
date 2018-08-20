@@ -1,5 +1,4 @@
 #init();
-#print(isOperatorFor(0,0));
-#print(isOperatorFor(1,0));
-#print(isOperatorFor(9,0));
-;;
+print(isOperatorFor(0,0));
+print(isOperatorFor(1,0));
+print(isOperatorFor(9,0));
