@@ -48,7 +48,6 @@ module IMP
    with the ERC20-K configuration.  Such statements would not be
    possible/allowed in a normal programming language for smart contracts. */
                 | "makeAccount" "(" AExp "," AExp")"     [strict]
-                | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeTotalSupply" "(" AExp ")"         [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeBalance" "(" AExp ")"             [strict]
@@ -137,12 +136,12 @@ module IMP
 
   //FIXME implement
   rule <k> makeAccount(A,V) => . ...</k>
-       /*<accounts>... .Bag => <account> <id> A </id> <balance> V </balance> </account> ...</accounts>
-       <allowances>... .Bag => <allowance1> <owner> A </owner> <spenders> .Bag </spenders> </allowance1> ...</allowances>*/
-  //FIXME implement
-  rule <k> makeAllowance(A,B) => . ...</k>
-       /*<owner> A </owner>
-       <spenders>... .Bag => <allow> <spender> B </spender> <amount> 0 </amount> </allow> ...</spenders>*/
+       <accounts>
+         <account> <id> A </id> <balance> _ => V </balance>  ... </account>
+         ...
+       </accounts>
+
+
   rule <k> makeTotalSupply(I:Int) => . ...</k> <supply> _ => I </supply> requires I >=Int 0
   rule <k> makeCaller(I:Int) => . ...</k> <caller> _ => I </caller>
   rule <k> makeBalance(I:Int) => . ...</k> <caller> Owner </caller> <id> Owner </id> <balance> _ => I </balance>
@@ -184,13 +183,9 @@ module IMP
 int accounts, x, y, a, b, c, caller, v;
 accounts = 10;
 x = accounts;
+#init(1 2 3 4 5 6 7 8 9 10 .Addresses);
 while(!(x <= 0)) {
   makeAccount(x, x*10);
-  y = accounts;
-  while(!(y <= 0)) {
-    makeAllowance(x,y);
-	y = y + -1;
-  }
   x = x + -1;
 }
 makeTotalSupply(550);

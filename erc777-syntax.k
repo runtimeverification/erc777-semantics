@@ -17,21 +17,21 @@ module ERC777-SYNTAX
 
   // Number
   syntax AExp ::= totalSupply ( )
-               | balanceOf ( AExp )
-               | granularity ( )
+                | balanceOf ( AExp ) [strict]
+                | granularity ( )
 
   // Addresses
   syntax Exp ::= defaultOperators ( )
 
   // Bool
-  syntax BExp ::= isOperatorFor ( AExp , AExp )
+  syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
 
-  syntax Stmt ::= authorizeOperator ( AExp )
-                | revokeOperator ( AExp )
-                | send ( AExp , AExp , Data )
-                | operatorSend ( AExp , AExp , AExp , Data , Data )
-                | burn ( AExp )
-                | operatorBurn ( AExp , AExp , Data )
+  syntax Stmt ::= authorizeOperator ( AExp )                        [strict]
+                | revokeOperator ( AExp )                           [strict]
+                | send ( AExp , AExp , Data )                       [strict]
+                | operatorSend ( AExp , AExp , AExp , Data , Data ) [strict]
+                | burn ( AExp )                                     [strict]
+                | operatorBurn ( AExp , AExp , Data )               [strict]
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
                  | Minted ( Address , Address , Number , Data , Data )
@@ -44,14 +44,14 @@ module ERC777-SYNTAX
   //
 
   // Number
-  syntax AExp ::= allowance ( AExp , AExp )
-               | decimals ( )
+  syntax AExp ::= allowance ( AExp , AExp ) [strict]
+                | decimals ( )
 
   // Bool
-  syntax BExp ::= approve ( AExp , AExp )
-               | transfer ( AExp , AExp )
-               | transferFrom ( AExp , AExp , AExp )
-               | "throw"
+  syntax BExp ::= approve ( AExp , AExp )             [strict]
+                | transfer ( AExp , AExp )            [strict]
+                | transferFrom ( AExp , AExp , AExp ) [strict]
+                | "throw"
 
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)
@@ -87,7 +87,7 @@ module ERC777-SYNTAX
 
   syntax Bool ::= #isContractAddress ( Address ) [function]
 
-  syntax Stmt ::= #init ( )
+  syntax Stmt ::= #init ( Addresses )
                 | #initAccounts ( Addresses , Addresses )
                 | #initAllowances ( Address , Addresses )
 

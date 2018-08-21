@@ -1,2 +1,2 @@
-#init();
+#init(#addresses);
 print(totalSupply());

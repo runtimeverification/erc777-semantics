@@ -38,7 +38,7 @@ module ERC777
   // Configuration initialization -- all addresses should be initialized
   // - parameterized by: #addresses, #defaultOperators, #senderHook, #receiverHook
 
-  rule <k> #init() => #initAccounts(#addresses, #addresses) ... </k>
+  rule <k> #init(Addresses) => #initAccounts(Addresses, Addresses) ... </k>
 
   rule <k> #initAccounts(Holder Rest, Accounts)
         => #initAllowances(Holder, Accounts) ~> #initAccounts(Rest, Accounts) ... </k>
