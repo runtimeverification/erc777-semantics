@@ -1,4 +1,4 @@
-#init(#addresses);
-print(isOperatorFor(0,0));
-print(isOperatorFor(1,0));
-print(isOperatorFor(9,0));
+test.preamble()
+print(isOperatorFor(1,1));
+print(isOperatorFor(2,1));
+print(isOperatorFor(9,1));

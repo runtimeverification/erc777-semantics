@@ -48,7 +48,7 @@ module IMP
    with the ERC20-K configuration.  Such statements would not be
    possible/allowed in a normal programming language for smart contracts. */
                 | "makeAccount" "(" AExp "," AExp")"     [strict]
-                | "makeTotalSupply" "(" AExp ")"         [strict]
+                | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeThrowAsPrintTrue"
@@ -134,15 +134,38 @@ module IMP
    mistake can make ERC20-K behave unexpectedly.  Such operations should not
    exist in normal implementations of languages for smart contracts.  */
 
-  //FIXME implement
+  //todo replace with Ids
+  syntax Address ::= #senderHook ( Address ) [function]
+                   | #receiverHook ( Address ) [function]
+
+  rule #senderHook ( _ ) => 4
+  rule #receiverHook ( _ ) => 5
+
   rule <k> makeAccount(A,V) => . ...</k>
-       <accounts>
-         <account> <id> A </id> <balance> _ => V </balance>  ... </account>
+       <accounts> (.Bag =>
+         <account>
+           <id> A </id>
+           <balance> V </balance>
+           <operators> SetItem(A) #defaultOperators </operators>
+           <senderHook> #senderHook(A) </senderHook>
+           <receiverHook> #receiverHook(A) </receiverHook>
+           <allowances> .Bag </allowances>
+         </account>)
          ...
        </accounts>
+       <supply> S => S +Int V </supply>
+
+  rule <k> makeAllowance(A,B) => . ...</k>
+       <id> A </id>
+       <allowances> (.Bag =>
+         <allow>
+           <spender> B </spender>
+           <amount> 0 </amount>
+         </allow>)
+         ...
+       </allowances>
 
 
-  rule <k> makeTotalSupply(I:Int) => . ...</k> <supply> _ => I </supply> requires I >=Int 0
   rule <k> makeCaller(I:Int) => . ...</k> <caller> _ => I </caller>
   rule <k> makeBalance(I:Int) => . ...</k> <caller> Owner </caller> <id> Owner </id> <balance> _ => I </balance>
   rule <k> makeThrowAsPrintTrue  => . ...</k> <throwAsPrint> _ => true </throwAsPrint>
@@ -183,12 +206,15 @@ module IMP
 int accounts, x, y, a, b, c, caller, v;
 accounts = 10;
 x = accounts;
-#init(1 2 3 4 5 6 7 8 9 10 .Addresses);
-while(!(x <= 0)) {
+while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
   makeAccount(x, x*10);
+  y = accounts;
+  while(!(y <= 0)) {
+    makeAllowance(x,y);
+	y = y + -1;
+  }
   x = x + -1;
 }
-makeTotalSupply(550);
 caller = 7;
 makeCaller(caller);
 makeThrowAsPrintTrue;
@@ -212,14 +238,6 @@ makeThrowAsPrintTrue;
     print(caller);
     print("\n");
     makeCaller(caller);
-
-  syntax Stmt ::= "test.makeTotalSupply" "(" AExp ")"   [macro]
-  rule test.makeTotalSupply(Value) =>
-    v = Value;
-    print("Changing the total supply to ");
-    print(v);
-    print("\n");
-    makeTotalSupply(v);
 
   syntax Stmt ::= "test.totalSupply" "(" ")"   [macro]
   rule test.totalSupply() =>

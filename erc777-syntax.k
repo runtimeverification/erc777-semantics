@@ -76,19 +76,24 @@ module ERC777-SYNTAX
                | Number | Address | Data
                | Bool | String
 
-  syntax Addresses ::= "#addresses" [function]
-
-  syntax Address ::= #senderHook ( Address ) [function]
-                   | #receiverHook ( Address ) [function]
-
   syntax Int ::= "#maxNumber" [function]
 
   syntax Address ::= "#this" [function]
 
   syntax Bool ::= #isContractAddress ( Address ) [function]
 
+  /* Arguments: accounts
+  */
   syntax Stmt ::= #init ( Addresses )
-                | #initAccounts ( Addresses , Addresses )
-                | #initAllowances ( Address , Addresses )
+
+  /* Arguments: accounts, accounts again. An auxiliary function for #init
+  */
+  syntax Stmt ::= #initAccounts ( Addresses , Addresses )
+
+  /* Initialzies the content of <allowances> for the given address. Related to ERC20 only.
+  */
+  syntax Stmt ::= #initAllowances ( Address     //the address to initialzie
+                                  , Addresses   //all the other known addresses.
+                                  )
 
 endmodule

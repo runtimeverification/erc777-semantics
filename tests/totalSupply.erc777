@@ -1,2 +1,2 @@
-#init(#addresses);
+test.preamble()
 print(totalSupply());

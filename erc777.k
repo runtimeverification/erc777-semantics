@@ -18,9 +18,13 @@ module ERC777
          <account multiplicity="*">
            <id> 0:Address </id>
            <balance> 0:Number </balance>
+
+           //ERC777 operators
+           //fixme something is missing here - how a set can hold "holder -> 2^operator"?
            <operators> .Set </operators> // holder -> 2^operator
            <senderHook> 0:Address </senderHook> // holder -> senderHook
            <receiverHook> 0:Address </receiverHook> // holder -> receiverHook
+           //ERC20 allowances. Contains one entry for any known address. For ERC777 operators see <operators>
            <allowances>
              <allow multiplicity="*">
                <spender> 0:Address </spender>
@@ -33,41 +37,6 @@ module ERC777
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
-
-  //
-  // Configuration initialization -- all addresses should be initialized
-  // - parameterized by: #addresses, #defaultOperators, #senderHook, #receiverHook
-
-  rule <k> #init(Addresses) => #initAccounts(Addresses, Addresses) ... </k>
-
-  rule <k> #initAccounts(Holder Rest, Accounts)
-        => #initAllowances(Holder, Accounts) ~> #initAccounts(Rest, Accounts) ... </k>
-       <accounts> (.Bag =>
-         <account>
-           <id> Holder </id>
-           <balance> 0 </balance>
-           <operators> SetItem(Holder) #defaultOperators </operators>
-           <senderHook> #senderHook(Holder) </senderHook>
-           <receiverHook> #receiverHook(Holder) </receiverHook>
-           <allowances> .Bag </allowances>
-         </account>)
-         ...
-       </accounts>
-
-  rule <k> #initAccounts(.Addresses, _) => . ... </k>
-
-  rule <k> #initAllowances(Holder, Spender Rest)
-        => #initAllowances(Holder, Rest) ... </k>
-       <id> Holder </id>
-       <allowances> (.Bag =>
-         <allow>
-           <spender> Spender </spender>
-           <amount> 0 </amount>
-         </allow>)
-         ...
-       </allowances>
-
-  rule <k> #initAllowances(_, .Addresses) => . ... </k>
 
   //
   // Constant functions
@@ -359,6 +328,7 @@ module ERC777
        <id> From </id>
        <balance> BalanceFrom </balance>
 
+  //fixme - <operators> not used
   rule <k> transferFrom(From, To, Value)
         => #atomicBegin
         ~> #ensure(#and(BalanceFrom >=Int Value, Allowed >=Int Value))

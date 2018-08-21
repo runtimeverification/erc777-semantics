@@ -1,6 +1,13 @@
++ set -e
++ rm -rf erc777-test-kompiled
++ kompile --backend java erc777-test.k --syntax-module ERC777-TEST-SYNTAX
++ krun --smt none tests/name.erc777 -o none
 RVToken
++ krun --smt none tests/symbol.erc777 -o none
 RVT
++ krun --smt none tests/granularity.erc777 -o none
 1
++ krun --smt none tests/defaultOperators.erc777
 <IMP>
   <ERC777>
     <caller>
@@ -43,13 +50,17 @@ RVT
     true
   </printNewLine>
 </IMP>
-0
-0
-0
-0
++ krun --smt none tests/totalSupply.erc777 -o none
+550
++ krun --smt none tests/balanceOf.erc777 -o none
+10
+20
+90
++ krun --smt none tests/isOperatorFor.erc777 -o none
 true
 false
 true
++ krun --smt none tests/authorizeOperator.erc777
 false
 true
 false
@@ -64,101 +75,10 @@ false
     <accounts>
       <account>
         <id>
-          0
-        </id>
-        <balance>
-          0
-        </balance>
-        <operators>
-          SetItem ( 0 )
-          SetItem ( 8 )
-          SetItem ( 9 )
-        </operators>
-        <senderHook>
-          6
-        </senderHook>
-        <receiverHook>
-          7
-        </receiverHook>
-        <allowances>
-          <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              1
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              2
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              3
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              4
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              5
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              6
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              7
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              8
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              9
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow>
-        </allowances>
-      </account> <account>
-        <id>
           1
         </id>
         <balance>
-          0
+          10
         </balance>
         <operators>
           SetItem ( 1 )
@@ -166,20 +86,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -238,6 +151,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -249,7 +169,7 @@ false
           2
         </id>
         <balance>
-          0
+          20
         </balance>
         <operators>
           SetItem ( 2 )
@@ -257,20 +177,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -329,6 +242,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -340,7 +260,7 @@ false
           3
         </id>
         <balance>
-          0
+          30
         </balance>
         <operators>
           SetItem ( 3 )
@@ -348,20 +268,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -420,6 +333,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -431,7 +351,7 @@ false
           4
         </id>
         <balance>
-          0
+          40
         </balance>
         <operators>
           SetItem ( 4 )
@@ -439,20 +359,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -511,6 +424,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -522,7 +442,7 @@ false
           5
         </id>
         <balance>
-          0
+          50
         </balance>
         <operators>
           SetItem ( 5 )
@@ -530,20 +450,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -606,6 +519,13 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account> <account>
@@ -613,7 +533,7 @@ false
           6
         </id>
         <balance>
-          0
+          60
         </balance>
         <operators>
           SetItem ( 6 )
@@ -621,20 +541,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -693,6 +606,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -704,7 +624,7 @@ false
           7
         </id>
         <balance>
-          0
+          70
         </balance>
         <operators>
           SetItem ( 7 )
@@ -712,20 +632,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -784,6 +697,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -795,27 +715,20 @@ false
           8
         </id>
         <balance>
-          0
+          80
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -874,6 +787,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -885,27 +805,20 @@ false
           9
         </id>
         <balance>
-          0
+          90
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -968,12 +881,110 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account>
     </accounts>
     <supply>
-      0
+      550
     </supply>
     <log>
       Events: AuthorizedOperator ( 2 , 1 ) RevokedOperator ( 2 , 1 )
@@ -983,7 +994,14 @@ false
     </atomic>
   </ERC777>
   <state>
-    .Map
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    v |-> 0
+    x |-> 0
+    y |-> 0
   </state>
   <input>
     ListItem ( #buffer ( "" ) )
@@ -996,12 +1014,13 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
   <throwAsPrint>
-    false
+    true
   </throwAsPrint>
   <printNewLine>
     true
   </printNewLine>
 </IMP>
++ krun --smt none tests/revokeOperator.erc777
 <IMP>
   <ERC777>
     <caller>
@@ -1013,101 +1032,10 @@ false
     <accounts>
       <account>
         <id>
-          0
-        </id>
-        <balance>
-          0
-        </balance>
-        <operators>
-          SetItem ( 0 )
-          SetItem ( 8 )
-          SetItem ( 9 )
-        </operators>
-        <senderHook>
-          6
-        </senderHook>
-        <receiverHook>
-          7
-        </receiverHook>
-        <allowances>
-          <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              1
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              2
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              3
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              4
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              5
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              6
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              7
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              8
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              9
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow>
-        </allowances>
-      </account> <account>
-        <id>
           1
         </id>
         <balance>
-          0
+          10
         </balance>
         <operators>
           SetItem ( 1 )
@@ -1115,20 +1043,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1187,6 +1108,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1198,7 +1126,7 @@ false
           2
         </id>
         <balance>
-          0
+          20
         </balance>
         <operators>
           SetItem ( 2 )
@@ -1206,20 +1134,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1278,6 +1199,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1289,7 +1217,7 @@ false
           3
         </id>
         <balance>
-          0
+          30
         </balance>
         <operators>
           SetItem ( 3 )
@@ -1297,20 +1225,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1369,6 +1290,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1380,7 +1308,7 @@ false
           4
         </id>
         <balance>
-          0
+          40
         </balance>
         <operators>
           SetItem ( 4 )
@@ -1388,20 +1316,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1460,6 +1381,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1471,7 +1399,7 @@ false
           5
         </id>
         <balance>
-          0
+          50
         </balance>
         <operators>
           SetItem ( 5 )
@@ -1479,20 +1407,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1555,6 +1476,13 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account> <account>
@@ -1562,7 +1490,7 @@ false
           6
         </id>
         <balance>
-          0
+          60
         </balance>
         <operators>
           SetItem ( 6 )
@@ -1570,20 +1498,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1642,6 +1563,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1653,7 +1581,7 @@ false
           7
         </id>
         <balance>
-          0
+          70
         </balance>
         <operators>
           SetItem ( 7 )
@@ -1661,20 +1589,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1733,6 +1654,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1744,27 +1672,20 @@ false
           8
         </id>
         <balance>
-          0
+          80
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1823,6 +1744,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -1834,27 +1762,20 @@ false
           9
         </id>
         <balance>
-          0
+          90
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -1917,12 +1838,110 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account>
     </accounts>
     <supply>
-      0
+      550
     </supply>
     <log>
       Events:
@@ -1932,7 +1951,14 @@ false
     </atomic>
   </ERC777>
   <state>
-    .Map
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    v |-> 0
+    x |-> 0
+    y |-> 0
   </state>
   <input>
     ListItem ( #buffer ( "" ) )
@@ -1945,12 +1971,13 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
   <throwAsPrint>
-    false
+    true
   </throwAsPrint>
   <printNewLine>
     true
   </printNewLine>
 </IMP>
++ krun --smt none tests/send.erc777
 <IMP>
   <ERC777>
     <caller>
@@ -1962,101 +1989,10 @@ false
     <accounts>
       <account>
         <id>
-          0
-        </id>
-        <balance>
-          0
-        </balance>
-        <operators>
-          SetItem ( 0 )
-          SetItem ( 8 )
-          SetItem ( 9 )
-        </operators>
-        <senderHook>
-          6
-        </senderHook>
-        <receiverHook>
-          7
-        </receiverHook>
-        <allowances>
-          <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              1
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              2
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              3
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              4
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              5
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              6
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              7
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              8
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              9
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow>
-        </allowances>
-      </account> <account>
-        <id>
           1
         </id>
         <balance>
-          0
+          10
         </balance>
         <operators>
           SetItem ( 1 )
@@ -2064,20 +2000,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2136,6 +2065,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2147,7 +2083,7 @@ false
           2
         </id>
         <balance>
-          0
+          20
         </balance>
         <operators>
           SetItem ( 2 )
@@ -2155,20 +2091,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2227,6 +2156,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2238,7 +2174,7 @@ false
           3
         </id>
         <balance>
-          0
+          29
         </balance>
         <operators>
           SetItem ( 3 )
@@ -2246,20 +2182,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2318,6 +2247,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2329,7 +2265,7 @@ false
           4
         </id>
         <balance>
-          0
+          41
         </balance>
         <operators>
           SetItem ( 4 )
@@ -2337,20 +2273,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2409,6 +2338,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2420,7 +2356,7 @@ false
           5
         </id>
         <balance>
-          0
+          50
         </balance>
         <operators>
           SetItem ( 5 )
@@ -2428,20 +2364,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2504,6 +2433,13 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account> <account>
@@ -2511,7 +2447,7 @@ false
           6
         </id>
         <balance>
-          0
+          60
         </balance>
         <operators>
           SetItem ( 6 )
@@ -2519,20 +2455,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2591,6 +2520,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2602,7 +2538,7 @@ false
           7
         </id>
         <balance>
-          0
+          70
         </balance>
         <operators>
           SetItem ( 7 )
@@ -2610,20 +2546,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2682,6 +2611,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2693,27 +2629,20 @@ false
           8
         </id>
         <balance>
-          0
+          80
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2772,6 +2701,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -2783,27 +2719,20 @@ false
           9
         </id>
         <balance>
-          0
+          90
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -2866,22 +2795,127 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account>
     </accounts>
     <supply>
-      0
+      550
     </supply>
     <log>
-      Events: Sent ( 3 , 3 , 4 , 0 , "" , "" )
+      Events: Sent ( 3 , 3 , 4 , 1 , "" , "" )
     </log>
     <atomic>
       .
     </atomic>
   </ERC777>
   <state>
-    .Map
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    v |-> 0
+    x |-> 0
+    y |-> 0
   </state>
   <input>
     ListItem ( #buffer ( "" ) )
@@ -2894,12 +2928,13 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
   <throwAsPrint>
-    false
+    true
   </throwAsPrint>
   <printNewLine>
     true
   </printNewLine>
 </IMP>
++ krun --smt none tests/operatorSend.erc777
 <IMP>
   <ERC777>
     <caller>
@@ -2911,101 +2946,10 @@ false
     <accounts>
       <account>
         <id>
-          0
-        </id>
-        <balance>
-          0
-        </balance>
-        <operators>
-          SetItem ( 0 )
-          SetItem ( 8 )
-          SetItem ( 9 )
-        </operators>
-        <senderHook>
-          6
-        </senderHook>
-        <receiverHook>
-          7
-        </receiverHook>
-        <allowances>
-          <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              1
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              2
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              3
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              4
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              5
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              6
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              7
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              8
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              9
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow>
-        </allowances>
-      </account> <account>
-        <id>
           1
         </id>
         <balance>
-          0
+          10
         </balance>
         <operators>
           SetItem ( 1 )
@@ -3013,20 +2957,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3085,6 +3022,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3096,7 +3040,7 @@ false
           2
         </id>
         <balance>
-          0
+          20
         </balance>
         <operators>
           SetItem ( 2 )
@@ -3104,20 +3048,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3176,6 +3113,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3187,7 +3131,7 @@ false
           3
         </id>
         <balance>
-          0
+          30
         </balance>
         <operators>
           SetItem ( 3 )
@@ -3195,20 +3139,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3267,6 +3204,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3278,7 +3222,7 @@ false
           4
         </id>
         <balance>
-          0
+          40
         </balance>
         <operators>
           SetItem ( 4 )
@@ -3286,20 +3230,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3358,6 +3295,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3369,7 +3313,7 @@ false
           5
         </id>
         <balance>
-          0
+          50
         </balance>
         <operators>
           SetItem ( 5 )
@@ -3377,20 +3321,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3453,6 +3390,13 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account> <account>
@@ -3460,7 +3404,7 @@ false
           6
         </id>
         <balance>
-          0
+          60
         </balance>
         <operators>
           SetItem ( 6 )
@@ -3468,20 +3412,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3540,6 +3477,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3551,7 +3495,7 @@ false
           7
         </id>
         <balance>
-          0
+          70
         </balance>
         <operators>
           SetItem ( 7 )
@@ -3559,20 +3503,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3631,6 +3568,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3642,27 +3586,20 @@ false
           8
         </id>
         <balance>
-          0
+          80
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3721,6 +3658,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -3732,27 +3676,20 @@ false
           9
         </id>
         <balance>
-          0
+          90
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -3815,12 +3752,110 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account>
     </accounts>
     <supply>
-      0
+      550
     </supply>
     <log>
       Events: Sent ( 8 , 4 , 5 , 0 , "" , "" )
@@ -3830,7 +3865,14 @@ false
     </atomic>
   </ERC777>
   <state>
-    .Map
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    v |-> 0
+    x |-> 0
+    y |-> 0
   </state>
   <input>
     ListItem ( #buffer ( "" ) )
@@ -3843,12 +3885,13 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
   <throwAsPrint>
-    false
+    true
   </throwAsPrint>
   <printNewLine>
     true
   </printNewLine>
 </IMP>
++ krun --smt none tests/operatorSend2.erc777
 <IMP>
   <ERC777>
     <caller>
@@ -3860,101 +3903,10 @@ false
     <accounts>
       <account>
         <id>
-          0
-        </id>
-        <balance>
-          0
-        </balance>
-        <operators>
-          SetItem ( 0 )
-          SetItem ( 8 )
-          SetItem ( 9 )
-        </operators>
-        <senderHook>
-          6
-        </senderHook>
-        <receiverHook>
-          7
-        </receiverHook>
-        <allowances>
-          <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              1
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              2
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              3
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              4
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              5
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              6
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              7
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              8
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
-            <spender>
-              9
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow>
-        </allowances>
-      </account> <account>
-        <id>
           1
         </id>
         <balance>
-          0
+          10
         </balance>
         <operators>
           SetItem ( 1 )
@@ -3962,20 +3914,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4034,6 +3979,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4045,7 +3997,7 @@ false
           2
         </id>
         <balance>
-          0
+          20
         </balance>
         <operators>
           SetItem ( 2 )
@@ -4053,20 +4005,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4125,6 +4070,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4136,7 +4088,7 @@ false
           3
         </id>
         <balance>
-          0
+          30
         </balance>
         <operators>
           SetItem ( 3 )
@@ -4144,20 +4096,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4216,6 +4161,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4227,7 +4179,7 @@ false
           4
         </id>
         <balance>
-          0
+          40
         </balance>
         <operators>
           SetItem ( 4 )
@@ -4235,20 +4187,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4307,6 +4252,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4318,7 +4270,7 @@ false
           5
         </id>
         <balance>
-          0
+          50
         </balance>
         <operators>
           SetItem ( 5 )
@@ -4326,20 +4278,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4402,6 +4347,13 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account> <account>
@@ -4409,7 +4361,7 @@ false
           6
         </id>
         <balance>
-          0
+          60
         </balance>
         <operators>
           SetItem ( 6 )
@@ -4417,20 +4369,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4489,6 +4434,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4500,7 +4452,7 @@ false
           7
         </id>
         <balance>
-          0
+          70
         </balance>
         <operators>
           SetItem ( 7 )
@@ -4508,20 +4460,13 @@ false
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4580,6 +4525,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4591,27 +4543,20 @@ false
           8
         </id>
         <balance>
-          0
+          80
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4670,6 +4615,13 @@ false
           </allow> <allow>
             <spender>
               9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
             </spender>
             <amount>
               0
@@ -4681,27 +4633,20 @@ false
           9
         </id>
         <balance>
-          0
+          90
         </balance>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
         </operators>
         <senderHook>
-          6
+          4
         </senderHook>
         <receiverHook>
-          7
+          5
         </receiverHook>
         <allowances>
           <allow>
-            <spender>
-              0
-            </spender>
-            <amount>
-              0
-            </amount>
-          </allow> <allow>
             <spender>
               1
             </spender>
@@ -4764,12 +4709,110 @@ false
             <amount>
               0
             </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
           </allow>
         </allowances>
       </account>
     </accounts>
     <supply>
-      0
+      550
     </supply>
     <log>
       Events:
@@ -4779,7 +4822,14 @@ false
     </atomic>
   </ERC777>
   <state>
-    .Map
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    v |-> 0
+    x |-> 0
+    y |-> 0
   </state>
   <input>
     ListItem ( #buffer ( "" ) )
@@ -4792,7 +4842,7 @@ false
     ListItem ( #buffer ( "" ) )
   </output>
   <throwAsPrint>
-    false
+    true
   </throwAsPrint>
   <printNewLine>
     true
