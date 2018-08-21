@@ -12,9 +12,11 @@
    We assume the reader familiar with K and the K tutorial definitions
    of IMP and IMP++. */
 
-module IMP
-  imports DOMAINS
-  imports ERC777
+require "erc777.k"
+
+module ERC777-IMP-SYNTAX
+  imports ERC777-SYNTAX
+  imports DOMAINS-SYNTAX
 
   syntax AExp  ::= String | Id
                  | "read" "(" ")"
@@ -42,19 +44,32 @@ module IMP
                  > Stmt Stmt                  [left]
   syntax Ids   ::= List{Id,","}
 
-  syntax Stmt ::= AExp ";"                               [strict]
-                | BExp ";"                               [strict]
+  syntax Stmt ::= Exp ";"                               [strict]
 /* The "make" statements below allow us to programmatically interfere
    with the ERC20-K configuration.  Such statements would not be
    possible/allowed in a normal programming language for smart contracts. */
-                | "makeAccount" "(" AExp "," AExp")"     [strict]
+                | "makeDefaultOperator" "(" AExp ")"  [strict]
+                | "makeAccount" "(" AExp //account
+                                "," AExp //value
+                                "," AExp //sender hook
+                                "," AExp //receiver hook
+                                "," BExp //is contract
+                                ")"     [strict]
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeBalance" "(" AExp ")"             [strict]
+                | "makeNameAndSymbol" "(" String "," String ")"
                 | "makeThrowAsPrintTrue"
                 | "makeThrowAsPrintFalse"
                 | "makePrintStringsTrue"
                 | "makePrintStringsFalse"
+
+endmodule
+
+module ERC777-IMP
+  imports DOMAINS
+  imports ERC777-IMP-SYNTAX
+  imports ERC777
 
 /* The IMP configuration embeds the ERC20 configuration *unchanged*.
    It adds several new cells to keep track of IMP program's state, I/O, UI. */
@@ -134,26 +149,24 @@ module IMP
    mistake can make ERC20-K behave unexpectedly.  Such operations should not
    exist in normal implementations of languages for smart contracts.  */
 
-  //todo replace with Ids
-  syntax Address ::= #senderHook ( Address ) [function]
-                   | #receiverHook ( Address ) [function]
+  rule <k> makeDefaultOperator(DOP:Int) => . ...</k>
+       <defaultOperatorsC>... .Set => SetItem(DOP) ...</defaultOperatorsC>
 
-  rule #senderHook ( _ ) => 4
-  rule #receiverHook ( _ ) => 5
-
-  rule <k> makeAccount(A,V) => . ...</k>
+  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT) => . ...</k>
        <accounts> (.Bag =>
          <account>
            <id> A </id>
            <balance> V </balance>
-           <operators> SetItem(A) #defaultOperators </operators>
-           <senderHook> #senderHook(A) </senderHook>
-           <receiverHook> #receiverHook(A) </receiverHook>
+           <isContract> ISCONTRACT </isContract>
+           <operators> SetItem(A) DefOps </operators>
+           <senderHook> SH </senderHook>
+           <receiverHook> RH </receiverHook>
            <allowances> .Bag </allowances>
          </account>)
          ...
        </accounts>
        <supply> S => S +Int V </supply>
+       <defaultOperatorsC> DefOps </defaultOperatorsC>
 
   rule <k> makeAllowance(A,B) => . ...</k>
        <id> A </id>
@@ -168,6 +181,11 @@ module IMP
 
   rule <k> makeCaller(I:Int) => . ...</k> <caller> _ => I </caller>
   rule <k> makeBalance(I:Int) => . ...</k> <caller> Owner </caller> <id> Owner </id> <balance> _ => I </balance>
+
+  rule <k> makeNameAndSymbol(NAME:String, SYMBOL:String) => . ...</k>
+       <nameC> _ => NAME </nameC>
+       <symbolC> _ => SYMBOL </symbolC>
+
   rule <k> makeThrowAsPrintTrue  => . ...</k> <throwAsPrint> _ => true </throwAsPrint>
   rule <k> makeThrowAsPrintFalse => . ...</k> <throwAsPrint> _ => false </throwAsPrint>
   rule <k> throw => false ...</k> <throwAsPrint> true </throwAsPrint> <output>... .List => ListItem("THROW\n") </output>
@@ -193,6 +211,8 @@ module IMP
               | "c"         [token]
               | "caller"    [token]
               | "v"         [token]
+              | "senderHook"    [token]
+              | "receiverHook"  [token]
 
 /* ---PREAMBLE----------
    This preamble creates some initial configuration:
@@ -203,11 +223,15 @@ module IMP
 
   syntax Stmt ::= "test.preamble" "(" ")"  [macro]
   rule test.preamble() =>
-int accounts, x, y, a, b, c, caller, v;
+int accounts, x, y, a, b, c, caller, v, senderHook, receiverHook;
 accounts = 10;
+senderHook = 4;
+receiverHook = 5;
 x = accounts;
+makeDefaultOperator(8)
+makeDefaultOperator(9)
 while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
-  makeAccount(x, x*10);
+  makeAccount(x, x*10, senderHook, receiverHook, true);
   y = accounts;
   while(!(y <= 0)) {
     makeAllowance(x,y);
@@ -215,6 +239,7 @@ while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
   }
   x = x + -1;
 }
+makeNameAndSymbol("RVToken", "RVT")
 caller = 7;
 makeCaller(caller);
 makeThrowAsPrintTrue;

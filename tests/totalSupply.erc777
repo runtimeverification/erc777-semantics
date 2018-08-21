@@ -1,2 +1,2 @@
-test.preamble()
+test.preamble();
 print(totalSupply());

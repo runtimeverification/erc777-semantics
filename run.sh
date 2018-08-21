@@ -1,7 +1,9 @@
+#!/usr/bin/env bash
+
   set -e
 
   rm -rf erc777-test-kompiled
-  kompile --backend java erc777-test.k --syntax-module ERC777-TEST-SYNTAX
+  kompile --backend java erc777-imp.k --syntax-module ERC777-IMP
 
   krun --smt none tests/name.erc777 -o none
   krun --smt none tests/symbol.erc777 -o none

@@ -1,1 +1,2 @@
-defaultOperators()
+test.preamble();
+defaultOperators();

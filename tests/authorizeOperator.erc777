@@ -1,4 +1,4 @@
-test.preamble()
+test.preamble();
 print(isOperatorFor(2,1));
 makeCaller(1);
 authorizeOperator(2);

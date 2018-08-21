@@ -18,6 +18,7 @@ module ERC777
          <account multiplicity="*">
            <id> 0:Address </id>
            <balance> 0:Number </balance>
+           <isContract> .K </isContract>
 
            //ERC777 operators
            //fixme something is missing here - how a set can hold "holder -> 2^operator"?
@@ -34,6 +35,10 @@ module ERC777
          </account>
        </accounts>
        <supply> 0:Number </supply>
+       <nameC> "" </nameC>
+       <symbolC> "" </symbolC>
+       <granularityC> 1 </granularityC>
+       <defaultOperatorsC> .Set </defaultOperatorsC>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -43,13 +48,19 @@ module ERC777
   // - name, symbol, granularity, defaultOperators
   //
 
-  rule name ( ) => #name
+  rule #MAXVALUE => 2 ^Int 256 -Int 1
 
-  rule symbol ( ) => #symbol
+  rule <k> name ( ) => NAME ...</k>
+       <nameC> NAME </nameC>
 
-  rule granularity ( ) => #granularity
+  rule <k> symbol ( ) => SYMBOL ...</k>
+       <symbolC> SYMBOL </symbolC>
 
-  rule defaultOperators ( ) => #defaultOperators
+  rule <k> granularity ( ) => G ...</k>
+       <granularityC> G </granularityC>
+
+  rule <k> defaultOperators ( ) => DefOps ...</k>
+       <defaultOperatorsC> DefOps </defaultOperatorsC>
 
   //
   // View functions
@@ -145,18 +156,24 @@ module ERC777
        <caller> Operator </caller>
        requires From =/=Int 0
 
-  syntax Exp ::= #check ( Address , Address , Address , Number , Data )
+  syntax BExp ::= #check ( Address , Address , Address , Number , Data )
 
   rule #check ( Operator , From , To , Value , Data )
     => #and ( isOperatorFor ( Operator , From )
             , To =/=Int 0
-            , #isMultipleOf ( Value , #granularity )
+            , #isMultipleOf ( Value , granularity() )
             )
 
-  syntax Stmt ::= #hookFrom ( Address , Address , Address , Number , Data , Data )
+  syntax Stmt ::= #hookFrom ( Address , //caller (operator)
+                              Address , //from
+                              Address , //to
+                              Number ,  //amount
+                              Data ,    //Data
+                              Data      //OperatorData
+                              )
 
   rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => #call ( Operator , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <id> From </id>
        <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
@@ -170,15 +187,16 @@ module ERC777
   syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data , Bool )
 
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , _ )
-        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => #call ( Operator , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
   // TODO: why #mayRevert?
   rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
-        => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
+        => #ite ( ISCONTRACT , #revert , #mayRevert ) ... </k>
        <id> To </id>
+       <isContract> ISCONTRACT </isContract>
        <receiverHook> Hook </receiverHook>
        requires Hook ==Int 0 andBool PreventLocking
 
@@ -203,12 +221,12 @@ module ERC777
        </account>
        requires From =/=Int To
         andBool ValueFrom -Int Value >=Int 0
-        andBool ValueTo   +Int Value  <Int #maxNumber
+        andBool ValueTo   +Int Value  <Int #MAXVALUE
 
   rule <k> #update ( From , To , Value ) => . ... </k>
        requires From ==Int To
 
-  syntax Exp ::= #isMultipleOf ( Number , Number )
+  syntax BExp ::= #isMultipleOf ( AExp , AExp ) [seqstrict]
 
   rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
 
@@ -231,7 +249,7 @@ module ERC777
   rule <k> operatorBurn(Holder, Amount, OperatorData)
         => #atomicBegin
         ~> #ensure(#and(isOperatorFor(Operator, Holder),
-                        #isMultipleOf(Balance -Int Amount, #granularity),
+                        #isMultipleOf(Balance -Int Amount, granularity()),
                         Balance >=Int Amount,
                         Holder =/=Int 0))
         ~> #burn(Holder, Amount)
@@ -270,7 +288,7 @@ module ERC777
 
   rule <k> #mint(Holder, Amount, Data, OperatorData)
         => #atomicBegin
-        ~> #ensure(#and(#isMultipleOf(Balance +Int Amount, #granularity),
+        ~> #ensure(#and(#isMultipleOf(Balance +Int Amount, granularity()),
                         Holder =/=Int 0))
         ~> #mintAux(Holder, Amount)
         ~> #hookTo(Operator, 0, Holder, Amount, Data,  OperatorData, true)
@@ -288,7 +306,7 @@ module ERC777
          ...
        </account>
        <supply> Supply => Supply +Int Amount </supply>
-       requires Balance +Int Amount <=Int #maxNumber
+       requires Balance +Int Amount <=Int #MAXVALUE
 
   //
   // TODO: Hooks: check if registered via ERC820?
@@ -360,7 +378,7 @@ module ERC777
        </account>
        requires From =/=Int To
         andBool BalanceFrom -Int Value >=Int 0
-        andBool BalanceTo   +Int Value  <Int #maxNumber
+        andBool BalanceTo   +Int Value  <Int #MAXVALUE
         andBool Allowed >=Int Value
 
   rule <k> #updateWithAllowance(Operator, From, To, Value) => . ... </k>
@@ -383,19 +401,19 @@ module ERC777
   rule #sum ( ListItem(I:Int) S ) => I +Int #sum ( S )
   rule #sum ( .List ) => 0
 
-  syntax Stmt ::= #ensure ( Exp ) [strict]
+  syntax Stmt ::= #ensure ( BExp ) [strict]
 
   rule #ensure ( B:Bool ) => .        requires B
   rule #ensure ( B:Bool ) => #revert  requires notBool B
 
-  syntax Stmt ::= #ite ( Exp , Stmt , Stmt ) [strict(1)]
+  syntax Stmt ::= #ite ( BExp , Stmt , Stmt ) [strict(1)]
 
   rule #ite ( B:Bool , T , F ) => T  requires B
   rule #ite ( B:Bool , T , F ) => F  requires notBool B
 
-  syntax Exp ::= "#and" "(" Exp "," Exp ")"                 [strict]
-               | "#and" "(" Exp "," Exp "," Exp ")"         [strict]
-               | "#and" "(" Exp "," Exp "," Exp "," Exp ")" [strict]
+  syntax BExp ::= "#and" "(" BExp "," BExp ")"                   [strict]
+                | "#and" "(" BExp "," BExp "," BExp ")"          [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp ")" [strict]
 
   rule #and ( A:Bool , B:Bool          ) => A andBool B
   rule #and ( A:Bool , B:Bool , C:Bool ) => A andBool B andBool C

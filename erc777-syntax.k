@@ -56,18 +56,6 @@ module ERC777-SYNTAX
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)
 
-
-  //
-  // Token Parameters
-  //
-
-  syntax String ::= "#name"   [function]
-                  | "#symbol" [function]
-
-  syntax Number ::= "#granularity" [function]
-
-  syntax Set ::= "#defaultOperators" [function]
-
   //
   // Semantics Internal
   //
@@ -76,11 +64,7 @@ module ERC777-SYNTAX
                | Number | Address | Data
                | Bool | String
 
-  syntax Int ::= "#maxNumber" [function]
-
-  syntax Address ::= "#this" [function]
-
-  syntax Bool ::= #isContractAddress ( Address ) [function]
+  syntax Int ::= "#MAXVALUE"  [function]
 
   /* Arguments: accounts
   */

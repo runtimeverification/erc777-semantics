@@ -11,66 +11,11 @@ RVT
 <IMP>
   <ERC777>
     <caller>
-      0
+      7
     </caller>
     <k>
       SetItem ( 8 )
-      SetItem ( 9 )
-    </k>
-    <accounts>
-      .AccountCellBag
-    </accounts>
-    <supply>
-      0
-    </supply>
-    <log>
-      Events:
-    </log>
-    <atomic>
-      .
-    </atomic>
-  </ERC777>
-  <state>
-    .Map
-  </state>
-  <input>
-    ListItem ( #buffer ( "" ) )
-    ListItem ( "on" )
-    ListItem ( #istream ( 0 ) )
-  </input>
-  <output>
-    ListItem ( #ostream ( 1 ) )
-    ListItem ( "on" )
-    ListItem ( #buffer ( "" ) )
-  </output>
-  <throwAsPrint>
-    false
-  </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
-</IMP>
-+ krun --smt none tests/totalSupply.erc777 -o none
-550
-+ krun --smt none tests/balanceOf.erc777 -o none
-10
-20
-90
-+ krun --smt none tests/isOperatorFor.erc777 -o none
-true
-false
-true
-+ krun --smt none tests/authorizeOperator.erc777
-false
-true
-false
-<IMP>
-  <ERC777>
-    <caller>
-      3
-    </caller>
-    <k>
-      #revert
+      SetItem ( 9 ) ~> #freezer_;_ERC777-IMP-SYNTAX0_ ( )
     </k>
     <accounts>
       <account>
@@ -80,6 +25,9 @@ false
         <balance>
           10
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -171,6 +119,9 @@ false
         <balance>
           20
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -262,6 +213,9 @@ false
         <balance>
           30
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -353,6 +307,9 @@ false
         <balance>
           40
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -444,6 +401,9 @@ false
         <balance>
           50
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -535,6 +495,9 @@ false
         <balance>
           60
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -626,6 +589,9 @@ false
         <balance>
           70
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -717,6 +683,9 @@ false
         <balance>
           80
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -807,6 +776,9 @@ false
         <balance>
           90
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -897,6 +869,9 @@ false
         <balance>
           100
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -986,6 +961,1034 @@ false
     <supply>
       550
     </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
+    <log>
+      Events:
+    </log>
+    <atomic>
+      .
+    </atomic>
+  </ERC777>
+  <state>
+    a |-> 0
+    accounts |-> 10
+    b |-> 0
+    c |-> 0
+    caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
+    v |-> 0
+    x |-> 0
+    y |-> 0
+  </state>
+  <input>
+    ListItem ( #buffer ( "" ) )
+    ListItem ( "on" )
+    ListItem ( #istream ( 0 ) )
+  </input>
+  <output>
+    ListItem ( #ostream ( 1 ) )
+    ListItem ( "on" )
+    ListItem ( #buffer ( "" ) )
+  </output>
+  <throwAsPrint>
+    true
+  </throwAsPrint>
+  <printNewLine>
+    true
+  </printNewLine>
+</IMP>
++ krun --smt none tests/totalSupply.erc777 -o none
+550
++ krun --smt none tests/balanceOf.erc777 -o none
+10
+20
+90
++ krun --smt none tests/isOperatorFor.erc777 -o none
+true
+false
+true
++ krun --smt none tests/authorizeOperator.erc777
+false
+true
+false
+<IMP>
+  <ERC777>
+    <caller>
+      3
+    </caller>
+    <k>
+      #revert
+    </k>
+    <accounts>
+      <account>
+        <id>
+          1
+        </id>
+        <balance>
+          10
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 1 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          2
+        </id>
+        <balance>
+          20
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 2 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          3
+        </id>
+        <balance>
+          30
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 3 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          4
+        </id>
+        <balance>
+          40
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 4 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          5
+        </id>
+        <balance>
+          50
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 5 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          6
+        </id>
+        <balance>
+          60
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 6 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          7
+        </id>
+        <balance>
+          70
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 7 )
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          8
+        </id>
+        <balance>
+          80
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          9
+        </id>
+        <balance>
+          90
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account> <account>
+        <id>
+          10
+        </id>
+        <balance>
+          100
+        </balance>
+        <isContract>
+          true
+        </isContract>
+        <operators>
+          SetItem ( 8 )
+          SetItem ( 9 )
+          SetItem ( 10 )
+        </operators>
+        <senderHook>
+          4
+        </senderHook>
+        <receiverHook>
+          5
+        </receiverHook>
+        <allowances>
+          <allow>
+            <spender>
+              1
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              2
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              3
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              4
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              5
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              6
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              7
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              8
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              9
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow> <allow>
+            <spender>
+              10
+            </spender>
+            <amount>
+              0
+            </amount>
+          </allow>
+        </allowances>
+      </account>
+    </accounts>
+    <supply>
+      550
+    </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
     <log>
       Events: AuthorizedOperator ( 2 , 1 ) RevokedOperator ( 2 , 1 )
     </log>
@@ -999,6 +2002,8 @@ false
     b |-> 0
     c |-> 0
     caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
     v |-> 0
     x |-> 0
     y |-> 0
@@ -1037,6 +2042,9 @@ false
         <balance>
           10
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -1128,6 +2136,9 @@ false
         <balance>
           20
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -1219,6 +2230,9 @@ false
         <balance>
           30
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -1310,6 +2324,9 @@ false
         <balance>
           40
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -1401,6 +2418,9 @@ false
         <balance>
           50
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -1492,6 +2512,9 @@ false
         <balance>
           60
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -1583,6 +2606,9 @@ false
         <balance>
           70
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -1674,6 +2700,9 @@ false
         <balance>
           80
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1764,6 +2793,9 @@ false
         <balance>
           90
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1854,6 +2886,9 @@ false
         <balance>
           100
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1943,6 +2978,19 @@ false
     <supply>
       550
     </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
     <log>
       Events:
     </log>
@@ -1956,6 +3004,8 @@ false
     b |-> 0
     c |-> 0
     caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
     v |-> 0
     x |-> 0
     y |-> 0
@@ -1994,6 +3044,9 @@ false
         <balance>
           10
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -2085,6 +3138,9 @@ false
         <balance>
           20
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -2176,6 +3232,9 @@ false
         <balance>
           29
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -2267,6 +3326,9 @@ false
         <balance>
           41
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -2358,6 +3420,9 @@ false
         <balance>
           50
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -2449,6 +3514,9 @@ false
         <balance>
           60
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -2540,6 +3608,9 @@ false
         <balance>
           70
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -2631,6 +3702,9 @@ false
         <balance>
           80
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2721,6 +3795,9 @@ false
         <balance>
           90
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2811,6 +3888,9 @@ false
         <balance>
           100
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2900,6 +3980,19 @@ false
     <supply>
       550
     </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
     <log>
       Events: Sent ( 3 , 3 , 4 , 1 , "" , "" )
     </log>
@@ -2913,6 +4006,8 @@ false
     b |-> 0
     c |-> 0
     caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
     v |-> 0
     x |-> 0
     y |-> 0
@@ -2951,6 +4046,9 @@ false
         <balance>
           10
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -3042,6 +4140,9 @@ false
         <balance>
           20
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -3133,6 +4234,9 @@ false
         <balance>
           30
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -3224,6 +4328,9 @@ false
         <balance>
           40
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -3315,6 +4422,9 @@ false
         <balance>
           50
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -3406,6 +4516,9 @@ false
         <balance>
           60
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -3497,6 +4610,9 @@ false
         <balance>
           70
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -3588,6 +4704,9 @@ false
         <balance>
           80
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3678,6 +4797,9 @@ false
         <balance>
           90
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3768,6 +4890,9 @@ false
         <balance>
           100
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3857,6 +4982,19 @@ false
     <supply>
       550
     </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
     <log>
       Events: Sent ( 8 , 4 , 5 , 0 , "" , "" )
     </log>
@@ -3870,6 +5008,8 @@ false
     b |-> 0
     c |-> 0
     caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
     v |-> 0
     x |-> 0
     y |-> 0
@@ -3908,6 +5048,9 @@ false
         <balance>
           10
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -3999,6 +5142,9 @@ false
         <balance>
           20
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -4090,6 +5236,9 @@ false
         <balance>
           30
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -4181,6 +5330,9 @@ false
         <balance>
           40
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -4272,6 +5424,9 @@ false
         <balance>
           50
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -4363,6 +5518,9 @@ false
         <balance>
           60
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -4454,6 +5612,9 @@ false
         <balance>
           70
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -4545,6 +5706,9 @@ false
         <balance>
           80
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4635,6 +5799,9 @@ false
         <balance>
           90
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4725,6 +5892,9 @@ false
         <balance>
           100
         </balance>
+        <isContract>
+          true
+        </isContract>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4814,6 +5984,19 @@ false
     <supply>
       550
     </supply>
+    <nameC>
+      "RVToken"
+    </nameC>
+    <symbolC>
+      "RVT"
+    </symbolC>
+    <granularityC>
+      1
+    </granularityC>
+    <defaultOperatorsC>
+      SetItem ( 8 )
+      SetItem ( 9 )
+    </defaultOperatorsC>
     <log>
       Events:
     </log>
@@ -4827,6 +6010,8 @@ false
     b |-> 0
     c |-> 0
     caller |-> 7
+    receiverHook |-> 5
+    senderHook |-> 4
     v |-> 0
     x |-> 0
     y |-> 0
