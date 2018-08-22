@@ -39,6 +39,7 @@ module ERC777-IMP-SYNTAX
                  | "while" "(" BExp ")" Block
                  | "int" Ids   // use only at the top of the program
                  | "print" "(" Exp ")"       [strict]
+                 | "println" "(" Exp ")"
                  | "halt"
                  | Stmt ";"
                  > Stmt Stmt                  [left]
@@ -61,10 +62,8 @@ module ERC777-IMP-SYNTAX
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
                 | "makeERC20Compatible" "(" Bool ")"
-                | "makeThrowAsPrintTrue"
-                | "makeThrowAsPrintFalse"
-                | "makePrintStringsTrue"
-                | "makePrintStringsFalse"
+                | "makeRevertAsPrintTrue"
+                | "makeRevertAsPrintFalse"
 
 endmodule
 
@@ -80,8 +79,7 @@ module ERC777-IMP
                   <state> .Map </state>
                   <input color="magenta" stream="stdin"> .List </input>
                   <output color="Orchid" stream="stdout"> .List </output>
-                  <throwAsPrint> false </throwAsPrint> // for print THROW
-                  <printNewLine> true </printNewLine>  // for tests
+                  <revertAsPrint> false </revertAsPrint> // to print REVERT
                 </IMP>
 
   syntax KResult ::= Int | Bool | String
@@ -124,18 +122,15 @@ module ERC777-IMP
   rule Bool2String(true) => "true"
   rule Bool2String(false) => "false"
 
-  rule <k> print(I:Int) => . ...</k> <printNewLine> false </printNewLine>
+  rule <k> print(I:Int) => . ...</k>
        <output>... .List => ListItem(I) </output>
-  rule <k> print(I:Int) => . ...</k> <printNewLine> true  </printNewLine>
-       <output>... .List => ListItem(I) ListItem("\n") </output>
-  rule <k> print(Str:String) => . ...</k> <printNewLine> false </printNewLine>
+  rule <k> print(Str:String) => . ...</k>
        <output>... .List => ListItem(Str) </output>
-  rule <k> print(Str:String) => . ...</k> <printNewLine> true  </printNewLine>
-       <output>... .List => ListItem(Str) ListItem("\n") </output>
-  rule <k> print(B:Bool) => . ...</k> <printNewLine> false </printNewLine>
+  rule <k> print(B:Bool) => . ...</k>
        <output>... .List => ListItem(Bool2String(B)) </output>
-  rule <k> print(B:Bool) => . ...</k> <printNewLine> true  </printNewLine>
-       <output>... .List => ListItem(Bool2String(B)) ListItem("\n") </output>
+
+  rule println(E) => print(E) ~> print("\n")
+
   rule <k> halt ~> _ => . </k>
 
 /* We also add the following 3 rules which we do not have in the K Tutorial
@@ -183,7 +178,12 @@ module ERC777-IMP
 
 
   rule <k> makeCaller(I:Int) => . ...</k> <caller> _ => I </caller>
-  rule <k> makeBalance(I:Int) => . ...</k> <caller> Owner </caller> <id> Owner </id> <balance> _ => I </balance>
+
+  rule <k> makeBalance(BAL:Int) => . ...</k>
+       <caller> Owner </caller>
+       <id> Owner </id>
+       <balance> OldBal => BAL </balance>
+       <supply> OldSUPPL => OldSUPPL +Int BAL -Int OldBal </supply>
 
   rule <k> makeNameAndSymbol(NAME:String, SYMBOL:String) => . ...</k>
        <nameC> _ => NAME </nameC>
@@ -192,11 +192,11 @@ module ERC777-IMP
   rule <k> makeERC20Compatible(COMPAT) => . ... </k>
        <ERC20CompatibleC> _ => COMPAT </ERC20CompatibleC>
 
-  rule <k> makeThrowAsPrintTrue  => . ...</k> <throwAsPrint> _ => true </throwAsPrint>
-  rule <k> makeThrowAsPrintFalse => . ...</k> <throwAsPrint> _ => false </throwAsPrint>
-  rule <k> throw => false ...</k> <throwAsPrint> true </throwAsPrint> <output>... .List => ListItem("THROW\n") </output>
-  rule <k> makePrintStringsTrue  => . ...</k> <printNewLine> _ => true  </printNewLine>
-  rule <k> makePrintStringsFalse => . ...</k> <printNewLine> _ => false </printNewLine>
+  rule <k> makeRevertAsPrintTrue  => . ...</k> <revertAsPrint> _ => true </revertAsPrint>
+  rule <k> makeRevertAsPrintFalse => . ...</k> <revertAsPrint> _ => false </revertAsPrint>
+  rule <k> revert => false ...</k>
+       <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
+       <output>... .List => ListItem("REVERT\n") </output>
 
 /* The next definitions have nothing to do with the IMP semantics.
    They are macros allowing us to write some IMP programs more compactly.
@@ -248,7 +248,7 @@ while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
 makeNameAndSymbol("RVToken", "RVT")
 caller = 7;
 makeCaller(caller);
-makeThrowAsPrintTrue;
+makeRevertAsPrintTrue;
 // ---END-OF-PREAMBLE---
 
   syntax Stmt ::= "test.makeBalance" "(" AExp ")"   [macro]

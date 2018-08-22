@@ -1,1 +1,1 @@
-print(granularity());
+println(granularity());

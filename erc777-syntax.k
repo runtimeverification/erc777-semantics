@@ -59,7 +59,7 @@ module ERC777-SYNTAX
   syntax BExp ::= approve ( AExp , AExp )             [strict]
                 | transfer ( AExp , AExp )            [strict]
                 | transferFrom ( AExp , AExp , AExp ) [strict]
-                | "throw"
+                | "revert"
 
   syntax Event ::= Transfer ( Address , Address , Number)
                  | Approval ( Address , Address , Number)

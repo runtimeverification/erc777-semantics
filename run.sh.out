@@ -1039,9 +1039,6 @@ RVT
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
 + krun --smt none tests/totalSupply.erc777 -o none
 550
@@ -2087,9 +2084,6 @@ false
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
 + krun --smt none tests/revokeOperator.erc777
 <IMP>
@@ -3122,9 +3116,6 @@ false
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
 + krun --smt none tests/send.erc777
 <IMP>
@@ -4157,9 +4148,6 @@ false
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
 + krun --smt none tests/operatorSend.erc777
 <IMP>
@@ -5192,9 +5180,6 @@ false
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
 + krun --smt none tests/operatorSend2.erc777
 <IMP>
@@ -6227,7 +6212,4 @@ false
   <throwAsPrint>
     true
   </throwAsPrint>
-  <printNewLine>
-    true
-  </printNewLine>
 </IMP>
