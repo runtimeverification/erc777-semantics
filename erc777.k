@@ -40,6 +40,7 @@ module ERC777
        <symbolC> "" </symbolC>
        <granularityC> 1 </granularityC>
        <defaultOperatorsC> .Set </defaultOperatorsC>
+       <ERC20CompatibleC> true </ERC20CompatibleC>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -149,10 +150,11 @@ module ERC777
   rule <k> operatorSend ( From , To , Value , Data , OperatorData )
         => #atomicBegin
         ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
-//      ~> #callSender ( Operator , From , To , Value , Data , OperatorData )
+        ~> #callSender ( Operator , From , To , Value , Data , OperatorData )
         ~> #update ( From , To , Value )
-//      ~> #callRecipent ( Operator , From , To , Value , Data , OperatorData , true )
+        ~> #callRecipent ( Operator , From , To , Value , Data , OperatorData , true )
         ~> #log( Sent(Operator , From , To , Value , Data , OperatorData) )
+        ~> #logERC20( Transfer(From , To , Value) )
         ~> #atomicEnd ... </k>
        <caller> Operator </caller>
        requires From =/=Int 0
@@ -259,7 +261,7 @@ module ERC777
         ~> #burn(Holder, Amount)
         ~> #callRecipent(Operator, Holder, 0, Amount, "", OperatorData, true)
         ~> #log(Burned(Operator, Holder, Amount, OperatorData))
-        ~> #log(Transfer(Holder, 0, Amount)) // ERC20
+        ~> #logERC20(Transfer(Holder, 0, Amount)) // ERC20
         ~> #atomicEnd ... </k>
        <caller> Operator </caller>
        <id> Holder </id>
@@ -277,10 +279,20 @@ module ERC777
        requires Balance >=Int Amount andBool Supply >=Int Amount
 
   // general version
-  syntax Stmt ::= #log(Event)
+  syntax Stmt ::= #log ( Event )
+                | #logERC20 ( Event )
 
   rule <k> #log(Log) => . ... </k>
        <log> Logs => Logs Log </log>
+
+  rule <k> #logERC20(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires ERC20Compatible
+
+  rule <k> #logERC20(Log) => . ... </k>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires notBool ERC20Compatible
 
 
   //

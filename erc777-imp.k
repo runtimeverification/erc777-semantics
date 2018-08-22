@@ -60,6 +60,7 @@ module ERC777-IMP-SYNTAX
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
+                | "makeERC20Compatible" "(" Bool ")"
                 | "makeThrowAsPrintTrue"
                 | "makeThrowAsPrintFalse"
                 | "makePrintStringsTrue"
@@ -187,6 +188,9 @@ module ERC777-IMP
   rule <k> makeNameAndSymbol(NAME:String, SYMBOL:String) => . ...</k>
        <nameC> _ => NAME </nameC>
        <symbolC> _ => SYMBOL </symbolC>
+
+  rule <k> makeERC20Compatible(COMPAT) => . ... </k>
+       <ERC20CompatibleC> _ => COMPAT </ERC20CompatibleC>
 
   rule <k> makeThrowAsPrintTrue  => . ...</k> <throwAsPrint> _ => true </throwAsPrint>
   rule <k> makeThrowAsPrintFalse => . ...</k> <throwAsPrint> _ => false </throwAsPrint>

@@ -1004,6 +1004,9 @@ RVT
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
       Events:
     </log>
@@ -2049,6 +2052,9 @@ false
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
       Events: AuthorizedOperator ( 2 , 1 ) RevokedOperator ( 2 , 1 )
     </log>
@@ -3081,6 +3087,9 @@ false
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
       Events:
     </log>
@@ -4113,8 +4122,11 @@ false
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
-      Events: Sent ( 3 , 3 , 4 , 1 , "" , "" )
+      Events: Sent ( 3 , 3 , 4 , 1 , "" , "" ) Transfer ( 3 , 4 , 1 )
     </log>
     <atomic>
       .
@@ -4156,7 +4168,7 @@ false
       3
     </caller>
     <k>
-      #revert ~> #update ( 4 , 5 , 0 ) ~> #log ( Sent ( 3 , 4 , 5 , 0 , "" , "" ) ) ~> #atomicEnd
+      #revert ~> #callSender ( 3 , 4 , 5 , 0 , "" , "" ) ~> #update ( 4 , 5 , 0 ) ~> #callRecipent ( 3 , 4 , 5 , 0 , "" , "" , true ) ~> #log ( Sent ( 3 , 4 , 5 , 0 , "" , "" ) ) ~> #logERC20 ( Transfer ( 4 , 5 , 0 ) ) ~> #atomicEnd
     </k>
     <accounts>
       <account>
@@ -5145,8 +5157,11 @@ false
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
-      Events: Sent ( 8 , 4 , 5 , 0 , "" , "" )
+      Events: Sent ( 8 , 4 , 5 , 0 , "" , "" ) Transfer ( 4 , 5 , 0 )
     </log>
     <atomic>
       .
@@ -5188,7 +5203,7 @@ false
       8
     </caller>
     <k>
-      #revert ~> #update ( 4 , 0 , 0 ) ~> #log ( Sent ( 8 , 4 , 0 , 0 , "" , "" ) ) ~> #atomicEnd
+      #revert ~> #callSender ( 8 , 4 , 0 , 0 , "" , "" ) ~> #update ( 4 , 0 , 0 ) ~> #callRecipent ( 8 , 4 , 0 , 0 , "" , "" , true ) ~> #log ( Sent ( 8 , 4 , 0 , 0 , "" , "" ) ) ~> #logERC20 ( Transfer ( 4 , 0 , 0 ) ) ~> #atomicEnd
     </k>
     <accounts>
       <account>
@@ -6177,6 +6192,9 @@ false
       SetItem ( 8 )
       SetItem ( 9 )
     </defaultOperatorsC>
+    <ERC20CompatibleC>
+      true
+    </ERC20CompatibleC>
     <log>
       Events:
     </log>
