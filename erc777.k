@@ -19,6 +19,7 @@ module ERC777
            <id> 0:Address </id>
            <balance> 0:Number </balance>
            <isContract> .K </isContract>
+           <hookFail> false </hookFail>
 
            //ERC777 operators
            //fixme something is missing here - how a set can hold "holder -> 2^operator"?
@@ -148,9 +149,9 @@ module ERC777
   rule <k> operatorSend ( From , To , Value , Data , OperatorData )
         => #atomicBegin
         ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
-//      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
+//      ~> #callSender ( Operator , From , To , Value , Data , OperatorData )
         ~> #update ( From , To , Value )
-//      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData , true )
+//      ~> #callRecipent ( Operator , From , To , Value , Data , OperatorData , true )
         ~> #log( Sent(Operator , From , To , Value , Data , OperatorData) )
         ~> #atomicEnd ... </k>
        <caller> Operator </caller>
@@ -164,44 +165,52 @@ module ERC777
             , #isMultipleOf ( Value , granularity() )
             )
 
-  syntax Stmt ::= #hookFrom ( Address , //caller (operator)
-                              Address , //from
-                              Address , //to
-                              Number ,  //amount
-                              Data ,    //Data
-                              Data      //OperatorData
+  syntax Stmt ::= #callSender ( Address , // operator
+                                Address , // from
+                                Address , // to
+                                Number ,  // amount
+                                Data ,    // userData
+                                Data      // operatorData
                               )
 
-  rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => #call ( Operator , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData )
+        => Hook . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) ... </k>
        <id> From </id>
        <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
 
-  rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => #mayRevert ... </k>
+  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
        <id> From </id>
        <senderHook> Hook </senderHook>
        requires Hook ==Int 0
 
-  syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data , Bool )
+  syntax Stmt ::= #callRecipent ( Address , // operator
+                                  Address , // from
+                                  Address , // to
+                                  Number ,  // amount
+                                  Data ,    // userData
+                                  Data ,    // operatorData
+                                  Bool      // preventLocking
+                                )
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , _ )
-        => #call ( Operator , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
+  // If the recipient is a contract, which has not registered an ERC777TokensRecipient implementation; the token contract:
+  // * MUST revert if the tokensReceived hook is called from a mint or send call.
+  // * SHOULD accept if the tokensReceived hook is called from an ERC20 transfer or transferFrom call.
+  rule <k> #callRecipent ( Operator , From , To , Value , Data , OperatorData , _ )
+        => Hook . tokensReceived ( Operator , From , To , Value , Data , OperatorData ) ... </k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
-  // TODO: why #mayRevert?
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
-        => #ite ( ISCONTRACT , #revert , #mayRevert ) ... </k>
+  rule <k> #callRecipent ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
+        => #ite ( ISCONTRACT , #revert , . ) ... </k>
        <id> To </id>
        <isContract> ISCONTRACT </isContract>
        <receiverHook> Hook </receiverHook>
        requires Hook ==Int 0 andBool PreventLocking
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
-        => #mayRevert  ... </k>
+  rule <k> #callRecipent ( Operator , From , To , Value , Data , OperatorData , PreventLocking )
+        => . ... </k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
        requires Hook ==Int 0 andBool notBool PreventLocking
@@ -230,11 +239,6 @@ module ERC777
 
   rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
 
-  syntax Stmt ::= #call ( Address , Address , Address , Address , Address , Number , Data , Data )
-
-  // TODO: more fine-grained input
-  rule #call ( _ , _ , _ , _ , _ , _ , _ , _ ) => #mayRevert
-
   //
   // burn / operatorBurn
   // TODO: inconsistencies in the standards and reference implementation
@@ -253,7 +257,7 @@ module ERC777
                         Balance >=Int Amount,
                         Holder =/=Int 0))
         ~> #burn(Holder, Amount)
-        ~> #hookTo(Operator, Holder, 0, Amount, "", OperatorData, true)
+        ~> #callRecipent(Operator, Holder, 0, Amount, "", OperatorData, true)
         ~> #log(Burned(Operator, Holder, Amount, OperatorData))
         ~> #log(Transfer(Holder, 0, Amount)) // ERC20
         ~> #atomicEnd ... </k>
@@ -291,7 +295,7 @@ module ERC777
         ~> #ensure(#and(#isMultipleOf(Balance +Int Amount, granularity()),
                         Holder =/=Int 0))
         ~> #mintAux(Holder, Amount)
-        ~> #hookTo(Operator, 0, Holder, Amount, Data,  OperatorData, true)
+        ~> #callRecipent(Operator, 0, Holder, Amount, Data,  OperatorData, true)
         ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
         ~> #log(Transfer(0, Holder, Amount))
         ~> #atomicEnd ... </k>
@@ -308,9 +312,30 @@ module ERC777
        <supply> Supply => Supply +Int Amount </supply>
        requires Balance +Int Amount <=Int #MAXVALUE
 
-  //
-  // TODO: Hooks: check if registered via ERC820?
-  //
+  // Hooks
+  // TODO: 
+  // * check if registered via ERC820?
+  // * check if hook call can alter token contract state
+
+  rule <k> Hook . tokensToSend ( _ , _ , _ , _ , _ , _ ) => . ... </k>
+       <id> Hook </id>
+       <hookFail> HookFail </hookFail>
+       requires notBool HookFail
+
+  rule <k> Hook . tokensToSend ( _ , _ , _ , _ , _ , _ ) => #revert ... </k>
+       <id> Hook </id>
+       <hookFail> HookFail </hookFail>
+       requires HookFail
+
+  rule <k> Hook . tokensReceived ( _ , _ , _ , _ , _ , _ ) => . ... </k>
+       <id> Hook </id>
+       <hookFail> HookFail </hookFail>
+       requires notBool HookFail
+
+  rule <k> Hook . tokensReceived ( _ , _ , _ , _ , _ , _ ) => #revert ... </k>
+       <id> Hook </id>
+       <hookFail> HookFail </hookFail>
+       requires HookFail
 
   //
   // ERC20 compatibility
@@ -335,9 +360,9 @@ module ERC777
   rule <k> transfer(To, Value)
         => #atomicBegin
         ~> #ensure(BalanceFrom >=Int Value)
-        ~> #hookFrom(From, From, To, Value, "", "")
+        ~> #callSender(From, From, To, Value, "", "")
         ~> #update(From, To, Value)
-        ~> #hookTo(From, From, To, Value, "", "", false) // should accept even if To isn't registered and To is contract )
+        ~> #callRecipent(From, From, To, Value, "", "", false) // should accept even if To isn't registered and To is contract )
         ~> #log(Transfer(From, To, Value))
         ~> #log(Sent(From, From, To, Value, "", ""))
         ~> #atomicEnd
@@ -350,9 +375,9 @@ module ERC777
   rule <k> transferFrom(From, To, Value)
         => #atomicBegin
         ~> #ensure(#and(BalanceFrom >=Int Value, Allowed >=Int Value))
-        ~> #hookFrom(Operator, From, To, Value, "", "")
+        ~> #callSender(Operator, From, To, Value, "", "")
         ~> #updateWithAllowance(Operator, From, To, Value)
-        ~> #hookTo(Operator, From, To, Value, "", "", false)
+        ~> #callRecipent(Operator, From, To, Value, "", "", false)
         ~> #atomicEnd
         ~> true ... </k>
        <caller> Operator </caller>
@@ -421,8 +446,8 @@ module ERC777
 
   syntax Stmt ::= "#mayRevert"
 
-  rule #mayRevert => #revert
-  rule #mayRevert => .
+  rule #mayRevert => #revert [transition]
+  rule #mayRevert => .       [transition]
 
   syntax Stmt ::= "#revert"
 

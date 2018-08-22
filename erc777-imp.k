@@ -54,6 +54,7 @@ module ERC777-IMP-SYNTAX
                                 "," AExp //sender hook
                                 "," AExp //receiver hook
                                 "," BExp //is contract
+                                "," BExp //hookFail
                                 ")"     [strict]
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
@@ -152,12 +153,13 @@ module ERC777-IMP
   rule <k> makeDefaultOperator(DOP:Int) => . ...</k>
        <defaultOperatorsC>... .Set => SetItem(DOP) ...</defaultOperatorsC>
 
-  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT) => . ...</k>
+  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT, HOOKFAIL) => . ...</k>
        <accounts> (.Bag =>
          <account>
            <id> A </id>
            <balance> V </balance>
            <isContract> ISCONTRACT </isContract>
+           <hookFail> HOOKFAIL </hookFail>
            <operators> SetItem(A) DefOps </operators>
            <senderHook> SH </senderHook>
            <receiverHook> RH </receiverHook>
@@ -231,7 +233,7 @@ x = accounts;
 makeDefaultOperator(8)
 makeDefaultOperator(9)
 while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
-  makeAccount(x, x*10, senderHook, receiverHook, true);
+  makeAccount(x, x*10, senderHook, receiverHook, true, false);
   y = accounts;
   while(!(y <= 0)) {
     makeAllowance(x,y);

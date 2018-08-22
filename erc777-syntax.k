@@ -6,24 +6,20 @@ module ERC777-SYNTAX
   imports BOOL-SYNTAX
 
   //
-  // Token API
+  // ERC777Token
   //
 
-  // String
   syntax Exp ::= AExp | BExp
 
   syntax Exp ::= name ( )
                | symbol ( )
 
-  // Number
   syntax AExp ::= totalSupply ( )
                 | balanceOf ( AExp ) [strict]
                 | granularity ( )
 
-  // Addresses
   syntax Exp ::= defaultOperators ( )
 
-  // Bool
   syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
 
   syntax Stmt ::= authorizeOperator ( AExp )                        [strict]
@@ -40,14 +36,26 @@ module ERC777-SYNTAX
                  | RevokedOperator ( Address , Address )
 
   //
+  // ERC777TokensSender
+  //
+
+  syntax Stmt ::= AExp "." "tokensToSend" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
+
+  //
+  // ERC777TokensRecipent
+  //
+
+  syntax Stmt ::= AExp "." "tokensReceived" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
+
+  //
   // ERC20 compatibility
   //
 
-  // Number
+  // uint256
   syntax AExp ::= allowance ( AExp , AExp ) [strict]
                 | decimals ( )
 
-  // Bool
+  // bool
   syntax BExp ::= approve ( AExp , AExp )             [strict]
                 | transfer ( AExp , AExp )            [strict]
                 | transferFrom ( AExp , AExp , AExp ) [strict]

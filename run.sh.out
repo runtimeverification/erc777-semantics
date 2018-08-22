@@ -1,6 +1,6 @@
 + set -e
 + rm -rf erc777-test-kompiled
-+ kompile --backend java erc777-test.k --syntax-module ERC777-TEST-SYNTAX
++ kompile --backend java erc777-imp.k --syntax-module ERC777-IMP
 + krun --smt none tests/name.erc777 -o none
 RVToken
 + krun --smt none tests/symbol.erc777 -o none
@@ -28,6 +28,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -122,6 +125,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -216,6 +222,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -310,6 +319,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -404,6 +416,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -498,6 +513,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -592,6 +610,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -686,6 +707,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -779,6 +803,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -872,6 +899,9 @@ RVT
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1043,6 +1073,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -1137,6 +1170,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -1231,6 +1267,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -1325,6 +1364,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -1419,6 +1461,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -1513,6 +1558,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -1607,6 +1655,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -1701,6 +1752,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1794,6 +1848,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -1887,6 +1944,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2045,6 +2105,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -2139,6 +2202,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -2233,6 +2299,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -2327,6 +2396,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -2421,6 +2493,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -2515,6 +2590,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -2609,6 +2687,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -2703,6 +2784,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2796,6 +2880,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -2889,6 +2976,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3047,6 +3137,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -3141,6 +3234,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -3235,6 +3331,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -3329,6 +3428,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -3423,6 +3525,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -3517,6 +3622,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -3611,6 +3719,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -3705,6 +3816,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3798,6 +3912,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -3891,6 +4008,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4049,6 +4169,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -4143,6 +4266,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -4237,6 +4363,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -4331,6 +4460,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -4425,6 +4557,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -4519,6 +4654,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -4613,6 +4751,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -4707,6 +4848,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4800,6 +4944,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -4893,6 +5040,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -5051,6 +5201,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 1 )
           SetItem ( 8 )
@@ -5145,6 +5298,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 2 )
           SetItem ( 8 )
@@ -5239,6 +5395,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 3 )
           SetItem ( 8 )
@@ -5333,6 +5492,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 4 )
           SetItem ( 8 )
@@ -5427,6 +5589,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 5 )
           SetItem ( 8 )
@@ -5521,6 +5686,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 6 )
           SetItem ( 8 )
@@ -5615,6 +5783,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 7 )
           SetItem ( 8 )
@@ -5709,6 +5880,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -5802,6 +5976,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
@@ -5895,6 +6072,9 @@ false
         <isContract>
           true
         </isContract>
+        <hookFail>
+          false
+        </hookFail>
         <operators>
           SetItem ( 8 )
           SetItem ( 9 )
