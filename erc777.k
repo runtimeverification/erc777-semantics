@@ -311,7 +311,7 @@ module ERC777
         ~> #mintAux(Holder, Amount)
         ~> #callRecipent(Operator, 0, Holder, Amount, Data,  OperatorData, true)
         ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
-        ~> #log(Transfer(0, Holder, Amount))
+        ~> #logERC20(Transfer(0, Holder, Amount))
         ~> #atomicEnd(.K) ... </k>
        <caller> Operator </caller>
        <id> Holder </id>
@@ -353,8 +353,8 @@ module ERC777
 
   //
   // ERC20 compatibility
-  // TODO: hooks for ERC20 functions
   // TODO: Check compatibility on/off?
+  // FIXME: revert on overflow/negative input is not the part of standards
 
   rule <k> allowance(Owner, Spender) => Allowance ...</k>
        <id> Owner </id>
@@ -370,6 +370,14 @@ module ERC777
        <spender> Spender </spender>
        <amount> _ => Allowance </amount>
        <log> Log => Log Approval(Owner, Spender, Allowance) </log>
+       requires Allowance >=Int 0
+
+  rule <k> approve(Spender, Allowance) => revert ...</k>
+       <caller> Owner </caller>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> _ => Allowance </amount>
+       requires Allowance <Int 0
 
   rule <k> transfer(To, Value) => #transferAux(To, Value, #getBalance(From), #getBalance(To)) ...</k>
        <caller> From </caller>
@@ -387,6 +395,19 @@ module ERC777
         ~> #log(Sent(From, From, To, Value, "", ""))
         ~> #atomicEnd(true) ... </k>
        <caller> From </caller>
+       requires From =/=Int To
+
+  rule <k> #transferAux(To, Value, BalanceFrom, BalanceTo)
+        => #atomicBegin
+        ~> #ensure(#and(Value >=Int 0, BalanceFrom >=Int Value))
+        ~> #callSender(From, From, To, Value, "", "")
+        ~> #update(From, To, Value)
+        ~> #callRecipent(From, From, To, Value, "", "", false) // should accept even if To isn't registered and To is contract )
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
+        ~> #atomicEnd(true) ... </k>
+       <caller> From </caller>
+       requires From ==Int To
 
   //Required instead of direct cell matching because might be called multiple times in a rule for same address.
   syntax AExp ::= "#getBalance" "(" Int ")"
@@ -407,11 +428,31 @@ module ERC777
         ~> #callSender(Operator, From, To, Value, "", "")
         ~> #updateWithAllowance(Operator, From, To, Value)
         ~> #callRecipent(Operator, From, To, Value, "", "", false)
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
         ~> #atomicEnd(true) ... </k>
        <caller> Operator </caller>
        <id> From </id>
        <spender> Operator </spender>
        <amount> Allowed </amount>
+       requires From =/=Int To
+
+  rule <k> #transferFromAux(From, To, Value, BalanceFrom, BalanceTo)
+        => #atomicBegin
+        ~> #ensure(#and(Value >=Int 0,
+                        BalanceFrom >=Int Value,
+                        Allowed >=Int Value))
+        ~> #callSender(Operator, From, To, Value, "", "")
+        ~> #updateWithAllowance(Operator, From, To, Value)
+        ~> #callRecipent(Operator, From, To, Value, "", "", false)
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
+        ~> #atomicEnd(true) ... </k>
+       <caller> Operator </caller>
+       <id> From </id>
+       <spender> Operator </spender>
+       <amount> Allowed </amount>
+       requires From ==Int To
 
   syntax Stmt ::= #updateWithAllowance ( Address , Address , Address , Number )
 

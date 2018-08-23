@@ -1036,9 +1036,9 @@ RVT
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
 + krun --smt none tests/totalSupply.erc777 -o none
 550
@@ -1054,13 +1054,14 @@ true
 false
 true
 false
+REVERT
 <IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert
+      false
     </k>
     <accounts>
       <account>
@@ -2081,18 +2082,19 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
 + krun --smt none tests/revokeOperator.erc777
+REVERT
 <IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert
+      false
     </k>
     <accounts>
       <account>
@@ -3113,9 +3115,9 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
 + krun --smt none tests/send.erc777
 <IMP>
@@ -4145,18 +4147,19 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
 + krun --smt none tests/operatorSend.erc777
+REVERT
 <IMP>
   <ERC777>
     <caller>
       3
     </caller>
     <k>
-      #revert ~> #callSender ( 3 , 4 , 5 , 0 , "" , "" ) ~> #update ( 4 , 5 , 0 ) ~> #callRecipent ( 3 , 4 , 5 , 0 , "" , "" , true ) ~> #log ( Sent ( 3 , 4 , 5 , 0 , "" , "" ) ) ~> #logERC20 ( Transfer ( 4 , 5 , 0 ) ) ~> #atomicEnd
+      false
     </k>
     <accounts>
       <account>
@@ -5177,18 +5180,19 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
 + krun --smt none tests/operatorSend2.erc777
+REVERT
 <IMP>
   <ERC777>
     <caller>
       8
     </caller>
     <k>
-      #revert ~> #callSender ( 8 , 4 , 0 , 0 , "" , "" ) ~> #update ( 4 , 0 , 0 ) ~> #callRecipent ( 8 , 4 , 0 , 0 , "" , "" , true ) ~> #log ( Sent ( 8 , 4 , 0 , 0 , "" , "" ) ) ~> #logERC20 ( Transfer ( 4 , 0 , 0 ) ) ~> #atomicEnd
+      false
     </k>
     <accounts>
       <account>
@@ -6209,7 +6213,7 @@ false
     ListItem ( "on" )
     ListItem ( #buffer ( "" ) )
   </output>
-  <throwAsPrint>
+  <revertAsPrint>
     true
-  </throwAsPrint>
+  </revertAsPrint>
 </IMP>
