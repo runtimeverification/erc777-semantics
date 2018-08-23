@@ -5,18 +5,18 @@
   rm -rf erc777-test-kompiled
   kompile --backend java erc777-imp.k --syntax-module ERC777-IMP
 
-  krun --smt none tests/name.erc777 -o none
-  krun --smt none tests/symbol.erc777 -o none
-  krun --smt none tests/granularity.erc777 -o none
-  krun --smt none tests/defaultOperators.erc777 -o none
+  krun --smt none tests/old/name.erc777 -o none
+  krun --smt none tests/old/symbol.erc777 -o none
+  krun --smt none tests/old/granularity.erc777 -o none
+  krun --smt none tests/old/defaultOperators.erc777 -o none
 
-  krun --smt none tests/totalSupply.erc777 -o none
-  krun --smt none tests/balanceOf.erc777 -o none
+  krun --smt none tests/old/totalSupply.erc777 -o none
+  krun --smt none tests/old/balanceOf.erc777 -o none
 
-  krun --smt none tests/isOperatorFor.erc777 -o none
-  krun --smt none tests/authorizeOperator.erc777 -o none
-  krun --smt none tests/revokeOperator.erc777 -o none
+  krun --smt none tests/old/isOperatorFor.erc777 -o none
+  krun --smt none tests/old/authorizeOperator.erc777 -o none
+  krun --smt none tests/old/revokeOperator.erc777 -o none
 
-  krun --smt none tests/send.erc777 -o none
-  krun --smt none tests/operatorSend.erc777 -o none
-  krun --smt none tests/operatorSend2.erc777 -o none
+  krun --smt none tests/old/send.erc777 -o none
+  krun --smt none tests/old/operatorSend.erc777 -o none
+  krun --smt none tests/old/operatorSend2.erc777 -o none
