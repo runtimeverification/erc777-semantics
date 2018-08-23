@@ -9,7 +9,7 @@ module ERC777-SYNTAX
   // ERC777Token
   //
 
-  syntax Exp ::= AExp | BExp
+  syntax Exp ::= AExp | BExp | Set
 
   syntax Exp ::= name ( )
                | symbol ( )

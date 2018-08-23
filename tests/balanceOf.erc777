@@ -1,5 +1,4 @@
 test.preamble();
-println(balanceOf(1));
-println(balanceOf(2));
-println(balanceOf(9));
-
+test.balanceOf(1);
+test.balanceOf(8);
+test.balanceOf(9);

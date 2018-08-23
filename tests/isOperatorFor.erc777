@@ -1,4 +1,4 @@
 test.preamble();
-println(isOperatorFor(1,1));
-println(isOperatorFor(2,1));
-println(isOperatorFor(9,1));
+test.isOperatorFor(1,1);
+test.isOperatorFor(2,1);
+test.isOperatorFor(9,1);

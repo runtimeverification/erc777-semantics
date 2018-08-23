@@ -82,7 +82,7 @@ module ERC777-IMP
                   <revertAsPrint> false </revertAsPrint> // to print REVERT
                 </IMP>
 
-  syntax KResult ::= Int | Bool | String
+  syntax KResult ::= Int | Bool | String | Set
 
 // AExp
   rule <k> X:Id => Rho[X] ...</k> <state> Rho </state>
@@ -195,7 +195,7 @@ module ERC777-IMP
   rule <k> makeRevertAsPrintTrue  => . ...</k> <revertAsPrint> _ => true </revertAsPrint>
   rule <k> makeRevertAsPrintFalse => . ...</k> <revertAsPrint> _ => false </revertAsPrint>
   rule <k> revert => false ...</k>
-       <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
+       <revertAsPrint> true </revertAsPrint> <atomic> _ => .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
 
 /* The next definitions have nothing to do with the IMP semantics.
@@ -270,6 +270,31 @@ makeRevertAsPrintTrue;
     print("\n");
     makeCaller(caller);
 
+  syntax Stmt ::= "test.name" "(" ")" [macro]
+  rule test.name() =>
+    print("name() => ");
+    println(name());
+
+  syntax Stmt ::= "test.symbol" "(" ")" [macro]
+  rule test.symbol() =>
+    print("symbol() => ");
+    println(symbol());
+
+  syntax Stmt ::= "test.granularity" "(" ")" [macro]
+  rule test.granularity() =>
+    print("granularity() => ");
+    println(granularity());
+
+  syntax Stmt ::= "test.defaultOperators" "(" ")" [macro]
+  rule test.defaultOperators() =>
+    print("defaultOperators() => ");
+    printSet(defaultOperators());
+    print("\n");
+
+  syntax Stmt ::= printSet(Exp) [strict]
+  rule printSet(SetItem(E) Rest:Set) => print(E) ~> print(" ") ~> printSet(Rest)
+  rule printSet(.Set) => .
+
   syntax Stmt ::= "test.totalSupply" "(" ")"   [macro]
   rule test.totalSupply() =>
     print("Total supply is ");
@@ -284,6 +309,87 @@ makeRevertAsPrintTrue;
     print(" is ");
     print(balanceOf(a));
     print("\n");
+
+  syntax Stmt ::= "test.isOperatorFor" "(" AExp "," AExp ")" [macro]
+  rule test.isOperatorFor(Operator, Holder) =>
+    print("isOperatorFor(");
+    print(Operator);
+    print(", ");
+    print(Holder);
+    print(") => ");
+    println(isOperatorFor(Operator, Holder));
+
+  syntax Stmt ::= "test.authorizeOperator" "(" AExp ")" [macro]
+  rule test.authorizeOperator(Operator) =>
+    print(#getCaller);
+    print(" : authorizeOperator(");
+    print(Operator);
+    println(")");
+    authorizeOperator(Operator);
+
+  syntax Stmt ::= "test.revokeOperator" "(" AExp ")" [macro]
+  rule test.revokeOperator(Operator) =>
+    print(#getCaller);
+    print(" : revokeOperator(");
+    print(Operator);
+    println(")");
+    revokeOperator(Operator);
+
+  syntax Stmt ::= "test.send" "(" AExp "," AExp "," Data ")" [macro]
+  rule test.send(To, Value, Data) =>
+    print(#getCaller);
+    print(" : send(");
+    print(To);
+    print(", ");
+    print(Value);
+    print(", ");
+    print("\"");
+    print(Data);
+    print("\"");
+    println(")");
+    send(To, Value, Data);
+
+  syntax Stmt ::= "test.operatorSend" "(" AExp "," AExp "," AExp "," Data "," Data ")" [macro]
+  rule test.operatorSend(From, To, Value, Data, OperatorData) =>
+    print(#getCaller);
+    print(" : operatorSend(");
+    print(From);
+    print(", ");
+    print(To);
+    print(", ");
+    print(Value);
+    print(", ");
+    print("\"");
+    print(Data);
+    print("\"");
+    print(", ");
+    print("\"");
+    print(OperatorData);
+    print("\"");
+    println(")");
+    operatorSend(From, To, Value, Data, OperatorData);
+
+  syntax Stmt ::= "test.burn" "(" AExp ")" [macro]
+  rule test.burn(Amount) =>
+    print(#getCaller);
+    print(" : burn(");
+    print(Amount);
+    println(")");
+    burn(Amount);
+
+  syntax Stmt ::= "test.operatorBurn" "(" AExp "," AExp "," Data ")" [macro]
+  rule test.operatorBurn(Holder, Amount, OperatorData) =>
+    print(#getCaller);
+    print(" : operatorBurn(");
+    print(Holder);
+    print(", ");
+    print(Amount);
+    print(", ");
+    print("\"");
+    print(OperatorData);
+    print("\"");
+    println(")");
+    operatorBurn(Holder, Amount, OperatorData);
 
   syntax Stmt ::= "test.allowance" "(" AExp "," AExp ")"   [macro]
   rule test.allowance(Owner, Spender) =>

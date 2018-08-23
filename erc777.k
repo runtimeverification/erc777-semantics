@@ -409,12 +409,6 @@ module ERC777
        <caller> From </caller>
        requires From ==Int To
 
-  //Required instead of direct cell matching because might be called multiple times in a rule for same address.
-  syntax AExp ::= "#getBalance" "(" Int ")"
-  rule <k> #getBalance(Addr) => Bal ...</k>
-       <id> Addr </id>
-       <balance> Bal </balance>
-
   rule transferFrom(From, To, Value) => #transferFromAux(From, To, Value, #getBalance(From), #getBalance(To))
 
   //fixme - <operators> not used
@@ -537,5 +531,16 @@ module ERC777
 
   rule <k> #atomicEnd(OUT:K) => OUT ... </k>
        <atomic> _ => .K </atomic>
+
+  //Required instead of direct cell matching because might be called multiple times in a rule for same address.
+  syntax AExp ::= "#getBalance" "(" Int ")"
+  rule <k> #getBalance(Addr) => Bal ...</k>
+       <id> Addr </id>
+       <balance> Bal </balance>
+
+  syntax AExp ::= "#getCaller"
+  rule <k> #getCaller => Caller ... </k>
+       <caller> Caller </caller>
+
 
 endmodule

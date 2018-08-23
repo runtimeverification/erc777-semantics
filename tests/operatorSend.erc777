@@ -1,5 +1,5 @@
 test.preamble();
 makeCaller(8);
-operatorSend(4, 5, 0, "", "");
+test.operatorSend(4, 5, 0, "", "");
 makeCaller(3);
-operatorSend(4, 5, 0, "", "");
+test.operatorSend(4, 5, 0, "", "");

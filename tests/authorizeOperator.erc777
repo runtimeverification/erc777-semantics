@@ -1,9 +1,9 @@
 test.preamble();
-println(isOperatorFor(2,1));
+test.isOperatorFor(2,1);
 makeCaller(1);
-authorizeOperator(2);
-println(isOperatorFor(2,1));
-revokeOperator(2);
-println(isOperatorFor(2,1));
+test.authorizeOperator(2);
+test.isOperatorFor(2,1);
+test.revokeOperator(2);
+test.isOperatorFor(2,1);
 makeCaller(3);
-authorizeOperator(3);
+test.authorizeOperator(3);
