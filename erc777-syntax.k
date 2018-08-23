@@ -22,7 +22,7 @@ module ERC777-SYNTAX
 
   syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
 
-  syntax Stmt ::= authorizeOperator ( AExp )                        [strict]
+  syntax Exp ::=  authorizeOperator ( AExp )                        [strict]
                 | revokeOperator ( AExp )                           [strict]
                 | send ( AExp , AExp , Data )                       [strict]
                 | operatorSend ( AExp , AExp , AExp , Data , Data ) [strict]

@@ -82,7 +82,7 @@ module ERC777-IMP
                   <revertAsPrint> false </revertAsPrint> // to print REVERT
                 </IMP>
 
-  syntax KResult ::= Int | Bool | String | Set
+  syntax KResult ::= Int | Bool | String | Set | Void
 
 // AExp
   rule <k> X:Id => Rho[X] ...</k> <state> Rho </state>
@@ -139,6 +139,7 @@ module ERC777-IMP
 
   rule _:Bool; => .
   rule _:Int; => .
+  rule _:Void; => .
   rule S:Stmt; => S
 
 /* Next we define the special "make" constructs which create and modify the
@@ -194,7 +195,7 @@ module ERC777-IMP
 
   rule <k> makeRevertAsPrintTrue  => . ...</k> <revertAsPrint> _ => true </revertAsPrint>
   rule <k> makeRevertAsPrintFalse => . ...</k> <revertAsPrint> _ => false </revertAsPrint>
-  rule <k> revert => false ...</k>
+  rule <k> revert => #void ...</k>
        <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
 
@@ -337,17 +338,27 @@ makeRevertAsPrintTrue;
 
   syntax Stmt ::= "test.send" "(" AExp "," AExp "," Data ")" [macro]
   rule test.send(To, Value, Data) =>
+    b = To;
+    v = Value;
     print(#getCaller);
-    print(" : send(");
-    print(To);
-    print(", ");
-    print(Value);
-    print(", ");
-    print("\"");
+    print(" is sending ");
+    print(v);
+    print(" to ");
+    print(b);
+    print(" (data:");
     print(Data);
-    print("\"");
-    println(")");
-    send(To, Value, Data);
+    print(")\n");
+    send(b, v, Data);
+    print("Balance of ");
+    print(#getCaller);
+    print(" is ");
+    print(balanceOf(#getCaller));
+    print("\n");
+    print("Balance of ");
+    print(b);
+    print(" is ");
+    print(balanceOf(b));
+    print("\n");
 
   syntax Stmt ::= "test.operatorSend" "(" AExp "," AExp "," AExp "," Data "," Data ")" [macro]
   rule test.operatorSend(From, To, Value, Data, OperatorData) =>
