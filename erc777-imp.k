@@ -195,7 +195,7 @@ module ERC777-IMP
   rule <k> makeRevertAsPrintTrue  => . ...</k> <revertAsPrint> _ => true </revertAsPrint>
   rule <k> makeRevertAsPrintFalse => . ...</k> <revertAsPrint> _ => false </revertAsPrint>
   rule <k> revert => false ...</k>
-       <revertAsPrint> true </revertAsPrint> <atomic> _ => .K </atomic>
+       <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
 
 /* The next definitions have nothing to do with the IMP semantics.
