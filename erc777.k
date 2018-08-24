@@ -146,6 +146,7 @@ module ERC777
   rule <k> operatorSend ( From     , To , Value , Data , OperatorData )
         => operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
        <caller> Operator </caller>
+       requires From ==Int 0
 
   rule operatorSend ( From , To , Value , Data , OperatorData )
        => #operatorSendAux ( From , To , Value , Data , OperatorData , #getBalance(From), #getBalance(To) )
