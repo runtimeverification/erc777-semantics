@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when caller, From and To are distinct.
+// All conditions are met, so it is expected to pass.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 5, 23, "", "");  // transfer 23 from 7 to 5

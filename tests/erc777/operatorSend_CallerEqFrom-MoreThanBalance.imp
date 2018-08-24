@@ -1,0 +1,6 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when From = caller
+// and Value > BalanceFrom.
+
+test.operatorSend(caller, 4, 71, "", "")  // balance of caller is 70

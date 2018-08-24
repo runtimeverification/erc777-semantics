@@ -362,23 +362,33 @@ makeRevertAsPrintTrue;
 
   syntax Stmt ::= "test.operatorSend" "(" AExp "," AExp "," AExp "," Data "," Data ")" [macro]
   rule test.operatorSend(From, To, Value, Data, OperatorData) =>
+    a = From;
+    b = To;
+    v = Value;
     print(#getCaller);
-    print(" : operatorSend(");
-    print(From);
-    print(", ");
-    print(To);
-    print(", ");
-    print(Value);
-    print(", ");
-    print("\"");
+    print(" is sending ");
+    print(v);
+    print(" from ");
+    print(a);
+    print(" to ");
+    print(b);
+    print(" (data:\"");
     print(Data);
-    print("\"");
-    print(", ");
-    print("\"");
+    print("\"), ");
+    print(" (operatorData:\"");
     print(OperatorData);
-    print("\"");
-    println(")");
-    operatorSend(From, To, Value, Data, OperatorData);
+    print("\")\n");
+    operatorSend(a, b, v, Data, OperatorData);
+    print("Balance of ");
+    print(a);
+    print(" is ");
+    print(balanceOf(a));
+    print("\n");
+    print("Balance of ");
+    print(b);
+    print(" is ");
+    print(balanceOf(b));
+    print("\n");
 
   syntax Stmt ::= "test.burn" "(" AExp ")" [macro]
   rule test.burn(Amount) =>

@@ -1,0 +1,6 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when From = To = caller.
+// Send entire balance to yourself.
+
+test.operatorSend(caller, caller, 70, "", "");  // send entire balance

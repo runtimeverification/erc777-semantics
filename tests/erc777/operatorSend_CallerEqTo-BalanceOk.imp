@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when To = caller.
+// All conditions are met, so it is expected to pass.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 9, 23, "", "");  // send 23 from 7 to 9

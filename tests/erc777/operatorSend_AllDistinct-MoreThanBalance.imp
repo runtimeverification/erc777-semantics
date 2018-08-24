@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when caller, From and To are distinct.
+// Throw: send more than Balance
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 5, 71, "", "");  // transfer entire allowance

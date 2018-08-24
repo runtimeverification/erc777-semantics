@@ -1,0 +1,10 @@
+test.preamble();
+
+// Exploratory testing of operatorSend(From,To,Value, "", "").
+// All conditions are met, so it is expected to pass.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 5, 20, "", "");
+test.operatorSend(7, 6, 20, "", "");
+test.operatorSend(7, 7, 20, "", "");
+test.operatorSend(7, 9, 30, "", "");
