@@ -313,27 +313,31 @@ makeRevertAsPrintTrue;
 
   syntax Stmt ::= "test.isOperatorFor" "(" AExp "," AExp ")" [macro]
   rule test.isOperatorFor(Operator, Holder) =>
-    print("isOperatorFor(");
-    print(Operator);
-    print(", ");
-    print(Holder);
-    print(") => ");
-    println(isOperatorFor(Operator, Holder));
+    a = Operator;
+    b = Holder;
+    print(a);
+    if (isOperatorFor(a, b)) {
+      print(" is an operator for ");
+    } else {
+      print(" is not an operator for ");
+    }
+    println(b);
 
   syntax Stmt ::= "test.authorizeOperator" "(" AExp ")" [macro]
   rule test.authorizeOperator(Operator) =>
+    a = Operator;
     print(#getCaller);
-    print(" : authorizeOperator(");
-    print(Operator);
-    println(")");
+    print(" is authorizing ");
+    print(a);
+    println(" as an operator");
     authorizeOperator(Operator);
 
   syntax Stmt ::= "test.revokeOperator" "(" AExp ")" [macro]
   rule test.revokeOperator(Operator) =>
+    a = Operator;
     print(#getCaller);
-    print(" : revokeOperator(");
-    print(Operator);
-    println(")");
+    print(" is revoking operator ");
+    println(a);
     revokeOperator(Operator);
 
   syntax Stmt ::= "test.send" "(" AExp "," AExp "," Data ")" [macro]

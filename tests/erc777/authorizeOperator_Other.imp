@@ -1,0 +1,6 @@
+test.preamble();
+
+// Testing authorizeOperator(Operator) when Operator is neither caller itself nor default operator
+// should pass
+
+test.authorizeOperator(1);

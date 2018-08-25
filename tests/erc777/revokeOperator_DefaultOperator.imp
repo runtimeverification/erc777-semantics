@@ -1,0 +1,6 @@
+test.preamble();
+
+// Testing revokeOperator(Operator) when Operator is an default operator
+// should pass
+
+test.revokeOperator(8);
