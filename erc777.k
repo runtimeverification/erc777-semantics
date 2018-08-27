@@ -75,11 +75,11 @@ module ERC777
   rule <k> totalSupply ( ) => TotalSupply ... </k>
        <supply> TotalSupply </supply>
 
-  rule <k> balanceOf ( Holder ) => Balance ... </k>
+  rule <k> balanceOf ( Holder:Int  ) => Balance ... </k>
        <id> Holder </id>
        <balance> Balance </balance>
 
-  rule <k> isOperatorFor ( Operator , Holder )
+  rule <k> isOperatorFor ( Operator:Int , Holder:Int )
         => Operator in Operators ... </k>
        <id> Holder </id>
        <operators> Operators:Set </operators>
@@ -89,7 +89,7 @@ module ERC777
   //
 
   // Non-deterministically allow to authorize an already-authorized-operator
-  rule <k> authorizeOperator ( Operator ) => #void ... </k>
+  rule <k> authorizeOperator ( Operator:Int ) => #void ... </k>
        <caller> Holder </caller>
        <id> Holder </id>
        <operators> Operators => Operators SetItem(Operator) </operators>
@@ -105,14 +105,14 @@ module ERC777
 */
 
   // Reject to authorize itself -- TODO: too strong??
-  rule <k> authorizeOperator ( Operator ) => revert ... </k>
+  rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
        requires Holder ==Int Operator
 
   ////
 
   // Non-deterministically allow to revoke a non-authorized-operator
-  rule <k> revokeOperator ( Operator ) => #void ... </k>
+  rule <k> revokeOperator ( Operator:Int ) => #void ... </k>
        <caller> Holder </caller>
        <id> Holder </id>
        <operators> Operators => Operators -Set SetItem(Operator) </operators>
@@ -128,7 +128,7 @@ module ERC777
 */
 
   // Reject to revoke itself -- an address must be an operator for itself
-  rule <k> revokeOperator ( Operator ) => revert ... </k>
+  rule <k> revokeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
        requires Holder ==Int Operator
 
@@ -136,14 +136,14 @@ module ERC777
   // send / operatorSend
   // TODO: ERC20 compatibility
 
-  rule <k>         send (          To , Value , Data      )
+  rule <k>         send (          To:Int , Value:Int , Data      )
         => operatorSend ( Holder , To , Value , Data , "" ) ... </k>
        <caller> Holder </caller>
 
   ////
 
   // 'From == 0' implies 'From == Operator' -- TODO: what's the intuition? may be vulnerable
-  rule <k> operatorSend ( From     , To , Value , Data , OperatorData )
+  rule <k> operatorSend ( From:Int , To:Int , Value:Int , Data , OperatorData )
         => operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
        <caller> Operator </caller>
        requires From ==Int 0
@@ -152,7 +152,7 @@ module ERC777
        => #operatorSendAux ( From , To , Value , Data , OperatorData , #getBalance(From), #getBalance(To) )
 
   syntax K ::= "#operatorSendAux" "(" Address "," Address "," Number "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
-  rule <k> #operatorSendAux ( From , To , Value , Data , OperatorData , BalanceFrom, BalanceTo )
+  rule <k> #operatorSendAux ( From , To , Value , Data , OperatorData , BalanceFrom:Int, BalanceTo:Int )
         => #atomicBegin
         ~> #ensure( #and(
               isOperatorFor ( Operator , From ), #and(
@@ -242,7 +242,7 @@ module ERC777
 
   syntax BExp ::= #isMultipleOf ( AExp , AExp ) [seqstrict]
 
-  rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
+  rule #isMultipleOf ( Value:Int , Granularity:Int ) => Value /Int Granularity *Int Granularity ==Int Value
 
   //
   // burn / operatorBurn
@@ -251,11 +251,11 @@ module ERC777
   // NOTE: contract MAY prevent some/all holders from burning for any reason
   // vs Tokens MAY be burned from any holder address
 
-  rule <k>         burn(        Amount)
+  rule <k>         burn(        Amount:Int)
         => operatorBurn(Holder, Amount, "") ... </k>
        <caller> Holder </caller>
 
-  rule <k> operatorBurn(Holder, Amount, OperatorData)
+  rule <k> operatorBurn(Holder:Int, Amount:Int, OperatorData)
         => #atomicBegin
         ~> #ensure(#and(isOperatorFor(Operator, Holder),
                         #isMultipleOf(Balance -Int Amount, granularity()),
@@ -353,7 +353,7 @@ module ERC777
   // TODO: Check compatibility on/off?
   // FIXME: revert on overflow/negative input is not the part of standards
 
-  rule <k> allowance(Owner, Spender) => Allowance ...</k>
+  rule <k> allowance(Owner:Int, Spender:Int) => Allowance ...</k>
        <id> Owner </id>
        <spender> Spender </spender>
        <amount> Allowance </amount>
@@ -361,7 +361,7 @@ module ERC777
   // TODO: MUST be implemented? MAY implement?
   rule <k> decimals() => 18 </k>
 
-  rule <k> approve(Spender, Allowance) => true ...</k>
+  rule <k> approve(Spender:Int, Allowance:Int) => true ...</k>
        <caller> Owner </caller>
        <id> Owner </id>
        <spender> Spender </spender>
@@ -369,18 +369,18 @@ module ERC777
        <log> Log => Log Approval(Owner, Spender, Allowance) </log>
        requires Allowance >=Int 0
 
-  rule <k> approve(Spender, Allowance) => revert ...</k>
+  rule <k> approve(Spender:Int, Allowance:Int) => revert ...</k>
        <caller> Owner </caller>
        <id> Owner </id>
        <spender> Spender </spender>
        <amount> _ => Allowance </amount>
        requires Allowance <Int 0
 
-  rule <k> transfer(To, Value) => #transferAux(To, Value, #getBalance(From), #getBalance(To)) ...</k>
+  rule <k> transfer(To:Int, Value:Int) => #transferAux(To, Value, #getBalance(From), #getBalance(To)) ...</k>
        <caller> From </caller>
 
   syntax K ::= "#transferAux" "(" Address "," Number "," AExp "," AExp ")" [seqstrict(3,4)]
-  rule <k> #transferAux(To, Value, BalanceFrom, BalanceTo)
+  rule <k> #transferAux(To:Int, Value:Int, BalanceFrom:Int, BalanceTo:Int)
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
                         BalanceFrom >=Int Value,
@@ -393,11 +393,12 @@ module ERC777
         ~> #atomicEnd(true) ... </k>
        <caller> From </caller>
 
-  rule transferFrom(From, To, Value) => #transferFromAux(From, To, Value, #getBalance(From), #getBalance(To))
+  rule transferFrom(From:Int, To:Int, Value:Int)
+       => #transferFromAux(From, To, Value, #getBalance(From), #getBalance(To))
 
   //fixme - <operators> not used
   syntax K ::= "#transferFromAux" "(" Address "," Address "," Number "," AExp "," AExp ")" [seqstrict(4,5)]
-  rule <k> #transferFromAux(From, To, Value, BalanceFrom, BalanceTo)
+  rule <k> #transferFromAux(From, To, Value, BalanceFrom:Int, BalanceTo:Int)
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
                         BalanceFrom >=Int Value,
