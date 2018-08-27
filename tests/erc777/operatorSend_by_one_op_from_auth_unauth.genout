@@ -1,0 +1,14 @@
+7 is authorizing 1 as an operator
+Changing the caller to 6
+6 is authorizing 1 as an operator
+Changing the caller to 1
+1 is sending 10 from 6 to 3 (data:""),  (operatorData:"")
+Balance of 6 is 50
+Balance of 3 is 40
+1 is sending 10 from 7 to 3 (data:""),  (operatorData:"")
+Balance of 7 is 60
+Balance of 3 is 50
+1 is sending 10 from 8 to 3 (data:""),  (operatorData:"")
+REVERT
+Balance of 8 is 80
+Balance of 3 is 50

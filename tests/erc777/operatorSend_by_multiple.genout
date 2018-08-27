@@ -1,0 +1,14 @@
+7 is authorizing 1 as an operator
+7 is authorizing 2 as an operator
+Changing the caller to 1
+1 is sending 10 from 7 to 3 (data:""),  (operatorData:"")
+Balance of 7 is 60
+Balance of 3 is 40
+Changing the caller to 2
+2 is sending 10 from 7 to 3 (data:""),  (operatorData:"")
+Balance of 7 is 50
+Balance of 3 is 50
+Changing the caller to 8
+8 is sending 10 from 7 to 3 (data:""),  (operatorData:"")
+Balance of 7 is 40
+Balance of 3 is 60

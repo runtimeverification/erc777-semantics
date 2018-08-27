@@ -51,7 +51,6 @@ Scenarios to test, one operator:
     - authorize non-default, send, revoke same, send.
     - authorize non-default, send, send
     - (unauthorized non-default) send, authorize, send
-    - revoke default, send
     - revoke default, send, authorize same, send
 
 Scenarios to test, multiple operators:
