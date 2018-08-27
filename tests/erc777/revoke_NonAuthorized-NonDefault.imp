@@ -1,0 +1,9 @@
+test.preamble();
+
+// Testing revokeOperator(Operator) when Operator is not authorized but is a default operator.
+// A token holder MAY revoke an already revoked operator. A RevokedOperator MUST be emitted each time.
+// should pass
+
+test.isOperatorFor(1, 7);
+test.revokeOperator(1);
+test.isOperatorFor(1, 7);

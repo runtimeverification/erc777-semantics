@@ -1,6 +1,0 @@
-test.preamble();
-
-// Testing authorizeOperator(Operator) when Operator = caller
-// must revert
-
-test.authorizeOperator(7);

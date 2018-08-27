@@ -1,7 +1,0 @@
-test.preamble();
-
-// Testing revokeOperator(Operator) when Operator is not an operator
-// A token holder MAY revoke an already revoked operator. A RevokedOperator MUST be emitted each time.
-// should pass
-
-test.revokeOperator(1);

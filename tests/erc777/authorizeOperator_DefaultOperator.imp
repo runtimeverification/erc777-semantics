@@ -1,6 +1,0 @@
-test.preamble();
-
-// Testing authorizeOperator(Operator) when Operator is a default operator.
-// A token holder MAY authorize an already authorized operator. An AuthorizedOperator MUST be emitted each time.
-
-test.authorizeOperator(8);

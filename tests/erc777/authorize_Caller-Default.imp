@@ -1,0 +1,8 @@
+test.preamble();
+
+// Testing authorizeOperator(Operator) when Operator = caller, default
+// must revert
+
+test.makeCaller(8);
+test.authorizeOperator(8);
+test.isOperatorFor(8, 8);

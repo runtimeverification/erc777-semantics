@@ -317,9 +317,9 @@ makeRevertAsPrintTrue;
     b = Holder;
     print(a);
     if (isOperatorFor(a, b)) {
-      print(" is an operator for ");
+      print(" is operator for ");
     } else {
-      print(" is not an operator for ");
+      print(" is not operator for ");
     }
     println(b);
 

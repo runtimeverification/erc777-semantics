@@ -1,0 +1,11 @@
+test.preamble();
+
+// Testing revokeOperator(Operator) when Operator is not an operator
+// A token holder MAY revoke an already revoked operator. A RevokedOperator MUST be emitted each time.
+// should pass
+
+test.isOperatorFor(8, 7);
+test.revokeOperator(8);
+test.isOperatorFor(8, 7);
+test.revokeOperator(8);
+test.isOperatorFor(8, 7);

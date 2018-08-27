@@ -1,0 +1,10 @@
+test.preamble();
+
+// Testing authorizeOperator(Operator) when Operator is a previously revoked default operator.
+// A token holder MUST be allowed to re-authorize a previously revoked default operator.
+
+test.isOperatorFor(8, 7);
+test.revokeOperator(8);
+test.isOperatorFor(8, 7);
+test.authorizeOperator(8);
+test.isOperatorFor(8, 7);

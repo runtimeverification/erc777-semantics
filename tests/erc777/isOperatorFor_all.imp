@@ -1,0 +1,26 @@
+test.preamble();
+
+// Testing isOperatorFor(), all possible scenarios.
+//State:
+//    - 2 token holders - 6 and 7
+//    - 2 default operators: 8 and 9. Both authorized for 6, just 9 authorized for 7.
+//    - 2 regular operators: 1 and 2. Both authorized for 6, just 2 authorized for 7.
+//Test:
+//    - isOperatorFor({1,2,8,9}, {6,7})
+
+test.makeCaller(6);
+test.authorizeOperator(1);
+test.authorizeOperator(2);
+
+test.makeCaller(7);
+test.revokeOperator(8);
+test.authorizeOperator(2);
+
+test.isOperatorFor(1,6);
+test.isOperatorFor(2,6);
+test.isOperatorFor(8,6);
+test.isOperatorFor(9,6);
+test.isOperatorFor(1,7);
+test.isOperatorFor(2,7);
+test.isOperatorFor(8,7);
+test.isOperatorFor(9,7);
