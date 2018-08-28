@@ -28,6 +28,11 @@ module ERC777-SYNTAX
                 | operatorSend ( AExp , AExp , AExp , Data , Data ) [strict]
                 | burn ( AExp )                                     [strict]
                 | operatorBurn ( AExp , AExp , Data )               [strict]
+  // Minting: ERC777 does not define specific functions to mint tokens. Instead,
+  // it specifies several rules that MUST be respected when minting tokens.
+  // The definition of `mint` below is a minimal example of minting function
+  // that conforms to those rules.
+                | mint ( AExp , AExp , Data , Data )                [strict]
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
                  | Minted ( Address , Address , Number , Data , Data )
