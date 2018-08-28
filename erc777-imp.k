@@ -271,6 +271,10 @@ makeRevertAsPrintTrue;
     print("\n");
     makeCaller(caller);
 
+  syntax Stmt ::= "test.setGranularity" "(" AExp ")" [strict]
+  rule <k> test.setGranularity(G)  => print("granularity: ") ~> println(G) ... </k>
+       <granularityC> _ => G </granularityC>
+
   syntax Stmt ::= "test.name" "(" ")" [macro]
   rule test.name() =>
     print("name() => ");
@@ -395,26 +399,55 @@ makeRevertAsPrintTrue;
     print("\n");
 
   syntax Stmt ::= "test.burn" "(" AExp ")" [macro]
-  rule test.burn(Amount) =>
+  rule test.burn(Value) =>
+    v = Value;
     print(#getCaller);
-    print(" : burn(");
-    print(Amount);
-    println(")");
-    burn(Amount);
+    print(" is burning ");
+    println(v);
+    burn(v);
+    print("Balance of ");
+    print(#getCaller);
+    print(" is ");
+    println(balanceOf(#getCaller));
 
   syntax Stmt ::= "test.operatorBurn" "(" AExp "," AExp "," Data ")" [macro]
-  rule test.operatorBurn(Holder, Amount, OperatorData) =>
+  rule test.operatorBurn(From, Value, OperatorData) =>
+    a = From;
+    v = Value;
     print(#getCaller);
-    print(" : operatorBurn(");
-    print(Holder);
-    print(", ");
-    print(Amount);
-    print(", ");
-    print("\"");
+    print(" is burning ");
+    print(v);
+    print(" of ");
+    print(a);
+    print(" (operatorData:\"");
     print(OperatorData);
-    print("\"");
-    println(")");
-    operatorBurn(Holder, Amount, OperatorData);
+    print("\")\n");
+    operatorBurn(a, v, OperatorData);
+    print("Balance of ");
+    print(a);
+    print(" is ");
+    println(balanceOf(a));
+
+  syntax Stmt ::= "test.mint" "(" AExp "," AExp "," Data "," Data ")" [macro]
+  rule test.mint(To, Value, Data, OperatorData) =>
+    b = To;
+    v = Value;
+    print(#getCaller);
+    print(" is minting ");
+    print(v);
+    print(" for ");
+    print(b);
+    print(" (data:\"");
+    print(Data);
+    print("\"), ");
+    print(" (operatorData:\"");
+    print(OperatorData);
+    print("\")\n");
+    mint(b, v, Data, OperatorData);
+    print("Balance of ");
+    print(b);
+    print(" is ");
+    println(balanceOf(b));
 
   syntax Stmt ::= "test.allowance" "(" AExp "," AExp ")"   [macro]
   rule test.allowance(Owner, Spender) =>

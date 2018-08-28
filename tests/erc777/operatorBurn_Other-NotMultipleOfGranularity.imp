@@ -1,0 +1,6 @@
+test.preamble();
+test.setGranularity(10);
+
+// Testing operatorBurn(From, Value, OperatorData) when From =/= caller and Value is not multiple of granularity().
+test.makeCaller(8);
+test.operatorBurn(7, 23, "");

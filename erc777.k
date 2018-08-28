@@ -254,7 +254,7 @@ module ERC777
   rule <k> operatorBurn(Holder:Int, Amount:Int, OperatorData)
         => #atomicBegin
         ~> #ensure(#and(isOperatorFor(Operator, Holder),
-                        #isMultipleOf(Balance -Int Amount, granularity()),
+                        #isMultipleOf(Amount, granularity()),
                         Amount >=Int 0,
                         Balance >=Int Amount,
                         Holder =/=Int 0))
@@ -309,7 +309,7 @@ module ERC777
         => #atomicBegin
         ~> #ensure(#and(Amount >=Int 0,
                         Balance +Int Amount <=Int #MAXVALUE,
-                        #isMultipleOf(Balance +Int Amount, granularity()),
+                        #isMultipleOf(Amount, granularity()),
                         Holder =/=Int 0))
         ~> #mint(Holder, Amount)
         ~> #callRecipient(Operator, 0, Holder, Amount, Data,  OperatorData, false)
@@ -354,7 +354,7 @@ module ERC777
   //
   // ERC20 compatibility
   // TODO: Check compatibility on/off?
-  // FIXME: revert on overflow/negative input is not the part of standards
+  //
 
   rule <k> allowance(Owner:Int, Spender:Int) => Allowance ...</k>
        <id> Owner </id>
@@ -387,6 +387,7 @@ module ERC777
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
                         BalanceFrom >=Int Value,
+                        #isMultipleOf(Value, granularity()),
                         #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE)))
         ~> #callSender(From, From, To, Value, "", "")
         ~> #transfer(From, To, Value)
@@ -405,6 +406,7 @@ module ERC777
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
                         BalanceFrom >=Int Value,
+                        #isMultipleOf(Value, granularity()),
                         #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE),
                         Allowed >=Int Value))
         ~> #callSender(Operator, From, To, Value, "", "")

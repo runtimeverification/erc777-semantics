@@ -1,0 +1,6 @@
+test.preamble();
+test.setGranularity(10)
+
+// Testing send(To, Value, "") when To != caller and Value > 0.
+
+test.send(4, 23, "");
