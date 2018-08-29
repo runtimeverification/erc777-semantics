@@ -1,0 +1,8 @@
+test.preamble();
+
+// operatorSend from 0x0 - must revert.
+// operatorSend to 0x0  - must revert.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(0, 1, 0, "", "");  // transfer 0 from 0 to 1
+test.operatorSend(1, 0, 1, "", "");  // transfer 1 from 1 to 0

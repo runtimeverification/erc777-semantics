@@ -78,11 +78,19 @@ module ERC777
   rule <k> balanceOf ( Holder:Int  ) => Balance ... </k>
        <id> Holder </id>
        <balance> Balance </balance>
+    requires Holder =/=Int 0
+
+  //Required for send/operatorSend revert cases.
+  rule balanceOf(0) => 0
 
   rule <k> isOperatorFor ( Operator:Int , Holder:Int )
         => Operator in Operators ... </k>
        <id> Holder </id>
        <operators> Operators:Set </operators>
+    requires Holder =/=Int 0
+
+  //aux case for operatorSend
+  rule isOperatorFor(_, 0) => false
 
   //
   // authorizeOperator / revokeOperator
@@ -94,7 +102,7 @@ module ERC777
        <id> Holder </id>
        <operators> Operators => Operators SetItem(Operator) </operators>
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
+       requires Holder =/=Int Operator andBool Operator =/=Int 0
 
 /* FIXME: temporarily disable for quick testing
   // Non-deterministically reject to authorize an already-authorized-operator
@@ -107,7 +115,7 @@ module ERC777
   // Reject to authorize itself -- TODO: too strong??
   rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
-       requires Holder ==Int Operator
+       requires Holder ==Int Operator orBool Operator ==Int 0
 
   ////
 
@@ -117,7 +125,7 @@ module ERC777
        <id> Holder </id>
        <operators> Operators => Operators -Set SetItem(Operator) </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
+       requires Holder =/=Int Operator andBool Operator =/=Int 0
 
 /* FIXME: temporarily disable for quick testing
   // Non-deterministically reject to revoke a non-authorized-operator
@@ -130,7 +138,7 @@ module ERC777
   // Reject to revoke itself -- an address must be an operator for itself
   rule <k> revokeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
-       requires Holder ==Int Operator
+       requires Holder ==Int Operator orBool Operator ==Int 0
 
   //
   // send / operatorSend
@@ -140,24 +148,17 @@ module ERC777
         => operatorSend ( Holder , To     , Value     , Data , "" ) ... </k>
        <caller> Holder </caller>
 
-  ////
-
-  // 'From == 0' implies 'From == Operator' -- TODO: what's the intuition? may be vulnerable
-  rule <k> operatorSend ( From:Int , To:Int , Value:Int , Data , OperatorData )
-        => operatorSend ( Operator , To     , Value     , Data , OperatorData ) ... </k>
-       <caller> Operator </caller>
-       requires From ==Int 0
-
   rule operatorSend ( From , To , Value , Data , OperatorData )
-       => #operatorSendAux ( From , To , Value , Data , OperatorData , #getBalance(From), #getBalance(To) )
+       => #operatorSendAux ( From , To , Value , Data , OperatorData , balanceOf(From), balanceOf(To) )
 
   syntax K ::= "#operatorSendAux" "(" Address "," Address "," Number "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
 
   rule <k> #operatorSendAux ( From , To , Value , Data , OperatorData , BalanceFrom:Int, BalanceTo:Int )
         => #atomicBegin
         ~> #ensure( #and(
-              isOperatorFor ( Operator , From ),
+              From =/=Int 0,
               To =/=Int 0,
+              isOperatorFor ( Operator , From ),
               Value >=Int 0,
               BalanceFrom >=Int Value,
               #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE),
@@ -169,7 +170,6 @@ module ERC777
         ~> #logERC20( Transfer(From , To , Value) )
         ~> #atomicEnd(#void) ... </k>
        <caller> Operator </caller>
-       requires From =/=Int 0
 
   syntax Stmt ::= #callSender ( Address , // operator
                                 Address , // from
@@ -379,7 +379,7 @@ module ERC777
        <amount> _ => Allowance </amount>
        requires Allowance <Int 0
 
-  rule <k> transfer(To:Int, Value:Int) => #transferAux(To, Value, #getBalance(From), #getBalance(To)) ...</k>
+  rule <k> transfer(To:Int, Value:Int) => #transferAux(To, Value, balanceOf(From), balanceOf(To)) ...</k>
        <caller> From </caller>
 
   syntax K ::= "#transferAux" "(" Address "," Number "," AExp "," AExp ")" [seqstrict(3,4)]
@@ -398,7 +398,7 @@ module ERC777
        <caller> From </caller>
 
   rule transferFrom(From:Int, To:Int, Value:Int)
-       => #transferFromAux(From, To, Value, #getBalance(From), #getBalance(To))
+       => #transferFromAux(From, To, Value, balanceOf(From), balanceOf(To))
 
   //fixme - <operators> not used
   syntax K ::= "#transferFromAux" "(" Address "," Address "," Number "," AExp "," AExp ")" [seqstrict(4,5)]
@@ -477,6 +477,7 @@ module ERC777
                 | "#and" "(" BExp "," BExp "," BExp "," BExp ")"                   [strict]
                 | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp ")"          [strict]
                 | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp "," BExp ")" [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp "," BExp "," BExp ")" [strict]
                 | "#or"  "(" BExp "," BExp ")"                                     [strict]
 
   rule #and ( A:Bool , B:Bool )                                     => A andBool B
@@ -484,6 +485,8 @@ module ERC777
   rule #and ( A:Bool , B:Bool , C:Bool , D:Bool )                   => A andBool B andBool C andBool D
   rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool )          => A andBool B andBool C andBool D andBool E
   rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool , F:Bool ) => A andBool B andBool C andBool D andBool E andBool F
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool , F:Bool , G:Bool )
+       => A andBool B andBool C andBool D andBool E andBool F andBool G
   rule #or  ( A:Bool , B:Bool )                                     => A orBool B
 
   syntax Stmt ::= "#mayRevert"
@@ -511,12 +514,6 @@ module ERC777
 
   rule <k> #atomicEnd(OUT:K) => OUT ... </k>
        <atomic> _ => .K </atomic>
-
-  //Required instead of direct cell matching because might be called multiple times in a rule for same address.
-  syntax AExp ::= "#getBalance" "(" Int ")"
-  rule <k> #getBalance(Addr) => Bal ...</k>
-       <id> Addr </id>
-       <balance> Bal </balance>
 
   syntax AExp ::= "#getCaller"
   rule <k> #getCaller => Caller ... </k>

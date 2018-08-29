@@ -60,4 +60,16 @@ Scenarios to test, multiple operators:
     - one un-authorized and one authorized, send from each in order
     - authorize same operator by 2 accounts. Send from these 2 and from a 3-rd unauthorized.
 
-Total: 21 tests.
+operatorSend involving 0x0
+================================
+    - send to 0x0 - must revert
+
+    - operatorSend from 0x0 - must revert.
+    - operatorSend to 0x0  - must revert.
+        - both in 1 test
+
+    - authorize and revoke 0x0 - both should revert.
+
+Reason: 0x0 is not allowed in from or to address of send/operatorSend operation.
+
+Total: 23 tests.
