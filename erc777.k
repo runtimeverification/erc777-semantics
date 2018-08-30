@@ -104,14 +104,6 @@ module ERC777
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator andBool Operator =/=Int 0
 
-/* FIXME: temporarily disable for quick testing
-  // Non-deterministically reject to authorize an already-authorized-operator
-  rule <k> Holder : authorizeOperator ( Operator ) => revert ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
-       requires Holder =/=Int Operator
-        andBool Operator in Operators
-*/
-
   // Reject to authorize itself -- TODO: too strong??
   rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
@@ -126,14 +118,6 @@ module ERC777
        <operators> Operators => Operators -Set SetItem(Operator) </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator andBool Operator =/=Int 0
-
-/* FIXME: temporarily disable for quick testing
-  // Non-deterministically reject to revoke a non-authorized-operator
-  rule <k> Holder : revokeOperator ( Operator ) => revert ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
-       requires Holder =/=Int Operator
-        andBool Operator in Operators
-*/
 
   // Reject to revoke itself -- an address must be an operator for itself
   rule <k> revokeOperator ( Operator:Int ) => revert ... </k>
