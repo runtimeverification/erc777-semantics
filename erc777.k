@@ -19,14 +19,12 @@ module ERC777
          <account multiplicity="*">
            <id> 0:Address </id>
            <balance> 0:Number </balance>
-           <isContract> .K </isContract>
-           <hookFail> false </hookFail>
 
            //ERC777 operators
-           //fixme something is missing here - how a set can hold "holder -> 2^operator"?
-           <operators> .Set </operators> // holder -> 2^operator
-           <senderHook> 0:Address </senderHook> // holder -> senderHook
-           <receiverHook> 0:Address </receiverHook> // holder -> receiverHook
+           <operators> .Set </operators> // Set of approved operators for this account.
+           <senderHook> 0:Address </senderHook> // Address of sender hook, or 0 if not registered.
+           <receiverHook> 0:Address </receiverHook> // Address of receiver hook, or 0 if not registered.
+           <isContract> .K </isContract>
            //ERC20 allowances. Contains one entry for any known address. For ERC777 operators see <operators>
            <allowances>
              <allow multiplicity="*">
@@ -169,10 +167,10 @@ module ERC777
        <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
 
+  // no hook registered
   rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
        <id> From </id>
-       <senderHook> Hook </senderHook>
-       requires Hook ==Int 0
+       <senderHook> 0 </senderHook>
 
   syntax Stmt ::= #callRecipient ( Address , // operator
                                    Address , // from
@@ -314,26 +312,6 @@ module ERC777
     // requires Balance +Int Amount <=Int #MAXVALUE
     // already checked in mint
 
-  // Hooks
-  // TODO:
-  // * check if registered via ERC820?
-  // * check if hook call can alter token contract state
-
-  rule <k> Hook . tokensToSend ( _ , _ , _ , _ , _ , _ ) => . ... </k>
-       <id> Hook </id>
-       <hookFail> false </hookFail>
-
-  rule <k> Hook . tokensToSend ( _ , _ , _ , _ , _ , _ ) => revert ... </k>
-       <id> Hook </id>
-       <hookFail> true </hookFail>
-
-  rule <k> Hook . tokensReceived ( _ , _ , _ , _ , _ , _ ) => . ... </k>
-       <id> Hook </id>
-       <hookFail> false </hookFail>
-
-  rule <k> Hook . tokensReceived ( _ , _ , _ , _ , _ , _ ) => revert ... </k>
-       <id> Hook </id>
-       <hookFail> true </hookFail>
 
   //
   // ERC20 compatibility

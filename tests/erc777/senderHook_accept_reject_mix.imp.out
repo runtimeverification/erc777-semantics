@@ -1,0 +1,17 @@
+Registering holder 10 with hook 1
+Registering holder 7 with hook 7
+Changing the caller to 9
+9 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 9, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+Balance of 10 is 90
+Balance of 3 is 40
+9 is sending 10 from 7 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 7, Operator = 9, From = 7, To = 3, Value = 10, Data = , OperatorData = 
+Reverting...
+REVERT
+Balance of 7 is 70
+Balance of 3 is 40
+9 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 9, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+Balance of 10 is 80
+Balance of 3 is 50

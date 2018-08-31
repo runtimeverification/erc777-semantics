@@ -13,6 +13,9 @@ ERC777-K interpretation:
     - also cannot model this in ERC777-K because we only have one ERC777 token in ths semantics.
     - tokensToSend hook is associated with the token holder address.
 
+When hook not implemented:
+    - There is no particular action to take if tokensToSend is not implemented.
+
 Test variables
 =================================
 
@@ -41,22 +44,27 @@ On all tests, 3 operations:
     - send() to other address,  operatorSend() through default operator, operatorSend() from caller.
     - the hook prints some message with details about its parameters.
 
+Already tested by other tests:
+- regular holder address with no hook, sending sufficient balance
+- regular holder address with no hook, sending more than balance
+- regular holder address with no hook, sending overflow
+- regular holder address with no hook, sending through unauthorized operator
+
 Tests:
-1. holder address with no hook, sending sufficient balance
-2. holder address with no hook, sending insufficient balance
-3. holder address with no hook, sending overflow
-4. holder address with no hook, sending through unauthorized operator
-5-8. contract holder address with no hook, same as above
-9-12: sender hook, always accepting
-13-16: sender hook, always rejecting
+1. contract holder address with no hook, sending sufficient balance
+2. contract holder address with no hook, sending more than balance
+3. contract holder address with no hook, sending overflow
+4. contract holder address with no hook, sending through unauthorized operator
+5-8: sender hook, always accepting
+9-12: sender hook, always rejecting
 
 Multiple send operations:
 ----------------------------------
-    17. One holder address with accepting hook. Perform operatorSend() from 2 operators.
-    18. 2 Holder addresses, one accepting another rejecting. Send by one operator
+    13. One holder address with accepting hook. Perform operatorSend() from 2 operators.
+    14. 2 Holder addresses, one accepting another rejecting. Send by one operator
         from 1st, then 2nd, then 1st.
-    19. One holder and 2 destinations. Holder and one destination has accepting hook, the other destination has
+    15. One holder and 2 destinations. Holder and one destination has accepting hook, the other destination has
         rejecting hook. Send to both destinations through operatorSend, through a default operator.
         Both operations should go through.
 
-Total: 19 tests.
+Total: 15 tests.

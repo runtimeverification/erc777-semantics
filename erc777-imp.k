@@ -55,7 +55,6 @@ module ERC777-IMP-SYNTAX
                                 "," AExp //sender hook
                                 "," AExp //receiver hook
                                 "," BExp //is contract
-                                "," BExp //hookFail
                                 ")"     [strict]
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
@@ -64,6 +63,14 @@ module ERC777-IMP-SYNTAX
                 | "makeERC20Compatible" "(" Bool ")"
                 | "makeRevertAsPrintTrue"
                 | "makeRevertAsPrintFalse"
+                | "makeAcceptingHookHost" "(" Address ")" //register this address as a host of accepting hook.
+                                                          //can be used by multiple token holders.
+                | "registerTokensToSendHook" "(" Address //token holder
+                                             "," Address //Hook address (Host)
+                                             ")"
+                | "registerTokensReceivedHook" "(" Address //token holder
+                                               "," Address //Hook address (Host)
+                                               ")"
 
 endmodule
 
@@ -79,7 +86,9 @@ module ERC777-IMP
                   <state> .Map </state>
                   <input color="magenta" stream="stdin"> .List </input>
                   <output color="Orchid" stream="stdout"> .List </output>
-                  <revertAsPrint> false </revertAsPrint> // to print REVERT
+                  <revertAsPrint> false </revertAsPrint>  // to print REVERT
+                  <acceptingHooks> .Set </acceptingHooks> // Set of addresses that implement an accepting hook.
+                                                          // all other addresses are reverting.
                 </IMP>
 
   syntax KResult ::= Int | Bool | String | Set | Void
@@ -142,6 +151,93 @@ module ERC777-IMP
   rule _:Void; => .
   rule S:Stmt; => S
 
+/* Hook implementations  */
+  rule <k> Hook:Int . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) =>
+            print("tokensToSend: Hook address = ");
+            print(Hook);
+            print(", Operator = ");
+            print(Operator);
+            print(", From = ");
+            print(From);
+            print(", To = ");
+            print(To);
+            print(", Value = ");
+            print(Value);
+            print(", Data = ");
+            print(Data);
+            print(", OperatorData = ");
+            print(OperatorData);
+            print("\n");
+            ...
+       </k>
+       <acceptingHooks>... SetItem(Hook) ...</acceptingHooks>
+
+  rule <k> Hook:Int . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) =>
+            print("tokensToSend: Hook address = ");
+            print(Hook);
+            print(", Operator = ");
+            print(Operator);
+            print(", From = ");
+            print(From);
+            print(", To = ");
+            print(To);
+            print(", Value = ");
+            print(Value);
+            print(", Data = ");
+            print(Data);
+            print(", OperatorData = ");
+            print(OperatorData);
+            print("\n");
+            print("Reverting...\n");
+            ~> revert
+            ...
+       </k>
+       <acceptingHooks> AcceptingHooks </acceptingHooks>
+     requires notBool Hook in AcceptingHooks
+
+  rule <k> Hook:Int . tokensReceived (Operator , From , To , Value , Data , OperatorData ) =>
+            print("tokensReceived: Hook address = ");
+            print(Hook);
+            print(", Operator = ");
+            print(Operator);
+            print(", From = ");
+            print(From);
+            print(", To = ");
+            print(To);
+            print(", Value = ");
+            print(Value);
+            print(", Data = ");
+            print(Data);
+            print(", OperatorData = ");
+            print(OperatorData);
+            print("\n");
+            ...
+       </k>
+       <acceptingHooks>... SetItem(Hook) ...</acceptingHooks>
+
+  rule <k> Hook:Int . tokensReceived (Operator , From , To , Value , Data , OperatorData ) =>
+            print("tokensReceived: Hook address = ");
+            print(Hook);
+            print(", Operator = ");
+            print(Operator);
+            print(", From = ");
+            print(From);
+            print(", To = ");
+            print(To);
+            print(", Value = ");
+            print(Value);
+            print(", Data = ");
+            print(Data);
+            print(", OperatorData = ");
+            print(OperatorData);
+            print("\n");
+            print("Reverting...\n");
+            ~> revert
+            ...
+       </k>
+       <acceptingHooks> AcceptingHooks </acceptingHooks>
+     requires notBool Hook in AcceptingHooks
+
 /* Next we define the special "make" constructs which create and modify the
    ERC20-K state.  One should be careful with these constructs, because any
    mistake can make ERC20-K behave unexpectedly.  Such operations should not
@@ -150,13 +246,12 @@ module ERC777-IMP
   rule <k> makeDefaultOperator(DOP:Int) => . ...</k>
        <defaultOperatorsC>... .Set => SetItem(DOP) ...</defaultOperatorsC>
 
-  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT, HOOKFAIL) => . ...</k>
+  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT) => . ...</k>
        <accounts> (.Bag =>
          <account>
            <id> A </id>
            <balance> V </balance>
            <isContract> ISCONTRACT </isContract>
-           <hookFail> HOOKFAIL </hookFail>
            <operators> SetItem(A) DefOps </operators>
            <senderHook> SH </senderHook>
            <receiverHook> RH </receiverHook>
@@ -195,6 +290,18 @@ module ERC777-IMP
 
   rule <k> makeRevertAsPrintTrue  => . ...</k> <revertAsPrint> _ => true </revertAsPrint>
   rule <k> makeRevertAsPrintFalse => . ...</k> <revertAsPrint> _ => false </revertAsPrint>
+
+  rule <k> makeAcceptingHookHost(Host) => . ...</k>
+       <acceptingHooks>... .Set => SetItem(Host) ...</acceptingHooks>
+
+  rule <k> registerTokensToSendHook(Holder, Host) => . ...</k>
+       <id> Holder </id>
+       <senderHook> _ => Host </senderHook>
+
+  rule <k> registerTokensReceivedHook(Holder, Host) => . ...</k>
+       <id> Holder </id>
+       <receiverHook> _ => Host </receiverHook>
+
   rule <k> revert => #void ...</k>
        <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
@@ -230,15 +337,13 @@ module ERC777-IMP
 
   syntax Stmt ::= "test.preamble" "(" ")"  [macro]
   rule test.preamble() =>
-int accounts, x, y, a, b, c, caller, v, senderHook, receiverHook;
+int accounts, x, y, a, b, c, caller, v;
 accounts = 10;
-senderHook = 4;
-receiverHook = 5;
 x = accounts;
-makeDefaultOperator(8)
+makeDefaultOperator(8) //accounts 8 and 9 are default operators
 makeDefaultOperator(9)
 while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
-  makeAccount(x, x*10, senderHook, receiverHook, true, false);
+  makeAccount(x, x*10, 0, 0, 9 <= x); //accounts 9 and 10 are contracts
   y = accounts;
   while(!(y <= 0)) {
     makeAllowance(x,y);
@@ -249,6 +354,8 @@ while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
 makeNameAndSymbol("RVToken", "RVT")
 caller = 7;
 makeCaller(caller);
+makeAcceptingHookHost(1); //accounts 1 and 2 are hosts of accepting hooks. All the rest - rejecting hooks.
+makeAcceptingHookHost(2);
 makeRevertAsPrintTrue;
 // ---END-OF-PREAMBLE---
 
@@ -270,6 +377,24 @@ makeRevertAsPrintTrue;
     print(caller);
     print("\n");
     makeCaller(caller);
+
+  syntax Stmt ::= "test.registerTokensToSendHook" "(" AExp "," AExp ")"   [macro]
+  rule test.registerTokensToSendHook(Holder, Hook) =>
+    print("Registering holder ");
+    print(Holder);
+    print(" with hook ");
+    print(Hook);
+    print("\n");
+    registerTokensToSendHook(Holder, Hook);
+
+  syntax Stmt ::= "test.registerTokensReceivedHook" "(" AExp "," AExp ")"   [macro]
+  rule test.registerTokensReceivedHook(Receiver, Hook) =>
+    print("Registering receiver ");
+    print(Receiver);
+    print(" with hook ");
+    print(Hook);
+    print("\n");
+    registerTokensReceivedHook(Receiver, Hook);
 
   syntax Stmt ::= "test.setGranularity" "(" AExp ")" [strict]
   rule <k> test.setGranularity(G)  => print("granularity: ") ~> println(G) ... </k>

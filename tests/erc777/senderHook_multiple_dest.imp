@@ -1,0 +1,13 @@
+test.preamble();
+
+// One holder and 2 destinations. Holder and one destination has accepting hook, the other destination has
+// rejecting hook. Send to both destinations through operatorSend, through a default operator.
+// Both operations should go through.
+
+test.registerTokensToSendHook(10, 1); //10 has accepting hook
+test.registerTokensToSendHook(3, 1);  //3  has accepting hook
+test.registerTokensToSendHook(4, 7);  //4  has reverting hook
+test.makeCaller(9);
+
+test.operatorSend(10, 3, 10, "", ""); //ok
+test.operatorSend(10, 4, 10, "", ""); //ok

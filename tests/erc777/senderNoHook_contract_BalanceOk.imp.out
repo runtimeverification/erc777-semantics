@@ -1,0 +1,11 @@
+Changing the caller to 10
+10 is sending 10 to 3 (data:)
+Balance of 10 is 90
+Balance of 3 is 40
+10 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+Balance of 10 is 80
+Balance of 3 is 50
+Changing the caller to 8
+8 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+Balance of 10 is 70
+Balance of 3 is 60
