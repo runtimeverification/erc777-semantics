@@ -1,13 +1,13 @@
-Changing the caller to 9
-9 is sending 20 from 7 to 5 (data:""),  (operatorData:"")
+Changing the caller to 8
+8 is sending 20 from 7 to 5 (data:""),  (operatorData:"")
 Balance of 7 is 50
 Balance of 5 is 70
-9 is sending 20 from 7 to 6 (data:""),  (operatorData:"")
+8 is sending 20 from 7 to 6 (data:""),  (operatorData:"")
 Balance of 7 is 30
 Balance of 6 is 80
-9 is sending 20 from 7 to 7 (data:""),  (operatorData:"")
+8 is sending 20 from 7 to 7 (data:""),  (operatorData:"")
 Balance of 7 is 30
 Balance of 7 is 30
-9 is sending 30 from 7 to 9 (data:""),  (operatorData:"")
+8 is sending 30 from 7 to 8 (data:""),  (operatorData:"")
 Balance of 7 is 0
-Balance of 9 is 120
+Balance of 8 is 110

@@ -4,10 +4,14 @@ Changing the caller to 10
 Changing the caller to 7
 7 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
 tokensToSend: Hook address = 1, Operator = 7, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensToSend: sender balance: 100
+tokensToSend: receiver balance: 30
 Balance of 10 is 90
 Balance of 3 is 40
 Changing the caller to 8
 8 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
 tokensToSend: Hook address = 1, Operator = 8, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensToSend: sender balance: 90
+tokensToSend: receiver balance: 40
 Balance of 10 is 80
 Balance of 3 is 50

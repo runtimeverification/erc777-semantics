@@ -167,6 +167,10 @@ module ERC777-IMP
             print(Data);
             print(", OperatorData = ");
             print(OperatorData);
+            print("\ntokensToSend: sender balance: ");
+            print(balanceOf(From));
+            print("\ntokensToSend: receiver balance: ");
+            print(balanceOf(To));
             print("\n");
             ...
        </k>
@@ -187,6 +191,10 @@ module ERC777-IMP
             print(Data);
             print(", OperatorData = ");
             print(OperatorData);
+            print("\ntokensToSend: sender balance: ");
+            print(balanceOf(From));
+            print("\ntokensToSend: receiver balance: ");
+            print(balanceOf(To));
             print("\n");
             print("Reverting...\n");
             ~> revert
@@ -210,6 +218,10 @@ module ERC777-IMP
             print(Data);
             print(", OperatorData = ");
             print(OperatorData);
+            print("\ntokensReceived: sender balance: ");
+            print(balanceOf(From));
+            print("\ntokensReceived: receiver balance: ");
+            print(balanceOf(To));
             print("\n");
             ...
        </k>
@@ -230,6 +242,10 @@ module ERC777-IMP
             print(Data);
             print(", OperatorData = ");
             print(OperatorData);
+            print("\ntokensReceived: sender balance: ");
+            print(balanceOf(From));
+            print("\ntokensReceived: receiver balance: ");
+            print(balanceOf(To));
             print("\n");
             print("Reverting...\n");
             ~> revert

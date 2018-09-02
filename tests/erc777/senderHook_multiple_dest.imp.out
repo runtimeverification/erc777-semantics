@@ -4,9 +4,13 @@ Registering holder 4 with hook 7
 Changing the caller to 9
 9 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
 tokensToSend: Hook address = 1, Operator = 9, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensToSend: sender balance: 100
+tokensToSend: receiver balance: 30
 Balance of 10 is 90
 Balance of 3 is 40
 9 is sending 10 from 10 to 4 (data:""),  (operatorData:"")
 tokensToSend: Hook address = 1, Operator = 9, From = 10, To = 4, Value = 10, Data = , OperatorData = 
+tokensToSend: sender balance: 90
+tokensToSend: receiver balance: 40
 Balance of 10 is 80
 Balance of 4 is 50
