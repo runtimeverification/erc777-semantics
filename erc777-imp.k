@@ -71,6 +71,7 @@ module ERC777-IMP-SYNTAX
                 | "registerTokensReceivedHook" "(" Address //token holder
                                                "," Address //Hook address (Host)
                                                ")"
+                | "test.setAcceptRegularNoReceiverHook" "(" Bool ")"
 
 endmodule
 
@@ -314,9 +315,12 @@ module ERC777-IMP
        <id> Holder </id>
        <senderHook> _ => Host </senderHook>
 
-  rule <k> registerTokensReceivedHook(Holder, Host) => . ...</k>
-       <id> Holder </id>
+  rule <k> registerTokensReceivedHook(Receiver, Host) => . ...</k>
+       <id> Receiver </id>
        <receiverHook> _ => Host </receiverHook>
+
+  rule <k> test.setAcceptRegularNoReceiverHook(B) => . ...</k>
+       <acceptRegularNoReceiverHook> _ => B </acceptRegularNoReceiverHook>
 
   rule <k> revert => #void ...</k>
        <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>

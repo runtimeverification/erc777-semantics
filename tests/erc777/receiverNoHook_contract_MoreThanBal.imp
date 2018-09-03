@@ -1,0 +1,11 @@
+test.preamble();
+
+// send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+// contract holder destination with no hook (account 10), sending more than balance
+
+test.makeCaller(3);
+test.send(10, 200, "");
+test.operatorSend(3, 10, 200, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorSend(3, 10, 200, "", ""); //through default operator

@@ -1,0 +1,29 @@
+test.preamble();
+
+//Common setup:
+//    - 4 holder/receiver accounts:
+//        - acc 1: accepting sender, accepting receiver
+//        - acc 2: accepting sender, rejecting receiver
+//        - acc 3: rejecting sender, accepting receiver
+//        - acc 4: rejecting sender, rejecting receiver
+//Send operation:
+//    - from 1 to 1 - accept
+//    - from 2 to 2 - 2 hooks, reject
+//    - from 3 to 3 - 1 hook, reject
+//    - from 4 to 4 - 1 hook, reject
+
+test.registerTokensToSendHook(1, 1);
+test.registerTokensReceivedHook(1, 1);
+test.registerTokensToSendHook(2, 1);
+test.registerTokensReceivedHook(2, 5);  //rejecting
+test.registerTokensToSendHook(3, 5);    //rejecting
+test.registerTokensReceivedHook(3, 1);
+test.registerTokensToSendHook(4, 5);    //rejecting
+test.registerTokensReceivedHook(4, 5);  //rejecting
+
+
+test.makeCaller(8);
+test.operatorSend(1, 1, 5, "", "");
+test.operatorSend(2, 2, 5, "", "");
+test.operatorSend(3, 3, 5, "", "");
+test.operatorSend(4, 4, 5, "", "");

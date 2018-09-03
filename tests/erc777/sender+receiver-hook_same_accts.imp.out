@@ -1,0 +1,45 @@
+Registering holder 1 with hook 1
+Registering receiver 1 with hook 1
+Registering holder 2 with hook 1
+Registering receiver 2 with hook 5
+Registering holder 3 with hook 5
+Registering receiver 3 with hook 1
+Registering holder 4 with hook 5
+Registering receiver 4 with hook 5
+Changing the caller to 8
+8 is sending 5 from 1 to 1 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 1, To = 1, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 10
+tokensToSend: receiver balance: 10
+tokensReceived: Hook address = 1, Operator = 8, From = 1, To = 1, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 10
+tokensReceived: receiver balance: 10
+Balance of 1 is 10
+Balance of 1 is 10
+8 is sending 5 from 2 to 2 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 2, To = 2, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 20
+tokensToSend: receiver balance: 20
+tokensReceived: Hook address = 5, Operator = 8, From = 2, To = 2, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 20
+tokensReceived: receiver balance: 20
+Reverting...
+REVERT
+Balance of 2 is 20
+Balance of 2 is 20
+8 is sending 5 from 3 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 5, Operator = 8, From = 3, To = 3, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 30
+tokensToSend: receiver balance: 30
+Reverting...
+REVERT
+Balance of 3 is 30
+Balance of 3 is 30
+8 is sending 5 from 4 to 4 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 5, Operator = 8, From = 4, To = 4, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 40
+tokensToSend: receiver balance: 40
+Reverting...
+REVERT
+Balance of 4 is 40
+Balance of 4 is 40

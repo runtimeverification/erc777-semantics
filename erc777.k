@@ -40,6 +40,8 @@ module ERC777
        <granularityC> 1 </granularityC>
        <defaultOperatorsC> .Set </defaultOperatorsC>
        <ERC20CompatibleC> true </ERC20CompatibleC>
+       // ERC777TokensRecipient not registered + regular address + receiving tokens: whether to accept (true) or reject
+       <acceptRegularNoReceiverHook> true </acceptRegularNoReceiverHook>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -191,11 +193,11 @@ module ERC777
        requires Hook =/=Int 0
 
   rule <k> #callRecipient ( Operator , From , To , Value , Data , OperatorData , FromERC20 )
-        => #ite ( #and ( ISCONTRACT , notBool FromERC20 ) , revert , . ) ... </k>
+        => #ite( #or(FromERC20, #and(AcceptRegular, notBool ISCONTRACT) ) , . , revert ) ... </k>
        <id> To </id>
+       <receiverHook> 0 </receiverHook>
        <isContract> ISCONTRACT </isContract>
-       <receiverHook> Hook </receiverHook>
-       requires Hook ==Int 0
+       <acceptRegularNoReceiverHook> AcceptRegular </acceptRegularNoReceiverHook>
 
   syntax Stmt ::= #transfer ( Address , Address , Number )
 

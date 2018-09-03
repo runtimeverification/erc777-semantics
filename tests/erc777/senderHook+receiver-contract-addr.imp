@@ -1,0 +1,15 @@
+test.preamble();
+
+//Setup:
+//    - sender 1 has accepting sender hook
+//    - sender 2 has rejecting sender hook
+//    - receiver is a contract address with no hooks (account 10)
+//Operations: send from both senders to the receiver.
+//    - sender hook called in both cases, both revert.
+
+test.registerTokensToSendHook(1, 1);
+test.registerTokensToSendHook(2, 5);  //rejecting
+
+test.makeCaller(8);
+test.operatorSend(1, 10, 5, "", "");
+test.operatorSend(2, 10, 5, "", "");
