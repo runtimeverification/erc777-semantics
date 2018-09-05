@@ -1,8 +1,20 @@
 test.preamble();
 
-// operatorSend from 0x0 - must revert.
+// operatorSend from 0x0 - from must be set to 0x0.
 // operatorSend to 0x0  - must revert.
 
 test.makeCaller(9);           // switch to 9
-test.operatorSend(0, 1, 0, "", "");  // transfer 0 from 0 to 1
+print("Actual sender: ");
+print(9);
+print("\nBalance of ");
+print(9);
+print(" is ");
+print(balanceOf(9));
+print("\n");
+test.operatorSend(0, 1, 1, "", "");  // transfer 1 from 9 (the caller) to 1
+print("Balance of ");
+print(9);
+print(" is ");
+print(balanceOf(9));
+print("\n");
 test.operatorSend(1, 0, 1, "", "");  // transfer 1 from 1 to 0

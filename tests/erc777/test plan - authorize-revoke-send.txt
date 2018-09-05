@@ -64,7 +64,7 @@ operatorSend involving 0x0
 ================================
     - send to 0x0 - must revert
 
-    - operatorSend from 0x0 - must revert.
+    - operatorSend from 0x0 - from must be set to 0x0.
     - operatorSend to 0x0  - must revert.
         - both in 1 test
 

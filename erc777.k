@@ -132,8 +132,13 @@ module ERC777
         => operatorSend ( Holder , To     , Value     , Data , "" ) ... </k>
        <caller> Holder </caller>
 
+  rule <k> operatorSend ( 0 => Caller , _,_,_,_ ) ... </k>
+       <caller> Caller </caller>
+    requires Caller =/=Int 0 //just for safety
+
   rule operatorSend ( From , To , Value , Data , OperatorData )
        => #operatorSendAux ( From , To , Value , Data , OperatorData , balanceOf(From), balanceOf(To) )
+    requires From =/=Int 0 //just for safety
 
   syntax K ::= "#operatorSendAux" "(" Address "," Address "," Number "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
 
