@@ -1,0 +1,13 @@
+test.preamble();
+
+// burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+// sender hook, always rejecting, burning sufficient balance
+// Hook addresses 1 and 2 are accepting.
+
+test.registerTokensToSendHook(5, 5); //rejecting hook
+test.makeCaller(5);
+test.burn(3);
+test.operatorBurn(5, 3, ""); //from caller
+
+test.makeCaller(8);
+test.operatorBurn(5, 3, ""); //through default operator

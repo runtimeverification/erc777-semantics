@@ -1,6 +1,6 @@
 test.preamble();
 
-// operatorSend from 0x0 - from must be set to 0x0.
+// operatorSend from 0x0 - from must be set to caller.
 // operatorSend to 0x0  - must revert.
 
 test.makeCaller(9);           // switch to 9

@@ -72,6 +72,7 @@ module ERC777-IMP-SYNTAX
                                                "," Address //Hook address (Host)
                                                ")"
                 | "test.setAcceptRegularNoReceiverHook" "(" Bool ")"
+                | "test.setBurnAllowed" "(" Bool ")"
 
 endmodule
 
@@ -322,6 +323,9 @@ module ERC777-IMP
   rule <k> test.setAcceptRegularNoReceiverHook(B) => . ...</k>
        <acceptRegularNoReceiverHook> _ => B </acceptRegularNoReceiverHook>
 
+  rule <k> test.setBurnAllowed(B) => print("Burning allowed: "); println(B); ...</k>
+       <burnAllowed> _ => B </burnAllowed>
+
   rule <k> revert => #void ...</k>
        <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
@@ -448,8 +452,7 @@ makeRevertAsPrintTrue;
   syntax Stmt ::= "test.totalSupply" "(" ")"   [macro]
   rule test.totalSupply() =>
     print("Total supply is ");
-    print(totalSupply());
-    print("\n");
+    println(totalSupply());
 
   syntax Stmt ::= "test.balanceOf" "(" AExp ")"     [macro]
   rule test.balanceOf(Id) =>
@@ -546,14 +549,16 @@ makeRevertAsPrintTrue;
   syntax Stmt ::= "test.burn" "(" AExp ")" [macro]
   rule test.burn(Value) =>
     v = Value;
-    print(#getCaller);
-    print(" is burning ");
-    println(v);
+    print("Burning ");
+    print(v);
+    print(" units from ");
+    println(#getCaller);
     burn(v);
     print("Balance of ");
     print(#getCaller);
     print(" is ");
     println(balanceOf(#getCaller));
+    test.totalSupply();
 
   syntax Stmt ::= "test.operatorBurn" "(" AExp "," AExp "," Data ")" [macro]
   rule test.operatorBurn(From, Value, OperatorData) =>
@@ -562,7 +567,7 @@ makeRevertAsPrintTrue;
     print(#getCaller);
     print(" is burning ");
     print(v);
-    print(" of ");
+    print(" units from ");
     print(a);
     print(" (operatorData:\"");
     print(OperatorData);
@@ -572,6 +577,7 @@ makeRevertAsPrintTrue;
     print(a);
     print(" is ");
     println(balanceOf(a));
+    test.totalSupply();
 
   syntax Stmt ::= "test.mint" "(" AExp "," AExp "," Data "," Data ")" [macro]
   rule test.mint(To, Value, Data, OperatorData) =>

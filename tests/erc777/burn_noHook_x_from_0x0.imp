@@ -1,0 +1,17 @@
+test.preamble();
+
+// burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+// holder is 0x0, operatorBurn() from authorized op, burning some balance. Should accept, burning from operator.
+
+test.makeCaller(8);
+print("Actual burner: ");
+print(8);
+print("\nBalance of ");
+print(8);
+print(" is ");
+println(balanceOf(8));
+test.operatorBurn(0, 3, ""); //through default operator
+print("Balance of ");
+print(8);
+print(" is ");
+println(balanceOf(8));

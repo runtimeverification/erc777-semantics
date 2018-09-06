@@ -1,0 +1,6 @@
+Changing the caller to 5
+5 is authorizing 1 as an operator
+Changing the caller to 1
+1 is burning 3 units from 5 (operatorData:"")
+Balance of 5 is 47
+Total supply is 547

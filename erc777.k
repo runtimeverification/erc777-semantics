@@ -42,6 +42,7 @@ module ERC777
        <ERC20CompatibleC> true </ERC20CompatibleC>
        // ERC777TokensRecipient not registered + regular address + receiving tokens: whether to accept (true) or reject
        <acceptRegularNoReceiverHook> true </acceptRegularNoReceiverHook>
+       <burnAllowed> true </burnAllowed>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
@@ -237,8 +238,12 @@ module ERC777
   // vs Tokens MAY be burned from any holder address
 
   rule <k>         burn(        Amount:Int   )
-        => operatorBurn(Holder, Amount,    "") ... </k>
-       <caller> Holder </caller>
+        => operatorBurn(Caller, Amount,    "") ... </k>
+       <caller> Caller </caller>
+
+  rule <k> operatorBurn(0 => Caller, _,_) ... </k>
+       <caller> Caller </caller>
+    requires Caller =/=Int 0 //just for safety
 
   rule <k> operatorBurn(Holder:Int, Amount:Int, OperatorData)
         => #atomicBegin
@@ -246,7 +251,8 @@ module ERC777
                         #isMultipleOf(Amount, granularity()),
                         Amount >=Int 0,
                         Balance >=Int Amount,
-                        Holder =/=Int 0))
+                        Holder =/=Int 0,
+                        BurnAllowed))
         ~> #callSender(Operator, Holder, 0, Amount, "", OperatorData)
         ~> #burn(Holder, Amount)
         ~> #log(Burned(Operator, Holder, Amount, OperatorData))
@@ -255,6 +261,8 @@ module ERC777
        <caller> Operator </caller>
        <id> Holder </id>
        <balance> Balance </balance>
+       <burnAllowed> BurnAllowed </burnAllowed>
+    requires Holder =/=Int 0
 
   syntax Stmt ::= #burn ( Address , Number )
 

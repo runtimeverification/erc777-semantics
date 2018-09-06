@@ -1,0 +1,26 @@
+test.preamble();
+
+// Setup:
+//    - holder 1: no hook
+//    - holder 2: accepting sender hook
+//    - burning disabled
+//Actions:
+//    - foreach(burn/operatorBurn: burn some balance/0 balance: from both holders). All should revert.
+//        - 8 actions total.
+// Hook addresses 1 and 2 are accepting.
+
+test.registerTokensToSendHook(2, 1);
+test.setBurnAllowed(false);
+
+test.makeCaller(1);
+test.burn(2);
+test.burn(0);
+test.makeCaller(2);
+test.burn(2);
+test.burn(0);
+
+test.makeCaller(8);
+test.operatorBurn(1, 2, "");
+test.operatorBurn(1, 0, "");
+test.operatorBurn(2, 2, "");
+test.operatorBurn(2, 0, "");

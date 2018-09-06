@@ -1,0 +1,16 @@
+test.preamble();
+
+// burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+// 2 Holder addresses, one accepting another rejecting.
+//  Burn by one operator from 1st, then 2nd, then 1st.
+// Hook addresses 1 and 2 are accepting.
+
+test.registerTokensToSendHook(5, 1); //accepting
+test.registerTokensToSendHook(6, 5); //rejecting
+test.makeCaller(8);
+test.operatorBurn(5, 2, ""); //accept
+test.operatorBurn(6, 2, ""); //revert
+test.makeCaller(6);
+test.burn(2);                //revert
+test.makeCaller(8);
+test.operatorBurn(5, 2, ""); //accept

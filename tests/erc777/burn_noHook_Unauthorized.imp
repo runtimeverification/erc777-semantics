@@ -1,0 +1,7 @@
+test.preamble();
+
+// burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+// regular holder address with no hook, burning through unauthorized operator
+
+test.makeCaller(7);
+test.operatorBurn(5, 3, ""); //through default operator

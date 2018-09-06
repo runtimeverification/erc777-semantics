@@ -1,0 +1,6 @@
+Registering holder 5 with hook 5
+Changing the caller to 7
+7 is burning 3 units from 5 (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
