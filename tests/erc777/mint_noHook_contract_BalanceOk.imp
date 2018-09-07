@@ -1,0 +1,10 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// contract address with no hook, minting new balance. Should reject.
+
+test.makeCaller(10);
+test.operatorMint(10, 1000, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorMint(10, 1000, "", ""); //through default operator

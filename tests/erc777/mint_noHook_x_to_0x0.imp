@@ -1,0 +1,7 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// receiver is 0x0, operatorMint() from authorized op, minting some balance. Should revert.
+
+test.makeCaller(8);
+test.operatorMint(0, 1000, "", ""); //through default operator

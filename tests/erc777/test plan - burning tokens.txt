@@ -56,7 +56,7 @@ A single burn operation:
 ----------------------------------
 On all tests, 3 operations:
     - burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
-    - helper functions test.burn() and and test.operatorBurn() print totalSupply() before and after operation.
+    - helper functions test.burn() and and test.operatorBurn() print totalSupply() after operation.
 
 Tests:
 1. regular holder address with no hook, burning sufficient balance

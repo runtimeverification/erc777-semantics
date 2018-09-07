@@ -579,8 +579,8 @@ makeRevertAsPrintTrue;
     println(balanceOf(a));
     test.totalSupply();
 
-  syntax Stmt ::= "test.mint" "(" AExp "," AExp "," Data "," Data ")" [macro]
-  rule test.mint(To, Value, Data, OperatorData) =>
+  syntax Stmt ::= "test.operatorMint" "(" AExp "," AExp "," Data "," Data ")" [macro]
+  rule test.operatorMint(To, Value, Data, OperatorData) =>
     b = To;
     v = Value;
     print(#getCaller);
@@ -594,11 +594,12 @@ makeRevertAsPrintTrue;
     print(" (operatorData:\"");
     print(OperatorData);
     print("\")\n");
-    mint(b, v, Data, OperatorData);
+    operatorMint(b, v, Data, OperatorData);
     print("Balance of ");
     print(b);
     print(" is ");
     println(balanceOf(b));
+    test.totalSupply();
 
   syntax Stmt ::= "test.allowance" "(" AExp "," AExp ")"   [macro]
   rule test.allowance(Owner, Spender) =>

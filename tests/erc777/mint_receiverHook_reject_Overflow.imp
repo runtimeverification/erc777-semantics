@@ -1,0 +1,11 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// receiver hook, always rejecting, minting to overflow totalSupply
+
+test.registerTokensReceivedHook(5, 3); // Hook address 3 is rejecting.
+test.makeCaller(5);
+test.operatorMint(5, 115792089237316195423570985008687907853269984665640564039457584007913129639935, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorMint(5, 115792089237316195423570985008687907853269984665640564039457584007913129639935, "", ""); //through default operator

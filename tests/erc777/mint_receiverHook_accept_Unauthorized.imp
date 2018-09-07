@@ -1,0 +1,8 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// receiver hook, always accepting, minting through unauthorized operator
+
+test.registerTokensReceivedHook(5, 1); // Hook addresses 1 and 2 are accepting.
+test.makeCaller(4);
+test.operatorMint(5, 1000, "", ""); //through default operator

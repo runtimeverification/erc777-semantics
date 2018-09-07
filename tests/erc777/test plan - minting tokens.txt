@@ -1,0 +1,91 @@
+Functions we are going to define
+=====================================
+    - operatorMint().
+
+Diff in semantics relevant to test plan plan, compared to burning
+=====================================
+    - hook called: tokensReceived. Should pretty much be symmetrical to tokensToSend, but is called after balance changed.
+    - "data" and "operatorData" both could exist, so functions should have them as arguments.
+    - only one function for minting: operatorMint(). Does not change the number of tests.
+    - if recipient is contract and does not register tokensReceived, operation MUST revert.
+        - so it's a MUST, no senantics parametrization needed.
+    - however, if minting to regular address, it "SHOULD accept", so we may chose to parametrize this behavior.
+        - but since our minting functions are unofficial, this doesn't make sense. Ignoring this item.
+    - if recipient is 0x0, should revert.
+    - initial tokens supply should be created through proper mint events, that involves Minted events and
+        calling tokensReceived hook.
+    - minting may involve overflow of total supply (before the overflow of actual holder balance)
+
+
+todo Points that influence the semantics in a way untestable at the moment
+=====================================
+- initial tokens supply should be created through proper mint events, that involves Minted events and
+    calling tokensReceived hook.
+
+todo Points that require changing other tests
+=====================================
+- overflow tests should be done through minting operations. The current tests are probably wrong
+    because they overflow the total supply.
+    Thus balance overflow is probably impossible as long as totalSupply invariant is respected.
+    - Consequence: I should just delete all balance overflow tests.
+
+Points that influence the test suite in a non-symmetrical way compared to burning operation
+=====================================
+
+New tests needed:
+- if recipient is contract and does not register tokensReceived, operation MUST revert.
+    - additional tests for recipient contract, inspired from test plan - receiver hooks.
+
+Deleting existing tests:
+- Test related to disabled burning is no longer needed, because there is no official mint operation,
+    so there's no need to test customizations of its effect.
+
+Points that influence the test content but not the number of tests
+=====================================
+- hook called: tokensReceived. Should pretty much be symmetrical to tokensToSend, but is called after balance changed.
+- only one function for minting: operatorMint(). Does not change the number of tests.
+- if recipient is 0x0, should revert.
+    - compare with for burning: if holder = 0x0, holder becomes the caller.
+- minting may involve overflow of total supply (before the overflow of actual holder balance)
+    - Will repurpose the tests for burning insufficient balance into tests that overflow totalSupply.
+
+Test scenarios
+=================================
+
+A single burn operation:
+----------------------------------
+On all tests, 2 operations:
+    - operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+    - helper function test.operatorMint() prints totalSupply() after operation.
+
+Tests:
+1. regular recipient address with no hook, minting new balance
+2. regular recipient address with no hook, minting to overflow totalSupply
+3. regular recipient address with no hook, minting through unauthorized operator
+4. regular recipient address with no hook, minting 0 balance
+5. regular recipient address with no hook, minting negative balance
+6. regular recipient address with no hook, minting through authorized non-default operator
+
+7. receiver hook, always accepting, minting new balance
+8. receiver hook, always accepting, minting to overflow totalSupply
+9. receiver hook, always accepting, minting through unauthorized operator
+
+10. receiver hook, always rejecting, minting new balance
+11. receiver hook, always rejecting, minting to overflow totalSupply
+12. receiver hook, always rejecting, minting through unauthorized operator
+13. receiver hook, always rejecting, minting 0 balance
+
+14. receiver is 0x0, operatorMint() from authorized op, minting some balance. Should revert.
+
+Multiple mint operations:
+----------------------------------
+15. One receiver address with accepting hook. Perform operatorMint() from 2 operators.
+16. 2 receiver addresses, one accepting another rejecting.
+    Mint by one operator from 1st, then 2nd, then 1st.
+
+New tests compared to burn operations:
+----------------------------------
+17. contract address with no hook, minting new balance. Should reject.
+18. contract address with no hook, minting 0 balance. Should reject.
+
+Total: 18 tests.

@@ -1,0 +1,10 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// regular recipient address with no hook, minting 0 balance
+
+test.makeCaller(5);
+test.operatorMint(5, 0, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorMint(6, 0, "", ""); //through default operator

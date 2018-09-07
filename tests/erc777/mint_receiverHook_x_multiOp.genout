@@ -1,0 +1,16 @@
+Registering receiver 5 with hook 1
+Registering receiver 6 with hook 3
+Changing the caller to 8
+8 is minting 1000 for 5 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 1, Operator = 8, From = 0, To = 5, Value = 1000, Data = , OperatorData = 
+tokensReceived: sender balance: 0
+tokensReceived: receiver balance: 1050
+Balance of 5 is 1050
+Total supply is 1550
+Changing the caller to 9
+9 is minting 10000 for 5 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 1, Operator = 9, From = 0, To = 5, Value = 10000, Data = , OperatorData = 
+tokensReceived: sender balance: 0
+tokensReceived: receiver balance: 11050
+Balance of 5 is 11050
+Total supply is 11550

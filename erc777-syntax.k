@@ -32,7 +32,11 @@ module ERC777-SYNTAX
   // it specifies several rules that MUST be respected when minting tokens.
   // The definition of `mint` below is a minimal example of minting function
   // that conforms to those rules.
-                | mint ( AExp , AExp , Data , Data )                [strict]
+                | operatorMint ( AExp , //from
+                                 AExp , //amount
+                                 Data , //data
+                                 Data   //operatorData.
+                               ) [strict]
 
   syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
                  | Minted ( Address , Address , Number , Data , Data )

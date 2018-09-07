@@ -1,0 +1,10 @@
+test.preamble();
+
+// One receiver address with accepting hook. Perform operatorMint() from 2 operators.
+
+test.registerTokensReceivedHook(5, 1); //accepting
+test.registerTokensReceivedHook(6, 3); //rejecting
+test.makeCaller(8);
+test.operatorMint(5, 1000, "", "");
+test.makeCaller(9);
+test.operatorMint(5, 10000, "", "");

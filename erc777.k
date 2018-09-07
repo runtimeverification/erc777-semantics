@@ -105,7 +105,7 @@ module ERC777
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator andBool Operator =/=Int 0
 
-  // Reject to authorize itself -- TODO: too strong??
+  // Reject to authorize itself
   rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
        <caller> Holder </caller>
        requires Holder ==Int Operator orBool Operator ==Int 0
@@ -300,14 +300,15 @@ module ERC777
   // TODO: * `event Minted` signature inconsistency in standard
   //       *  balance of 0x0 MUST NOT be decreased
 
-  syntax Stmt ::= #mint ( Address , Number )
+  rule operatorMint(0, _,_,_) => revert
 
-  rule <k> mint(Holder, Amount, Data, OperatorData)
+  rule <k> operatorMint(Holder, Amount, Data, OperatorData)
         => #atomicBegin
         ~> #ensure(#and(Amount >=Int 0,
                         Balance +Int Amount <=Int #MAXVALUE,
                         #isMultipleOf(Amount, granularity()),
-                        Holder =/=Int 0))
+                        Holder =/=Int 0,
+                        isOperatorFor( Operator , Holder )))
         ~> #mint(Holder, Amount)
         ~> #callRecipient(Operator, 0, Holder, Amount, Data,  OperatorData, false)
         ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
@@ -316,6 +317,9 @@ module ERC777
        <caller> Operator </caller>
        <id> Holder </id>
        <balance> Balance </balance>
+    requires Holder =/=Int 0
+
+  syntax Stmt ::= #mint ( Address , Number )
 
   rule <k> #mint(Holder, Amount) => . ... </k>
        <account>
@@ -377,7 +381,6 @@ module ERC777
   rule transferFrom(From:Int, To:Int, Value:Int)
        => #transferFromAux(From, To, Value, balanceOf(From), balanceOf(To))
 
-  //fixme - <operators> not used
   syntax K ::= "#transferFromAux" "(" Address "," Address "," Number "," AExp "," AExp ")" [seqstrict(4,5)]
   rule <k> #transferFromAux(From, To, Value, BalanceFrom:Int, BalanceTo:Int)
         => #atomicBegin
@@ -466,28 +469,25 @@ module ERC777
        => A andBool B andBool C andBool D andBool E andBool F andBool G
   rule #or  ( A:Bool , B:Bool )                                     => A orBool B
 
-  syntax Stmt ::= "#mayRevert"
-
-  rule #mayRevert => revert [transition]
-  rule #mayRevert => .      [transition]
-
   rule <k> revert ~> (KI:KItem => .K) ... </k>
-       <atomic> #snapshot ( _ , _ ) </atomic>
+       <atomic> #snapshot ( _ , _ , _ ) </atomic>
   requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
 
   rule <k> revert ~> (#atomicEnd(_) => .K) ... </k>
        <accounts> _ => Accounts </accounts>
        <log> _ => Log </log>
-       <atomic> #snapshot ( Accounts , Log ) => .K </atomic>
+       <supply> _ => Supply </supply>
+       <atomic> #snapshot ( Accounts , Log , Supply ) => .K </atomic>
 
   syntax KItem ::= "#atomicBegin"
                  | "#atomicEnd" "(" K /*output*/ ")"
-                 | #snapshot ( K , EventLog )
+                 | #snapshot ( K , EventLog , Number )
 
   rule <k> #atomicBegin => . ... </k>
        <accounts> Accounts </accounts>
        <log> Log </log>
-       <atomic> .K => #snapshot ( Accounts , Log ) </atomic>
+       <supply> Supply </supply>
+       <atomic> .K => #snapshot ( Accounts , Log , Supply ) </atomic>
 
   rule <k> #atomicEnd(OUT:K) => OUT ... </k>
        <atomic> _ => .K </atomic>

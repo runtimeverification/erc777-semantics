@@ -1,0 +1,6 @@
+Changing the caller to 6
+6 is authorizing 5 as an operator
+Changing the caller to 5
+5 is minting 1000 for 6 (data:""),  (operatorData:"")
+Balance of 6 is 1060
+Total supply is 1550

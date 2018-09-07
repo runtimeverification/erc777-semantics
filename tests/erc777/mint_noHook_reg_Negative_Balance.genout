@@ -1,0 +1,10 @@
+Changing the caller to 5
+5 is minting -3 for 5 (data:""),  (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
+Changing the caller to 8
+8 is minting -3 for 6 (data:""),  (operatorData:"")
+REVERT
+Balance of 6 is 60
+Total supply is 550

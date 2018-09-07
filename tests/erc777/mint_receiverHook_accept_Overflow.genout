@@ -1,0 +1,11 @@
+Registering receiver 5 with hook 1
+Changing the caller to 5
+5 is minting 115792089237316195423570985008687907853269984665640564039457584007913129639935 for 5 (data:""),  (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
+Changing the caller to 8
+8 is minting 115792089237316195423570985008687907853269984665640564039457584007913129639935 for 5 (data:""),  (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
