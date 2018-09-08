@@ -1,10 +1,16 @@
 test.preamble();
 
 // operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
-// regular recipient address with no hook, minting to overflow totalSupply
+// regular recipient address with no hook, minting to overflow totalSupply,
+//    minimum amount to cause overflow, and more than needed.
+// Recall that total supply is 550 tokens and 2^256 (a 78 digit number) and is:
+// 115792089237316195423570985008687907853269984665640564039457584007913129639936
 
 test.makeCaller(5);
-test.operatorMint(5, 115792089237316195423570985008687907853269984665640564039457584007913129639935, "", ""); //from caller
+test.operatorMint(5, 115792089237316195423570985008687907853269984665640564039457584007913129639386, "", ""); //from caller
+
+//more than needed for overflow
+test.operatorMint(5, 115792089237316195423570985008687907853269984665640564039457584007913129639390, "", ""); //from caller
 
 test.makeCaller(8);
-test.operatorMint(6, 115792089237316195423570985008687907853269984665640564039457584007913129639935, "", ""); //through default operator
+test.operatorMint(6, 115792089237316195423570985008687907853269984665640564039457584007913129639386, "", ""); //through default operator

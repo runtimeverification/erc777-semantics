@@ -305,7 +305,7 @@ module ERC777
   rule <k> operatorMint(Holder, Amount, Data, OperatorData)
         => #atomicBegin
         ~> #ensure(#and(Amount >=Int 0,
-                        Balance +Int Amount <=Int #MAXVALUE,
+                        Supply +Int Amount <=Int #MAXVALUE,
                         #isMultipleOf(Amount, granularity()),
                         Holder =/=Int 0,
                         isOperatorFor( Operator , Holder )))
@@ -316,7 +316,7 @@ module ERC777
         ~> #atomicEnd(#void) ... </k>
        <caller> Operator </caller>
        <id> Holder </id>
-       <balance> Balance </balance>
+       <supply> Supply </supply>
     requires Holder =/=Int 0
 
   syntax Stmt ::= #mint ( Address , Number )
@@ -328,8 +328,6 @@ module ERC777
          ...
        </account>
        <supply> Supply => Supply +Int Amount </supply>
-    // requires Balance +Int Amount <=Int #MAXVALUE
-    // already checked in mint
 
 
   //

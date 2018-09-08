@@ -60,32 +60,34 @@ On all tests, 2 operations:
 
 Tests:
 1. regular recipient address with no hook, minting new balance
-2. regular recipient address with no hook, minting to overflow totalSupply
+2. regular recipient address with no hook, minting to overflow totalSupply,
+    minimum amount to cause overflow, and more than needed.
 3. regular recipient address with no hook, minting through unauthorized operator
 4. regular recipient address with no hook, minting 0 balance
 5. regular recipient address with no hook, minting negative balance
 6. regular recipient address with no hook, minting through authorized non-default operator
+7. regular recipient address with no hook, minting maximum amount that won't cause overflow
 
-7. receiver hook, always accepting, minting new balance
-8. receiver hook, always accepting, minting to overflow totalSupply
-9. receiver hook, always accepting, minting through unauthorized operator
+8. receiver hook, always accepting, minting new balance
+9. receiver hook, always accepting, minting to overflow totalSupply
+10. receiver hook, always accepting, minting through unauthorized operator
 
-10. receiver hook, always rejecting, minting new balance
-11. receiver hook, always rejecting, minting to overflow totalSupply
-12. receiver hook, always rejecting, minting through unauthorized operator
-13. receiver hook, always rejecting, minting 0 balance
+11. receiver hook, always rejecting, minting new balance
+12. receiver hook, always rejecting, minting to overflow totalSupply
+13. receiver hook, always rejecting, minting through unauthorized operator
+14. receiver hook, always rejecting, minting 0 balance
 
-14. receiver is 0x0, operatorMint() from authorized op, minting some balance. Should revert.
+15. receiver is 0x0, operatorMint() from authorized op, minting some balance. Should revert.
 
 Multiple mint operations:
 ----------------------------------
-15. One receiver address with accepting hook. Perform operatorMint() from 2 operators.
-16. 2 receiver addresses, one accepting another rejecting.
+16. One receiver address with accepting hook. Perform operatorMint() from 2 operators.
+17. 2 receiver addresses, one accepting another rejecting.
     Mint by one operator from 1st, then 2nd, then 1st.
 
 New tests compared to burn operations:
 ----------------------------------
-17. contract address with no hook, minting new balance. Should reject.
-18. contract address with no hook, minting 0 balance. Should reject.
+18. contract address with no hook, minting new balance. Should reject.
+19. contract address with no hook, minting 0 balance. Should reject.
 
-Total: 18 tests.
+Total: 19 tests.

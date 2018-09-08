@@ -58,6 +58,7 @@ module ERC777-IMP-SYNTAX
                                 ")"     [strict]
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
+                //todo invalid operation. Fix when implementing ERC20 compatibility.
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
                 | "makeERC20Compatible" "(" Bool ")"
