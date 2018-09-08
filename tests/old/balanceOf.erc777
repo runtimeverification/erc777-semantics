@@ -1,4 +1,0 @@
-test.preamble();
-test.balanceOf(1);
-test.balanceOf(8);
-test.balanceOf(9);

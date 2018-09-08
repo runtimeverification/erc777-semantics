@@ -1,4 +1,8 @@
 granularity: 10
+Burning 23 units from 7
+REVERT
+Balance of 7 is 70
+Total supply is 550
 Changing the caller to 8
 8 is burning 23 units from 7 (operatorData:"")
 REVERT

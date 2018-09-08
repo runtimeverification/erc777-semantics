@@ -1,7 +1,0 @@
-test.preamble();
-test.setGranularity(10);
-
-// Testing operatorSend(From,To,Value,"","") when caller, From and To are distinct and Value is not multiple of granularity().
-
-test.makeCaller(9);           // switch to 9
-test.operatorSend(7, 5, 23, "", "");  // transfer 23 from 7 to 5

@@ -1,6 +1,0 @@
-test.preamble();
-test.setGranularity(10)
-
-// Testing burn(Value) when Value is not multiple of granularity().
-
-test.burn(23);

@@ -1,3 +1,0 @@
-test.preamble();
-makeCaller(8);
-test.operatorSend(4, 0, 0, "", "");
