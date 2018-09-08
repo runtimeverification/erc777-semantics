@@ -45,19 +45,16 @@ module ERC777-IMP-SYNTAX
                  > Stmt Stmt                  [left]
   syntax Ids   ::= List{Id,","}
 
-  syntax Stmt ::= Exp ";"                               [strict]
+  syntax Stmt ::= Exp ";"                                [strict]
 /* The "make" statements below allow us to programmatically interfere
    with the ERC20-K configuration.  Such statements would not be
    possible/allowed in a normal programming language for smart contracts. */
-                | "makeDefaultOperator" "(" AExp ")"  [strict]
+                | "makeDefaultOperator" "(" AExp ")"     [strict]
                 | "makeAccount" "(" AExp //account
-                                "," AExp //value
-                                "," AExp //sender hook
-                                "," AExp //receiver hook
-                                "," BExp //is contract
-                                ")"     [strict]
+                                ")"                      [strict]
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
+                | "makeContractAccount" "(" AExp ")"     [strict]
                 //todo invalid operation. Fix when implementing ERC20 compatibility.
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
@@ -265,27 +262,30 @@ module ERC777-IMP
   rule <k> makeDefaultOperator(DOP:Int) => . ...</k>
        <defaultOperatorsC>... .Set => SetItem(DOP) ...</defaultOperatorsC>
 
-  rule <k> makeAccount(A,V, SH, RH, ISCONTRACT) => . ...</k>
+  rule <k> makeContractAccount(Addr:Address) => . ...</k>
+       <id> Addr </id>
+       <isContract> _ => true </isContract>
+
+  rule <k> makeAccount(Addr:Address) => . ...</k>
        <accounts> (.Bag =>
          <account>
-           <id> A </id>
-           <balance> V </balance>
-           <isContract> ISCONTRACT </isContract>
-           <operators> SetItem(A) DefOps </operators>
-           <senderHook> SH </senderHook>
-           <receiverHook> RH </receiverHook>
+           <id> Addr </id>
+           <balance> 0 </balance>
+           <isContract> false </isContract>
+           <operators> SetItem(Addr) DefOps </operators>
+           <senderHook> 0 </senderHook>
+           <receiverHook> 0 </receiverHook>
            <allowances> .Bag </allowances>
          </account>)
          ...
        </accounts>
-       <supply> S => S +Int V </supply>
        <defaultOperatorsC> DefOps </defaultOperatorsC>
 
-  rule <k> makeAllowance(A,B) => . ...</k>
-       <id> A </id>
+  rule <k> makeAllowance(Holder:Address, Spender:Address) => . ...</k>
+       <id> Holder </id>
        <allowances> (.Bag =>
          <allow>
-           <spender> B </spender>
+           <spender> Spender </spender>
            <amount> 0 </amount>
          </allow>)
          ...
@@ -364,11 +364,20 @@ module ERC777-IMP
   rule test.preamble() =>
 int accounts, x, y, a, b, c, caller, v;
 accounts = 10;
-x = accounts;
+makeNameAndSymbol("RVToken", "RVT")
+
 makeDefaultOperator(8) //accounts 8 and 9 are default operators
 makeDefaultOperator(9)
-while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
-  makeAccount(x, x*10, 0, 0, 9 <= x); //accounts 9 and 10 are contracts
+x = accounts;
+while(!(x <= 0)) { //e.g. while x > 0, but we cannot use ">" because it throws kompilation error
+  makeAccount(x);
+  x = x + -1;
+}
+
+makeCaller(8); //operator to call operatorMint()
+x = accounts;
+while(!(x <= 0)) {
+  operatorMint(x, x*10, "", "init"); //init account x with 10*x balance through minting operation.
   y = accounts;
   while(!(y <= 0)) {
     makeAllowance(x,y);
@@ -376,7 +385,11 @@ while(!(x <= 0)) { //e.g. while x > 0, but ">" throws kompilation error
   }
   x = x + -1;
 }
-makeNameAndSymbol("RVToken", "RVT")
+
+//setting them as contracts now, to avoid incompatibility with operatorMint().
+makeContractAccount(9); //accounts 9 and 10 are contracts
+makeContractAccount(10);
+
 caller = 7;
 makeCaller(caller);
 makeAcceptingHookHost(1); //accounts 1 and 2 are hosts of accepting hooks. All the rest - rejecting hooks.

@@ -1,3 +1,10 @@
+ERC777 spec about initial balance creation
+===========================================
+NOTE: The initial token supply at the creation of the token contract MUST be considered as minting
+for the amount of the initial supply to the address(es) receiving the initial supply.
+This means one or more Minted events must be emitted and the tokensReceived hook of the recipient(s) MUST be called.
+
+
 Functions we are going to define
 =====================================
     - operatorMint().
