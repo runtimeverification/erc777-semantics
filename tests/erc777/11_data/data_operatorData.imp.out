@@ -1,0 +1,40 @@
+Registering holder 5 with hook 1
+Registering receiver 6 with hook 1
+Changing the caller to 5
+5 is sending 1 to 6 (data:d_send)
+tokensToSend: Hook address = 1, Operator = 5, From = 5, To = 6, Value = 1, Data = d_send, OperatorData = 
+tokensToSend: sender balance: 50
+tokensToSend: receiver balance: 60
+tokensReceived: Hook address = 1, Operator = 5, From = 5, To = 6, Value = 1, Data = d_send, OperatorData = 
+tokensReceived: sender balance: 49
+tokensReceived: receiver balance: 61
+Balance of 5 is 49
+Balance of 6 is 61
+Burning 10 units from 5
+tokensToSend: Hook address = 1, Operator = 5, From = 5, To = 0, Value = 10, Data = , OperatorData = 
+tokensToSend: sender balance: 49
+tokensToSend: receiver balance: 0
+Balance of 5 is 39
+Total supply is 540
+Changing the caller to 8
+8 is sending 10 from 5 to 6 (data:"data_opSend"),  (operatorData:"operatorData_opSend")
+tokensToSend: Hook address = 1, Operator = 8, From = 5, To = 6, Value = 10, Data = data_opSend, OperatorData = operatorData_opSend
+tokensToSend: sender balance: 39
+tokensToSend: receiver balance: 61
+tokensReceived: Hook address = 1, Operator = 8, From = 5, To = 6, Value = 10, Data = data_opSend, OperatorData = operatorData_opSend
+tokensReceived: sender balance: 29
+tokensReceived: receiver balance: 71
+Balance of 5 is 29
+Balance of 6 is 71
+8 is burning 10 units from 5 (operatorData:"operatorData_burn")
+tokensToSend: Hook address = 1, Operator = 8, From = 5, To = 0, Value = 10, Data = , OperatorData = operatorData_burn
+tokensToSend: sender balance: 29
+tokensToSend: receiver balance: 0
+Balance of 5 is 19
+Total supply is 530
+8 is minting 100 for 6 (data:"data_opMint"),  (operatorData:"operatorData_opMint")
+tokensReceived: Hook address = 1, Operator = 8, From = 0, To = 6, Value = 100, Data = data_opMint, OperatorData = operatorData_opMint
+tokensReceived: sender balance: 0
+tokensReceived: receiver balance: 171
+Balance of 6 is 171
+Total supply is 630
