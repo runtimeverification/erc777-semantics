@@ -24,15 +24,15 @@ Diff in semantics relevant to test plan plan, compared to burning
     - minting may involve overflow of total supply (before the overflow of actual holder balance)
 
 
-todo Points that influence the semantics in a way untestable at the moment
+Points that influence the semantics in a way untestable at the moment
 =====================================
 - initial tokens supply should be created through proper mint events, that involves Minted events and
     calling tokensReceived hook.
 
-todo Points that require changing other tests
+Points that require changing other tests
 =====================================
-- overflow tests should be done through minting operations. The current tests are probably wrong
-    because they overflow the total supply.
+- overflow tests should be done through minting operations.
+    The current tests are probably wrong because they overflow the total supply.
     Thus balance overflow is probably impossible as long as totalSupply invariant is respected.
     - Consequence: I should just delete all balance overflow tests.
 
