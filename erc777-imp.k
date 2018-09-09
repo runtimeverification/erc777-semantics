@@ -40,7 +40,8 @@ module ERC777-IMP-SYNTAX
                  | "int" Ids   // use only at the top of the program
                  | "print" "(" Exp ")"       [strict]
                  | "println" "(" Exp ")"
-                 | "halt"
+                 | "printLog" "(" EventLog ")"
+                 | "printLog" "(" Event ")"
                  | Stmt ";"
                  > Stmt Stmt                  [left]
   syntax Ids   ::= List{Id,","}
@@ -55,7 +56,7 @@ module ERC777-IMP-SYNTAX
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeContractAccount" "(" AExp ")"     [strict]
-                //todo invalid operation. Fix when implementing ERC20 compatibility.
+                //todo invalid operation. Delete from ERC20 tests, then delete here.
                 | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
                 | "makeERC20Compatible" "(" Bool ")"
@@ -71,6 +72,7 @@ module ERC777-IMP-SYNTAX
                                                ")"
                 | "test.setAcceptRegularNoReceiverHook" "(" Bool ")"
                 | "test.setBurnAllowed" "(" Bool ")"
+                | "printLogs"
 
 endmodule
 
@@ -140,7 +142,51 @@ module ERC777-IMP
 
   rule println(E) => print(E) ~> print("\n")
 
-  rule <k> halt ~> _ => . </k>
+  //print logs at the end of execution
+  rule <k> printLogs => printLog(Log) ...</k>
+       <log> Log </log>
+
+  rule printLog(ELog Ev:Event) => printLog(ELog) ~> printLog(Ev)
+  rule <k> printLog(Events:) => . ...</k>
+       <output>... .List => ListItem("\nEvents:\n") </output>
+
+  rule <k> printLog(Sent(Operator , From , To , Value , Data , OperatorData)) => . ...</k>
+       <output>... .List => ListItem("Sent(" +String Int2String(Operator) +String ", "
+            +String Int2String(From) +String ", " +String Int2String(To) +String ", "
+            +String Int2String(Value) +String ", " +String Data +String ", " +String OperatorData
+            +String ")\n") </output>
+
+  rule <k> printLog(Minted(Operator, Holder, Amount, Data, OperatorData)) => . ...</k>
+       <output>... .List => ListItem("Minted(" +String Int2String(Operator) +String ", "
+            +String Int2String(Holder) +String ", " +String Int2String(Amount) +String ", "
+            +String Data +String ", " +String OperatorData
+            +String ")\n") </output>
+
+  rule <k> printLog(Burned(Operator, Holder, Amount, OperatorData)) => . ...</k>
+       <output>... .List => ListItem("Burned(" +String Int2String(Operator) +String ", "
+            +String Int2String(Holder) +String ", " +String Int2String(Amount) +String ", "
+            +String OperatorData
+            +String ")\n") </output>
+
+  rule <k> printLog(AuthorizedOperator ( Operator , Holder )) => . ...</k>
+       <output>... .List => ListItem("AuthorizedOperator(" +String Int2String(Operator) +String ", "
+            +String Int2String(Holder)
+            +String ")\n") </output>
+
+  rule <k> printLog(RevokedOperator ( Operator , Holder )) => . ...</k>
+       <output>... .List => ListItem("RevokedOperator(" +String Int2String(Operator) +String ", "
+            +String Int2String(Holder)
+            +String ")\n") </output>
+
+  rule <k> printLog(Transfer(From , To , Value)) => . ...</k>
+       <output>... .List => ListItem("Transfer(" +String Int2String(From) +String ", "
+            +String Int2String(To) +String ", " +String Int2String(Value)
+            +String ")\n") </output>
+
+  rule <k> printLog(Approval(Owner, Spender, Allowance)) => . ...</k>
+       <output>... .List => ListItem("Approval(" +String Int2String(Owner) +String ", "
+            +String Int2String(Spender) +String ", " +String Int2String(Allowance)
+            +String ")\n") </output>
 
 /* We also add the following 3 rules which we do not have in the K Tutorial
    IMP.  The reason we add them is to allow us to put semicolon ";" after
@@ -459,8 +505,8 @@ makeRevertAsPrintTrue;
     printSet(defaultOperators());
     print("\n");
 
-  syntax Stmt ::= printSet(Exp) [strict]
-  rule printSet(SetItem(E) Rest:Set) => print(E) ~> print(" ") ~> printSet(Rest)
+  syntax Stmt ::= printSet(SetExp) [strict]
+  rule printSet(SetItem(E:Exp) Rest:Set) => print(E) ~> print(" ") ~> printSet(Rest)
   rule printSet(.Set) => .
 
   syntax Stmt ::= "test.totalSupply" "(" ")"   [macro]

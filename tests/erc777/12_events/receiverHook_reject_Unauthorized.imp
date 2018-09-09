@@ -1,0 +1,10 @@
+test.preamble();
+
+// send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+// receiver hook, always rejecting, sending through unauthorized operator
+
+test.registerTokensReceivedHook(3, 5); //rejecting hook
+test.makeCaller(5);
+test.operatorSend(10, 3, 10, "", ""); //unauthorized send
+
+printLogs;

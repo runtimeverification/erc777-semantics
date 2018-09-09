@@ -1,0 +1,21 @@
+test.preamble();
+
+// Functions to test: send, operatorSend, burn, operatorBurn, operatorMint.
+//Hooks: all allowed, all accepting. Send hooks for senders, receive hooks for receivers.
+
+//Other: one single operation for each
+//Parameters: non-empty data, operatorData for each operation.
+
+test.registerTokensToSendHook(5, 1);
+test.registerTokensReceivedHook(6, 1);
+
+test.makeCaller(5);
+test.send(6, 1, "d_send");
+test.burn(10);
+
+test.makeCaller(8);
+test.operatorSend(5, 6, 10, "data_opSend", "operatorData_opSend");
+test.operatorBurn(5, 10, "operatorData_burn");
+test.operatorMint(6, 100, "data_opMint", "operatorData_opMint");
+
+printLogs;

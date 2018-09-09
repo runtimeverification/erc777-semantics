@@ -1,0 +1,14 @@
+test.preamble();
+
+// send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+// receiver hook, always accepting, sending more than balance
+
+test.registerTokensReceivedHook(3, 1);
+test.makeCaller(10);
+test.send(3, 200, "");
+test.operatorSend(10, 3, 200, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorSend(10, 3, 200, "", ""); //through default operator
+
+printLogs;

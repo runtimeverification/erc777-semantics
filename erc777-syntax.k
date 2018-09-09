@@ -9,7 +9,7 @@ module ERC777-SYNTAX
   // ERC777Token
   //
 
-  syntax Exp ::= AExp | BExp | Set
+  syntax Exp ::= AExp | BExp | SetExp
 
   syntax Exp ::= name ( )
                | symbol ( )
@@ -18,7 +18,8 @@ module ERC777-SYNTAX
                 | balanceOf ( AExp ) [strict]
                 | granularity ( )
 
-  syntax Exp ::= defaultOperators ( )
+  syntax SetExp ::= defaultOperators ( )
+                  | Set
 
   syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
 
