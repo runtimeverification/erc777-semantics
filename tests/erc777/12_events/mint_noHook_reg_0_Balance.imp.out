@@ -1,0 +1,34 @@
+Changing the caller to 5
+5 is minting 0 for 5 (data:""),  (operatorData:"")
+Balance of 5 is 50
+Total supply is 550
+Changing the caller to 8
+8 is minting 0 for 6 (data:""),  (operatorData:"")
+Balance of 6 is 60
+Total supply is 550
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)
+Minted(5, 5, 0, , )
+Transfer(0, 5, 0)
+Minted(8, 6, 0, , )
+Transfer(0, 6, 0)
