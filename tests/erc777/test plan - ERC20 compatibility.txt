@@ -86,7 +86,7 @@ Operations in each test:
 
 Test scenarios, divided by hook configuration
 ===========================================
-Part 1, all opeations
+Part 1, all operations
 -----------------
 Operations in each test:
     - transfer
