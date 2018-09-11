@@ -1,0 +1,28 @@
+test.preamble();
+
+/*
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance
+
+regular recipient - both hooks, tokensReceived rejecting*/
+
+test.registerTokensToSendHook(10, 1);  //accepting
+test.registerTokensReceivedHook(1, 5); //reverting
+
+test.makeCaller(10);
+test.transfer(1, 1);            // regular transfer, 1 is regular recipient
+
+test.approve(8, 200);
+test.makeCaller(8);
+test.transferFrom(10, 1, 200);  // more than balance, enough allowance
+
+test.makeCaller(10);
+test.approve(8, 20);
+test.makeCaller(8);
+test.transferFrom(10, 1, 1);    // from different address, enough allowance
+test.transferFrom(10, 1, 21);   // from different address, more than allowance
+
+printLogs;

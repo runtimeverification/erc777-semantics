@@ -232,11 +232,14 @@ module ERC777
 
   //
   // burn / operatorBurn
-  // TODO: inconsistencies in the standards and reference implementation
+  //
 
-  // NOTE: contract MAY prevent some/all holders from burning for any reason
-  // vs Tokens MAY be burned from any holder address
+  /* Wording from standard: contract MAY prevent some/all holders from burning for any reason
+  vs Tokens MAY be burned from any holder address.
 
+  We implement this through the cell <burnAllowed>. If it is true, burn operation will proceed according to other rules.
+  If it is false, burn operation is not allowed for the entire contract, and any burn operation will revert.
+  */
   rule <k>         burn(        Amount:Int   )
         => operatorBurn(Caller, Amount,    "") ... </k>
        <caller> Caller </caller>
@@ -297,7 +300,6 @@ module ERC777
   // it specifies several rules that MUST be respected when minting tokens.
   // The definition of `mint` below is a minimal example of minting function
   // that conforms to those rules.
-  // TODO: * `event Minted` signature inconsistency in standard
   //       *  balance of 0x0 MUST NOT be decreased
 
   rule operatorMint(0, _,_,_) => revert
@@ -340,7 +342,8 @@ module ERC777
        <spender> Spender </spender>
        <amount> Allowance </amount>
 
-  // TODO: MUST be implemented? MAY implement?
+  /*EERC777: RC20 compatibility requirement:
+    The decimals of the token MUST always be 18.*/
   rule <k> decimals() => 18 </k>
 
   rule <k> approve(Spender:Int, Allowance:Int) => true ...</k>

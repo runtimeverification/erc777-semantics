@@ -1,0 +1,66 @@
+Changing the caller to 10
+10 is transferring 1 to 9
+Balance of 10 is 99
+Balance of 9 is 91
+Allowance of 10 for 9 is 0
+10 is transferring 0 to 9
+Balance of 10 is 99
+Balance of 9 is 91
+Allowance of 10 for 9 is 0
+10 is approving allowance 20 for 10
+10 is transferring 10 from 10 to 9
+Balance of 10 is 89
+Balance of 9 is 101
+Allowance of 10 for 10 is 10
+10 is approving allowance 20 for 8
+Changing the caller to 8
+8 is transferring 10 from 10 to 9
+Balance of 10 is 79
+Balance of 9 is 111
+Allowance of 10 for 8 is 10
+8 is transferring 11 from 10 to 9
+REVERT
+Balance of 10 is 79
+Balance of 9 is 111
+Allowance of 10 for 8 is 10
+Changing the caller to 10
+10 is approving allowance 200 for 8
+Changing the caller to 8
+8 is transferring 200 from 10 to 9
+REVERT
+Balance of 10 is 79
+Balance of 9 is 111
+Allowance of 10 for 8 is 200
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)
+Transfer(10, 9, 1)
+Sent(10, 10, 9, 1, , )
+Transfer(10, 9, 0)
+Sent(10, 10, 9, 0, , )
+Approval(10, 10, 20)
+Transfer(10, 9, 10)
+Sent(10, 10, 9, 10, , )
+Approval(10, 8, 20)
+Transfer(10, 9, 10)
+Sent(10, 10, 9, 10, , )
+Approval(10, 8, 200)

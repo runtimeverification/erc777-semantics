@@ -1,0 +1,118 @@
+Hooks on ERC20 operations:
+===========================
+tokensToSend
+-------------------
+    NOTE: This function MUST NOT be called outside of a burn, send or ERC20 transfer process.
+
+This hook takes precedence over ERC20 and MUST be called (if registered) when calling
+    ERC20's transfer and transferFrom event. When called from a transfer, operator MUST be the same value as the from.
+    When called from a transferFrom, operator MUST be the address which issued the transferFrom call.
+
+tokensReceived
+-------------------
+If the recipient is a contract, which has not registered an ERC777TokensRecipient implementation; the token contract:
+    SHOULD accept if the tokensReceived hook is called from an ERC20 transfer or transferFrom call.
+
+NOTE: This function MUST NOT be called outside of a mint, send or ERC20 transfer process.
+
+This hook takes precedence over ERC20 and MUST be called (if registered) when calling ERC20's
+    transfer and transferFrom event. When called from a transfer, operator MUST be the same value as the from.
+    When called from a transferFrom, operator MUST be the address which issued the transferFrom call.
+
+Backward Compatibility
+-------------------
+The difference for new contracts implementing ERC20 is that tokensToSend and tokensReceived hooks take precedence over ERC20. Even with an ERC20 transfer and transferFrom call, the token contract MUST check via ERC820 if the from and the to address implement tokensToSend and tokensReceived hook respectively. If any hook is implemented, it MUST be called. Note that when calling ERC20 transfer on a contract, if the contract does not implement tokensReceived, the transfer call SHOULD still be accepted even if this means the tokens will probably be locked.
+
+In context of transfer/transferFrom:
+There is no particular action to take if tokensToSend is not implemented. The transfer MUST proceed and only be
+    canceled if another condition is not respected such as lack of funds or a revert in tokensReceived (if present).
+
+Events interplay between ERC20 and ERC777
+--------------------
+Furthermore, if the token contract declares that it implements ERC20Token via ERC820,
+    the token contract SHOULD emit a Transfer event for minting and burning and MUST emit a Transfer event for sending
+    (as specified in the ERC20 standard). During an ERC20's transfer or transferFrom functions, a valid Sent event
+    MUST be emitted.
+
+Hence for any movement of tokens, two events MAY be emitted: an ERC20 Transfer and an ERC777 Sent, Minted or Burned.
+
+
+Questions for Jacques
+============================
+1. In context of tokensToSend and tokensReceived hooks:
+"This hook takes precedence over ERC20 and MUST be called (if registered) when calling ERC20's transfer and transferFrom event."
+
+It is not clear what "takes precedence" means. What happens if the hooks executes successfully but operator does not have enough allowance, as per ERC20 specification? Is the allowance mechanism still active or is superseeded by ERC777 hook mechanism? If it is not superseeded, what operation is executed first: allowance check or call to hook?
+
+2. "Furthermore, if the token contract declares that it implements ERC20Token via ERC820, the token contract SHOULD emit a Transfer event for minting and burning and MUST emit a Transfer event for sending."
+
+Why SHOULD for minting/burning and MUST for sending? Are there cases when you don't want to produce the Transfer event on minting/burning?
+
+3. ERC20 compatibility: Should we generate Transfer events for initial supply?
+
+My interpretation so far:
+-----------------
+1. Allowance mechanism is not superseeded by hooks. called after the hooks.
+2. Will consider it MUST everywhere.
+3. Will assume yes.
+
+Other open question
+=========================
+    - Should we generate transfer events when generating initial supply?? Or just Mint events?
+
+ERC20 events
+============================
+    - activate printing of events on some ERC20 tests, to check that both ERC20 and ERC777 version of events is printed.
+
+Items to test in ERC20
+=============================
+Hooks
+---------------------------
+General rules to follow in each test:
+    - allowance: call approve function wen generating allowance, don;t rely on initial allowance.
+        test.preamble() creates some initial allowance, but we should not use it, to test the approve() function.
+    - log the events at the end of each test
+
+What to look for in events:
+    - transfer operations should generate 2 events: Transfer and Sent.
+
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transfer, 0 amount
+    - transferFrom from same address, enough allowance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance.
+
+Test scenarios, divided by hook configuration
+===========================================
+Part 1, all opeations
+-----------------
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transfer, 0 amount
+    - transferFrom from same address, enough allowance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance.
+
+Tests:
+    1. contract recipient with no tokensReceived hook.
+    2. regular recipient, no hooks
+
+Part 2, subset of operations
+-----------------
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance
+
+Tests:
+    3. regular recipient - just tokensToSend, approving
+    4. regular recipient - just tokensReceived, approving
+    5. regular recipient - both hooks, approving
+    6. regular recipient - both hooks, tokensToSend rejecting
+    7. regular recipient - both hooks, tokensReceived rejecting
+
+Total: 7 tests, but 42 operations.

@@ -1,0 +1,31 @@
+test.preamble();
+
+/*
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transfer, 0 amount
+    - transferFrom from same address, enough allowance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance.
+
+contract recipient with no tokensReceived hook.*/
+
+test.makeCaller(10);
+test.transfer(9, 1);            // regular transfer, 9 is contract recipient
+test.transfer(9, 0);            // 0 amount
+
+test.approve(10, 20);
+test.transferFrom(10, 9, 10);   // transferFrom from same address, enough allowance
+
+test.approve(8, 20);
+test.makeCaller(8);
+test.transferFrom(10, 9, 10);   // from different address, enough allowance
+test.transferFrom(10, 9, 11);   // from different address, more than allowance
+
+test.makeCaller(10);
+test.approve(8, 200);
+test.makeCaller(8);
+test.transferFrom(10, 9, 200);  // more than balance, enough allowance
+
+printLogs;
