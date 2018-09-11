@@ -1,0 +1,4 @@
+name = RVToken
+symbol = RVT
+granularity() => 1
+defaultOperators() => 8 9 

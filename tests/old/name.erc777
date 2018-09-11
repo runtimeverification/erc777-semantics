@@ -1,2 +1,0 @@
-test.preamble();
-println(name());

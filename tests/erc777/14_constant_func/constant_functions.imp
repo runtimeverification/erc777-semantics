@@ -1,0 +1,16 @@
+test.preamble();
+
+/*
+Functions to test:
+    function name() public view returns (string);
+    function symbol() public view returns (string);
+    function totalSupply() public view returns (uint256);
+    function granularity() public view returns (uint256);
+    function defaultOperators() public view returns (address[]);
+*/
+print("name = ");
+println(name());
+print("symbol = ");
+println(symbol());
+test.granularity();
+test.defaultOperators();

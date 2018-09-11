@@ -14,12 +14,10 @@ while (true) {
   print("--------------------------------\n");
   print(" 0 : EXIT\n");
   print("-2 : makeCaller(Id)\n")
-  print("-3 : makeBalance(Value)\n")
   print("--------------------------------\n");
   print("Command: ");
   c = read();
   print("\n\n\n\n\n\n\n");
-  if (c == -3) { test.makeBalance(read()); }
   if (c == -2) { test.makeCaller(read()); }
   if (c == 0 ) { halt; }
   if (c == 1 ) { test.totalSupply(); }

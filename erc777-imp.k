@@ -56,8 +56,6 @@ module ERC777-IMP-SYNTAX
                 | "makeAllowance" "(" AExp "," AExp ")"  [strict]
                 | "makeCaller" "(" AExp ")"              [strict]
                 | "makeContractAccount" "(" AExp ")"     [strict]
-                //todo invalid operation. Delete from ERC20 tests, then delete here.
-                | "makeBalance" "(" AExp ")"             [strict]
                 | "makeNameAndSymbol" "(" String "," String ")"
                 | "makeERC20Compatible" "(" Bool ")"
                 | "makeRevertAsPrintTrue"
@@ -340,12 +338,6 @@ module ERC777-IMP
 
   rule <k> makeCaller(I:Int) => . ...</k> <caller> _ => I </caller>
 
-  rule <k> makeBalance(BAL:Int) => . ...</k>
-       <caller> Owner </caller>
-       <id> Owner </id>
-       <balance> OldBal => BAL </balance>
-       <supply> OldSUPPL => OldSUPPL +Int BAL -Int OldBal </supply>
-
   rule <k> makeNameAndSymbol(NAME:String, SYMBOL:String) => . ...</k>
        <nameC> _ => NAME </nameC>
        <symbolC> _ => SYMBOL </symbolC>
@@ -442,17 +434,6 @@ makeAcceptingHookHost(1); //accounts 1 and 2 are hosts of accepting hooks. All t
 makeAcceptingHookHost(2);
 makeRevertAsPrintTrue;
 // ---END-OF-PREAMBLE---
-
-  syntax Stmt ::= "test.makeBalance" "(" AExp ")"   [macro]
-  rule test.makeBalance(Value) =>
-    v = Value;
-    print("Changing the balance of ");
-    print(caller);
-    print(" to ");
-    print(v);
-    print("\n");
-    makeBalance(v);
-    test.balanceOf(caller);
 
   syntax Stmt ::= "test.makeCaller" "(" AExp ")"   [macro]
   rule test.makeCaller(Id) =>
