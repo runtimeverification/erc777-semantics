@@ -1,13 +1,17 @@
-require "erc777-sorts.k"
-
 module ERC777-SYNTAX
-
-  imports ERC777-SORTS
-  imports BOOL-SYNTAX
+  imports DOMAINS
 
   //
   // ERC777Token
   //
+
+  syntax Address ::= Int
+  syntax ValueType ::= Int
+
+  syntax Data ::= String
+
+  syntax AExp  ::= ValueType | Address
+  syntax BExp  ::= Bool
 
   syntax Exp ::= AExp | BExp | SetExp
 
@@ -39,11 +43,13 @@ module ERC777-SYNTAX
                                  Data   //operatorData.
                                ) [strict]
 
-  syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
-                 | Minted ( Address , Address , Number , Data , Data )
-                 | Burned ( Address , Address , Number , Data )
+  syntax Event ::= Sent ( Address , Address , Address , ValueType , Data , Data )
+                 | Minted ( Address , Address , ValueType , Data , Data )
+                 | Burned ( Address , Address , ValueType , Data )
                  | AuthorizedOperator ( Address , Address )
                  | RevokedOperator ( Address , Address )
+
+  syntax EventLog ::= "Events:" | EventLog Event
 
   //
   // ERC777TokensSender
@@ -71,31 +77,17 @@ module ERC777-SYNTAX
                 | transferFrom ( AExp , AExp , AExp ) [strict]
                 | "revert"
 
-  syntax Event ::= Transfer ( Address , Address , Number)
-                 | Approval ( Address , Address , Number)
+  syntax Event ::= Transfer ( Address , Address , ValueType)
+                 | Approval ( Address , Address , ValueType)
 
   //
   // Semantics Internal
   //
 
   syntax Exp ::= Event
-               | Number | Address | Data
+               | ValueType | Address | Data
                | Bool | String
 
   syntax Int ::= "#MAXVALUE"  [function]
-
-  /* Arguments: accounts
-  */
-  syntax Stmt ::= #init ( Addresses )
-
-  /* Arguments: accounts, accounts again. An auxiliary function for #init
-  */
-  syntax Stmt ::= #initAccounts ( Addresses , Addresses )
-
-  /* Initialzies the content of <allowances> for the given address. Related to ERC20 only.
-  */
-  syntax Stmt ::= #initAllowances ( Address     //the address to initialzie
-                                  , Addresses   //all the other known addresses.
-                                  )
 
 endmodule

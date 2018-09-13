@@ -18,7 +18,7 @@ module ERC777
        <accounts>
          <account multiplicity="*">
            <id> 0:Address </id>
-           <balance> 0:Number </balance>
+           <balance> 0:ValueType </balance>
 
            //ERC777 operators
            <operators> .Set </operators> // Set of approved operators for this account.
@@ -29,12 +29,12 @@ module ERC777
            <allowances>
              <allow multiplicity="*">
                <spender> 0:Address </spender>
-               <amount> 0:Number </amount>
+               <amount> 0:ValueType </amount>
              </allow>
            </allowances>
          </account>
        </accounts>
-       <supply> 0:Number </supply>
+       <supply> 0:ValueType </supply>
        <nameC> "" </nameC>
        <symbolC> "" </symbolC>
        <granularityC> 1 </granularityC>
@@ -141,7 +141,7 @@ module ERC777
        => #operatorSendAux ( From , To , Value , Data , OperatorData , balanceOf(From), balanceOf(To) )
     requires From =/=Int 0 //just for safety
 
-  syntax K ::= "#operatorSendAux" "(" Address "," Address "," Number "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
+  syntax K ::= "#operatorSendAux" "(" Address "," Address "," ValueType "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
 
   rule <k> #operatorSendAux ( From , To , Value , Data , OperatorData , BalanceFrom:Int, BalanceTo:Int )
         => #atomicBegin
@@ -164,7 +164,7 @@ module ERC777
   syntax Stmt ::= #callSender ( Address , // operator
                                 Address , // from
                                 Address , // to
-                                Number ,  // amount
+                                ValueType ,  // amount
                                 Data ,    // userData
                                 Data      // operatorData
                               )
@@ -183,7 +183,7 @@ module ERC777
   syntax Stmt ::= #callRecipient ( Address , // operator
                                    Address , // from
                                    Address , // to
-                                   Number ,  // amount
+                                   ValueType ,  // amount
                                    Data ,    // userData
                                    Data ,    // operatorData
                                    Bool      // fromERC20: called by ERC20 functions
@@ -205,7 +205,7 @@ module ERC777
        <isContract> ISCONTRACT </isContract>
        <acceptRegularNoReceiverHook> AcceptRegular </acceptRegularNoReceiverHook>
 
-  syntax Stmt ::= #transfer ( Address , Address , Number )
+  syntax Stmt ::= #transfer ( Address , Address , ValueType )
 
   rule <k> #transfer ( From , To , Value ) => . ... </k>
        <account>
@@ -267,7 +267,7 @@ module ERC777
        <burnAllowed> BurnAllowed </burnAllowed>
     requires Holder =/=Int 0
 
-  syntax Stmt ::= #burn ( Address , Number )
+  syntax Stmt ::= #burn ( Address , ValueType )
 
   rule <k> #burn(Holder, Amount) => . ... </k>
        <account>
@@ -321,7 +321,7 @@ module ERC777
        <supply> Supply </supply>
     requires Holder =/=Int 0
 
-  syntax Stmt ::= #mint ( Address , Number )
+  syntax Stmt ::= #mint ( Address , ValueType )
 
   rule <k> #mint(Holder, Amount) => . ... </k>
        <account>
@@ -364,7 +364,7 @@ module ERC777
   rule <k> transfer(To:Int, Value:Int) => #transferAux(To, Value, balanceOf(From), balanceOf(To)) ...</k>
        <caller> From </caller>
 
-  syntax K ::= "#transferAux" "(" Address "," Number "," AExp "," AExp ")" [seqstrict(3,4)]
+  syntax K ::= "#transferAux" "(" Address "," ValueType "," AExp "," AExp ")" [seqstrict(3,4)]
   rule <k> #transferAux(To:Int, Value:Int, BalanceFrom:Int, BalanceTo:Int)
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
@@ -382,7 +382,7 @@ module ERC777
   rule transferFrom(From:Int, To:Int, Value:Int)
        => #transferFromAux(From, To, Value, balanceOf(From), balanceOf(To))
 
-  syntax K ::= "#transferFromAux" "(" Address "," Address "," Number "," AExp "," AExp ")" [seqstrict(4,5)]
+  syntax K ::= "#transferFromAux" "(" Address "," Address "," ValueType "," AExp "," AExp ")" [seqstrict(4,5)]
   rule <k> #transferFromAux(From, To, Value, BalanceFrom:Int, BalanceTo:Int)
         => #atomicBegin
         ~> #ensure(#and(Value >=Int 0,
@@ -401,7 +401,7 @@ module ERC777
        <spender> Operator </spender>
        <amount> Allowed </amount>
 
-  syntax Stmt ::= #transferWithAllowance ( Address , Address , Address , Number )
+  syntax Stmt ::= #transferWithAllowance ( Address , Address , Address , ValueType )
 
   rule <k> #transferWithAllowance(Operator, From, To, Value) => . ... </k>
        <account>
@@ -482,7 +482,7 @@ module ERC777
 
   syntax KItem ::= "#atomicBegin"
                  | "#atomicEnd" "(" K /*output*/ ")"
-                 | #snapshot ( K , EventLog , Number )
+                 | #snapshot ( K , EventLog , ValueType )
 
   rule <k> #atomicBegin => . ... </k>
        <accounts> Accounts </accounts>
