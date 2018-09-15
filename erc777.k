@@ -52,6 +52,7 @@ module ERC777
   // - name, symbol, granularity, defaultOperators
   //
 
+  syntax Int ::= "#MAXVALUE"  [function]
   rule #MAXVALUE => 2 ^Int 256 -Int 1
 
   rule <k> name ( ) => NAME ...</k>
@@ -97,7 +98,6 @@ module ERC777
   // authorizeOperator / revokeOperator
   //
 
-  // Non-deterministically allow to authorize an already-authorized-operator
   rule <k> authorizeOperator ( Operator:Int ) => #void ... </k>
        <caller> Holder </caller>
        <id> Holder </id>
@@ -112,7 +112,6 @@ module ERC777
 
   ////
 
-  // Non-deterministically allow to revoke a non-authorized-operator
   rule <k> revokeOperator ( Operator:Int ) => #void ... </k>
        <caller> Holder </caller>
        <id> Holder </id>
@@ -127,7 +126,7 @@ module ERC777
 
   //
   // send / operatorSend
-  // TODO: ERC20 compatibility
+  //
 
   rule <k>         send (          To:Int , Value:Int , Data      )
         => operatorSend ( Holder , To     , Value     , Data , "" ) ... </k>
@@ -151,7 +150,6 @@ module ERC777
               isOperatorFor ( Operator , From ),
               Value >=Int 0,
               BalanceFrom >=Int Value,
-              #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE),
               #isMultipleOf ( Value , granularity() ) ))
         ~> #callSender ( Operator , From , To , Value , Data , OperatorData )
         ~> #transfer ( From , To , Value )
@@ -230,6 +228,22 @@ module ERC777
 
   rule #isMultipleOf ( Value:Int , Granularity:Int ) => Value /Int Granularity *Int Granularity ==Int Value
 
+
+  syntax Stmt ::= #log ( Event )
+                | #logERC20 ( Event )
+
+  rule <k> #log(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
+
+  rule <k> #logERC20(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires ERC20Compatible
+
+  rule <k> #logERC20(Log) => . ... </k>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires notBool ERC20Compatible
+
   //
   // burn / operatorBurn
   //
@@ -278,29 +292,14 @@ module ERC777
        <supply> Supply => Supply -Int Amount </supply>
        requires Balance >=Int Amount andBool Supply >=Int Amount
 
-  // general version
-  syntax Stmt ::= #log ( Event )
-                | #logERC20 ( Event )
 
-  rule <k> #log(Log) => . ... </k>
-       <log> Logs => Logs Log </log>
-
-  rule <k> #logERC20(Log) => . ... </k>
-       <log> Logs => Logs Log </log>
-       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
-       requires ERC20Compatible
-
-  rule <k> #logERC20(Log) => . ... </k>
-       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
-       requires notBool ERC20Compatible
-
-
-  //
-  // Minting: ERC777 does not define specific functions to mint tokens. Instead,
-  // it specifies several rules that MUST be respected when minting tokens.
-  // The definition of `mint` below is a minimal example of minting function
-  // that conforms to those rules.
-  //       *  balance of 0x0 MUST NOT be decreased
+ /* Minting: ERC777 does not define specific functions to mint tokens. Instead,
+   it specifies several rules that MUST be respected when minting tokens.
+   The definition of `mint` below is a minimal example of minting function
+   that conforms to those rules.
+         *  balance of 0x0 MUST NOT be decreased
+ */
+ //====================================================================
 
   rule operatorMint(0, _,_,_) => revert
 
@@ -435,13 +434,35 @@ module ERC777
      // already checked
 
   //
-  // Utils
+  // #atomicBegin, #atomicEnd and #revert.
   //
 
-  syntax Int ::= #sum ( List ) [function]
+  rule <k> revert ~> (KI:KItem => .K) ... </k>
+       <atomic> #snapshot ( _ , _ , _ ) </atomic>
+  requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
 
-  rule #sum ( ListItem(I:Int) S ) => I +Int #sum ( S )
-  rule #sum ( .List ) => 0
+  rule <k> revert ~> (#atomicEnd(_) => .K) ... </k>
+       <accounts> _ => Accounts </accounts>
+       <log> _ => Log </log>
+       <supply> _ => Supply </supply>
+       <atomic> #snapshot ( Accounts , Log , Supply ) => .K </atomic>
+
+  syntax KItem ::= "#atomicBegin"
+                 | "#atomicEnd" "(" K /*output*/ ")"
+                 | #snapshot ( K , EventLog , ValueType )
+
+  rule <k> #atomicBegin => . ... </k>
+       <accounts> Accounts </accounts>
+       <log> Log </log>
+       <supply> Supply </supply>
+       <atomic> .K => #snapshot ( Accounts , Log , Supply ) </atomic>
+
+  rule <k> #atomicEnd(OUT:K) => OUT ... </k>
+       <atomic> _ => .K </atomic>
+
+  //
+  // Utils
+  //
 
   syntax Stmt ::= #ensure ( BExp ) [strict]
 
@@ -469,39 +490,5 @@ module ERC777
   rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool , F:Bool , G:Bool )
        => A andBool B andBool C andBool D andBool E andBool F andBool G
   rule #or  ( A:Bool , B:Bool )                                     => A orBool B
-
-  rule <k> revert ~> (KI:KItem => .K) ... </k>
-       <atomic> #snapshot ( _ , _ , _ ) </atomic>
-  requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
-
-  rule <k> revert ~> (#atomicEnd(_) => .K) ... </k>
-       <accounts> _ => Accounts </accounts>
-       <log> _ => Log </log>
-       <supply> _ => Supply </supply>
-       <atomic> #snapshot ( Accounts , Log , Supply ) => .K </atomic>
-
-  syntax KItem ::= "#atomicBegin"
-                 | "#atomicEnd" "(" K /*output*/ ")"
-                 | #snapshot ( K , EventLog , ValueType )
-
-  rule <k> #atomicBegin => . ... </k>
-       <accounts> Accounts </accounts>
-       <log> Log </log>
-       <supply> Supply </supply>
-       <atomic> .K => #snapshot ( Accounts , Log , Supply ) </atomic>
-
-  rule <k> #atomicEnd(OUT:K) => OUT ... </k>
-       <atomic> _ => .K </atomic>
-
-  syntax AExp ::= "#getCaller"
-  rule <k> #getCaller => Caller ... </k>
-       <caller> Caller </caller>
-
-  syntax EventLog ::= "#getLogs"
-  rule <k> #getLogs => Logs ... </k>
-       <log> Logs </log>
-
-  syntax Void ::= "#void"
-  syntax Exp ::= Void
 
 endmodule

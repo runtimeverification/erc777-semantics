@@ -366,7 +366,8 @@ module ERC777-IMP
        <burnAllowed> _ => B </burnAllowed>
 
   rule <k> revert => #void ...</k>
-       <revertAsPrint> true </revertAsPrint> <atomic> .K </atomic>
+       <revertAsPrint> true </revertAsPrint>
+       <atomic> .K </atomic>
        <output>... .List => ListItem("REVERT\n") </output>
 
 /* The next definitions have nothing to do with the IMP semantics.
@@ -524,6 +525,10 @@ makeRevertAsPrintTrue;
     print(a);
     println(" as an operator");
     authorizeOperator(Operator);
+
+  syntax AExp ::= "#getCaller"
+  rule <k> #getCaller => Caller ... </k>
+       <caller> Caller </caller>
 
   syntax Stmt ::= "test.revokeOperator" "(" AExp ")" [macro]
   rule test.revokeOperator(Operator) =>

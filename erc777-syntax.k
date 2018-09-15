@@ -13,7 +13,9 @@ module ERC777-SYNTAX
   syntax AExp  ::= ValueType | Address
   syntax BExp  ::= Bool
 
-  syntax Exp ::= AExp | BExp | SetExp
+  syntax Void ::= "#void"
+
+  syntax Exp ::= AExp | BExp | SetExp | Data | Void
 
   syntax Exp ::= name ( )
                | symbol ( )
@@ -79,15 +81,5 @@ module ERC777-SYNTAX
 
   syntax Event ::= Transfer ( Address , Address , ValueType)
                  | Approval ( Address , Address , ValueType)
-
-  //
-  // Semantics Internal
-  //
-
-  syntax Exp ::= Event
-               | ValueType | Address | Data
-               | Bool | String
-
-  syntax Int ::= "#MAXVALUE"  [function]
 
 endmodule
