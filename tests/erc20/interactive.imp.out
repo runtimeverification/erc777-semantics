@@ -10,7 +10,6 @@ Caller: 7
 --------------------------------
  0 : EXIT
 -2 : makeCaller(Id)
--3 : makeBalance(Value)
 --------------------------------
 Command: 
 

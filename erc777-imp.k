@@ -391,6 +391,7 @@ module ERC777-IMP
               | "v"         [token]
               | "senderHook"    [token]
               | "receiverHook"  [token]
+              | "continueLoop"  [token] //for interactive.imp
 
 /* ---PREAMBLE----------
    This preamble creates some initial configuration:

@@ -1,7 +1,9 @@
 test.preamble();
 
 // Interactive program
-while (true) {
+int continueLoop;
+continueLoop = 1;
+while (continueLoop == 1) {
   print("--------------------------------\n");
   print("Caller: "); print(caller); print("\n");
   print("--------------------------------\n");
@@ -19,7 +21,7 @@ while (true) {
   c = read();
   print("\n\n\n\n\n\n\n");
   if (c == -2) { test.makeCaller(read()); }
-  if (c == 0 ) { halt; }
+  if (c == 0 ) { continueLoop = 0; }
   if (c == 1 ) { test.totalSupply(); }
   if (c == 2 ) { test.balanceOf(read()); }
   if (c == 3 ) { test.allowance(read(), read()); }
