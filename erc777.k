@@ -1,3 +1,68 @@
+
+module ERC777-SYNTAX
+  imports DOMAINS
+
+  syntax Address ::= Int
+  syntax ValueType ::= Int
+  syntax Data ::= String
+
+  syntax AExp  ::= ValueType | Address
+  syntax BExp  ::= Bool
+
+  syntax Void ::= "#void"
+  
+  syntax Exp ::= AExp | BExp | SetExp | Data | Void
+
+  syntax Exp ::= name ( )
+               | symbol ( )
+
+  syntax AExp ::= totalSupply ( )
+                | balanceOf ( AExp ) [strict]
+                | granularity ( )
+
+  syntax SetExp ::= defaultOperators ( )
+                  | Set
+
+  syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
+
+  syntax Exp ::=  authorizeOperator ( AExp )                        [strict]
+                | revokeOperator ( AExp )                           [strict]
+                | send ( AExp , AExp , Data )                       [strict]
+                | operatorSend ( AExp , AExp , AExp , Data , Data ) [strict]
+                | burn ( AExp )                                     [strict]
+                | operatorBurn ( AExp , AExp , Data )               [strict]
+                | "revert"
+
+  syntax Exp ::=  operatorMint ( AExp , //from
+                                 AExp , //amount
+                                 Data , //data
+                                 Data   //operatorData.
+                               ) [strict]
+
+  syntax Event ::= Sent ( Address , Address , Address , ValueType , Data , Data )
+                 | Minted ( Address , Address , ValueType , Data , Data )
+                 | Burned ( Address , Address , ValueType , Data )
+                 | AuthorizedOperator ( Address , Address )
+                 | RevokedOperator ( Address , Address )
+
+  syntax EventLog ::= "Events:" | EventLog Event
+
+  syntax Stmt ::= AExp "." "tokensToSend" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
+
+  syntax Stmt ::= AExp "." "tokensReceived" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
+
+  syntax AExp ::= allowance ( AExp , AExp ) [strict]
+                | decimals ( )
+
+  syntax BExp ::= approve ( AExp , AExp )             [strict]
+                | transfer ( AExp , AExp )            [strict]
+                | transferFrom ( AExp , AExp , AExp ) [strict]
+
+  syntax Event ::= Transfer ( Address , Address , ValueType)
+                 | Approval ( Address , Address , ValueType)
+
+endmodule
+
 require "erc777-syntax.k"
 
 module ERC777
@@ -20,12 +85,10 @@ module ERC777
            <id> 0:Address </id>
            <balance> 0:ValueType </balance>
 
-           //ERC777 operators
-           <operators> .Set </operators> // Set of approved operators for this account.
-           <senderHook> 0:Address </senderHook> // Address of sender hook, or 0 if not registered.
-           <receiverHook> 0:Address </receiverHook> // Address of receiver hook, or 0 if not registered.
-           <isContract> .K </isContract>
-           //ERC20 allowances. Contains one entry for any known address. For ERC777 operators see <operators>
+           <operators> .Set </operators>
+           <senderHook> 0:Address </senderHook>
+           <receiverHook> 0:Address </receiverHook>
+           <isContract> . </isContract>
            <allowances>
              <allow multiplicity="*">
                <spender> 0:Address </spender>
@@ -40,17 +103,11 @@ module ERC777
        <granularityC> 1 </granularityC>
        <defaultOperatorsC> .Set </defaultOperatorsC>
        <ERC20CompatibleC> true </ERC20CompatibleC>
-       // ERC777TokensRecipient not registered + regular address + receiving tokens: whether to accept (true) or reject
        <acceptRegularNoReceiverHook> true </acceptRegularNoReceiverHook>
        <burnAllowed> true </burnAllowed>
        <log> Events: </log> // event*
-       <atomic> .K </atomic>
+       <atomic> . </atomic>
      </ERC777>
-
-  //
-  // Constant functions
-  // - name, symbol, granularity, defaultOperators
-  //
 
   syntax Int ::= "#MAXVALUE"  [function]
   rule #MAXVALUE => 2 ^Int 256 -Int 1
@@ -67,17 +124,7 @@ module ERC777
   rule <k> defaultOperators ( ) => DefOps ...</k>
        <defaultOperatorsC> DefOps </defaultOperatorsC>
 
-  //
-  // View functions
-  // - totalSupply, balanceOf, isOperatorFor
-  //
-  // Simplely defined, but non-trivial properties to be ensured by token implementations
-  //
-
-  rule <k> totalSupply ( ) => TotalSupply ... </k>
-       <supply> TotalSupply </supply>
-
-  rule <k> balanceOf ( Holder:Int  ) => Balance ... </k>
+  rule <k> balanceOf ( Holder:Int  ) => Balance ...</k>
        <id> Holder </id>
        <balance> Balance </balance>
     requires Holder =/=Int 0
@@ -86,53 +133,40 @@ module ERC777
   rule balanceOf(0) => 0
 
   rule <k> isOperatorFor ( Operator:Int , Holder:Int )
-        => Operator in Operators ... </k>
+        => Operator in Operators ...</k>
        <id> Holder </id>
        <operators> Operators:Set </operators>
     requires Holder =/=Int 0
 
-  //aux case for operatorSend
   rule isOperatorFor(_, 0) => false
 
-  //
-  // authorizeOperator / revokeOperator
-  //
-
-  rule <k> authorizeOperator ( Operator:Int ) => #void ... </k>
+  rule <k> authorizeOperator ( Operator:Int ) => #void ...</k>
        <caller> Holder </caller>
        <id> Holder </id>
        <operators> Operators => Operators SetItem(Operator) </operators>
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator andBool Operator =/=Int 0
 
-  // Reject to authorize itself
-  rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
+  rule <k> authorizeOperator ( Operator:Int ) => revert ...</k>
        <caller> Holder </caller>
        requires Holder ==Int Operator orBool Operator ==Int 0
 
-  ////
-
-  rule <k> revokeOperator ( Operator:Int ) => #void ... </k>
+  rule <k> revokeOperator ( Operator:Int ) => #void ...</k>
        <caller> Holder </caller>
        <id> Holder </id>
        <operators> Operators => Operators -Set SetItem(Operator) </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
        requires Holder =/=Int Operator andBool Operator =/=Int 0
 
-  // Reject to revoke itself -- an address must be an operator for itself
-  rule <k> revokeOperator ( Operator:Int ) => revert ... </k>
+  rule <k> revokeOperator ( Operator:Int ) => revert ...</k>
        <caller> Holder </caller>
        requires Holder ==Int Operator orBool Operator ==Int 0
 
-  //
-  // send / operatorSend
-  //
-
   rule <k>         send (          To:Int , Value:Int , Data      )
-        => operatorSend ( Holder , To     , Value     , Data , "" ) ... </k>
+        => operatorSend ( Holder , To     , Value     , Data , "" ) ...</k>
        <caller> Holder </caller>
 
-  rule <k> operatorSend ( 0 => Caller , _,_,_,_ ) ... </k>
+  rule <k> operatorSend ( 0 => Caller , _,_,_,_ ) ...</k>
        <caller> Caller </caller>
     requires Caller =/=Int 0 //just for safety
 
@@ -156,7 +190,7 @@ module ERC777
         ~> #callRecipient ( Operator , From , To , Value , Data , OperatorData , false )
         ~> #log( Sent(Operator , From , To , Value , Data , OperatorData) )
         ~> #logERC20( Transfer(From , To , Value) )
-        ~> #atomicEnd(#void) ... </k>
+        ~> #atomicEnd(#void) ...</k>
        <caller> Operator </caller>
 
   syntax Stmt ::= #callSender ( Address , // operator
@@ -168,13 +202,12 @@ module ERC777
                               )
 
   rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData )
-        => Hook . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => Hook . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) ...</k>
        <id> From </id>
        <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
 
-  // no hook registered
-  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
+  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData ) => . ...</k>
        <id> From </id>
        <senderHook> 0 </senderHook>
 
@@ -187,17 +220,14 @@ module ERC777
                                    Bool      // fromERC20: called by ERC20 functions
                                  )
 
-  // If the recipient is a contract, which has not registered an ERC777TokensRecipient implementation; the token contract:
-  // * MUST revert if the tokensReceived hook is called from a mint or send call.
-  // * SHOULD accept if the tokensReceived hook is called from an ERC20 transfer or transferFrom call.
   rule <k> #callRecipient ( Operator , From , To , Value , Data , OperatorData , _ )
-        => Hook . tokensReceived ( Operator , From , To , Value , Data , OperatorData ) ... </k>
+        => Hook . tokensReceived ( Operator , From , To , Value , Data , OperatorData ) ...</k>
        <id> To </id>
        <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
   rule <k> #callRecipient ( Operator , From , To , Value , Data , OperatorData , FromERC20 )
-        => #ite( #or(FromERC20, #and(AcceptRegular, notBool ISCONTRACT) ) , . , revert ) ... </k>
+        => #ite( #or(FromERC20, #and(AcceptRegular, notBool ISCONTRACT) ) , . , revert ) ...</k>
        <id> To </id>
        <receiverHook> 0 </receiverHook>
        <isContract> ISCONTRACT </isContract>
@@ -205,7 +235,7 @@ module ERC777
 
   syntax Stmt ::= #transfer ( Address , Address , ValueType )
 
-  rule <k> #transfer ( From , To , Value ) => . ... </k>
+  rule <k> #transfer ( From , To , Value ) => . ...</k>
        <account>
          <id> From </id>
          <balance> ValueFrom => ValueFrom -Int Value </balance>
@@ -217,48 +247,33 @@ module ERC777
          ...
        </account>
        requires From =/=Int To
-     // andBool ValueFrom -Int Value >=Int 0
-     // andBool ValueTo   +Int Value  <=Int #MAXVALUE
-     // already checked
 
-  rule <k> #transfer ( From , To , Value ) => . ... </k>
+  rule <k> #transfer ( From , To , Value ) => . ...</k>
        requires From ==Int To
 
   syntax BExp ::= #isMultipleOf ( AExp , AExp ) [seqstrict]
 
-  rule #isMultipleOf ( Value:Int , Granularity:Int ) => Value /Int Granularity *Int Granularity ==Int Value
-
+  rule #isMultipleOf ( Value:Int , Granularity:Int )
+    => (Value /Int Granularity) *Int Granularity ==Int Value
 
   syntax Stmt ::= #log ( Event )
                 | #logERC20 ( Event )
 
-  rule <k> #log(Log) => . ... </k>
+  rule <k> #log(Log) => . ...</k>
        <log> Logs => Logs Log </log>
 
-  rule <k> #logERC20(Log) => . ... </k>
+  rule <k> #logERC20(Log) => . ...</k>
        <log> Logs => Logs Log </log>
-       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
-       requires ERC20Compatible
+       <ERC20CompatibleC> true </ERC20CompatibleC>
 
-  rule <k> #logERC20(Log) => . ... </k>
-       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
-       requires notBool ERC20Compatible
+  rule <k> #logERC20(Log) => . ...</k>
+       <ERC20CompatibleC> false </ERC20CompatibleC>
 
-  //
-  // burn / operatorBurn
-  //
-
-  /* Wording from standard: contract MAY prevent some/all holders from burning for any reason
-  vs Tokens MAY be burned from any holder address.
-
-  We implement this through the cell <burnAllowed>. If it is true, burn operation will proceed according to other rules.
-  If it is false, burn operation is not allowed for the entire contract, and any burn operation will revert.
-  */
   rule <k>         burn(        Amount:Int   )
-        => operatorBurn(Caller, Amount,    "") ... </k>
+        => operatorBurn(Caller, Amount,    "") ...</k>
        <caller> Caller </caller>
 
-  rule <k> operatorBurn(0 => Caller, _,_) ... </k>
+  rule <k> operatorBurn(0 => Caller, _,_) ...</k>
        <caller> Caller </caller>
     requires Caller =/=Int 0 //just for safety
 
@@ -274,7 +289,7 @@ module ERC777
         ~> #burn(Holder, Amount)
         ~> #log(Burned(Operator, Holder, Amount, OperatorData))
         ~> #logERC20(Transfer(Holder, 0, Amount)) // ERC20
-        ~> #atomicEnd(#void) ... </k>
+        ~> #atomicEnd(#void) ...</k>
        <caller> Operator </caller>
        <id> Holder </id>
        <balance> Balance </balance>
@@ -283,7 +298,7 @@ module ERC777
 
   syntax Stmt ::= #burn ( Address , ValueType )
 
-  rule <k> #burn(Holder, Amount) => . ... </k>
+  rule <k> #burn(Holder, Amount) => . ...</k>
        <account>
          <id> Holder </id>
          <balance> Balance => Balance -Int Amount </balance>
@@ -292,16 +307,7 @@ module ERC777
        <supply> Supply => Supply -Int Amount </supply>
        requires Balance >=Int Amount andBool Supply >=Int Amount
 
-
- /* Minting: ERC777 does not define specific functions to mint tokens. Instead,
-   it specifies several rules that MUST be respected when minting tokens.
-   The definition of `mint` below is a minimal example of minting function
-   that conforms to those rules.
-         *  balance of 0x0 MUST NOT be decreased
- */
- //====================================================================
-
-  rule operatorMint(0, _,_,_) => revert
+  rule operatorMint(0,_,_,_) => revert
 
   rule <k> operatorMint(Holder, Amount, Data, OperatorData)
         => #atomicBegin
@@ -311,10 +317,10 @@ module ERC777
                         Holder =/=Int 0,
                         isOperatorFor( Operator , Holder )))
         ~> #mint(Holder, Amount)
-        ~> #callRecipient(Operator, 0, Holder, Amount, Data,  OperatorData, false)
+        ~> #callRecipient(Operator, 0, Holder, Amount, Data, OperatorData, false)
         ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
         ~> #logERC20(Transfer(0, Holder, Amount))
-        ~> #atomicEnd(#void) ... </k>
+        ~> #atomicEnd(#void) ...</k>
        <caller> Operator </caller>
        <id> Holder </id>
        <supply> Supply </supply>
@@ -322,7 +328,7 @@ module ERC777
 
   syntax Stmt ::= #mint ( Address , ValueType )
 
-  rule <k> #mint(Holder, Amount) => . ... </k>
+  rule <k> #mint(Holder, Amount) => . ...</k>
        <account>
          <id> Holder </id>
          <balance> Balance => Balance +Int Amount </balance>
@@ -330,19 +336,11 @@ module ERC777
        </account>
        <supply> Supply => Supply +Int Amount </supply>
 
-
-  //
-  // ERC20 compatibility
-  // TODO: Check compatibility on/off?
-  //
-
   rule <k> allowance(Owner:Int, Spender:Int) => Allowance ...</k>
        <id> Owner </id>
        <spender> Spender </spender>
        <amount> Allowance </amount>
 
-  /*EERC777: RC20 compatibility requirement:
-    The decimals of the token MUST always be 18.*/
   rule <k> decimals() => 18 ...</k>
 
   rule <k> approve(Spender:Int, Allowance:Int) => true ...</k>
@@ -375,7 +373,7 @@ module ERC777
         ~> #callRecipient(From, From, To, Value, "", "", true) // should accept even if To isn't registered and To is contract )
         ~> #log(Transfer(From, To, Value))
         ~> #log(Sent(From, From, To, Value, "", ""))
-        ~> #atomicEnd(true) ... </k>
+        ~> #atomicEnd(true) ...</k>
        <caller> From </caller>
 
   rule transferFrom(From:Int, To:Int, Value:Int)
@@ -394,7 +392,7 @@ module ERC777
         ~> #callRecipient(Operator, From, To, Value, "", "", true)
         ~> #log(Transfer(From, To, Value))
         ~> #log(Sent(From, From, To, Value, "", ""))
-        ~> #atomicEnd(true) ... </k>
+        ~> #atomicEnd(true) ...</k>
        <caller> Operator </caller>
        <id> From </id>
        <spender> Operator </spender>
@@ -402,7 +400,7 @@ module ERC777
 
   syntax Stmt ::= #transferWithAllowance ( Address , Address , Address , ValueType )
 
-  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ... </k>
+  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ...</k>
        <account>
          <id> From </id>
          <balance> BalanceFrom => BalanceFrom -Int Value </balance>
@@ -416,12 +414,8 @@ module ERC777
          ...
        </account>
        requires From =/=Int To
-     // andBool BalanceFrom -Int Value >=Int 0
-     // andBool BalanceTo   +Int Value  <=Int #MAXVALUE
-     // andBool Allowed >=Int Value
-     // already checked
 
-  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ... </k>
+  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ...</k>
        <account>
          <id> From </id>
          <balance> Balance </balance>
@@ -430,39 +424,29 @@ module ERC777
          ...
        </account>
        requires From ==Int To
-     // andBool Allowed >=Int Value
-     // already checked
-
-  //
-  // #atomicBegin, #atomicEnd and #revert.
-  //
-
-  rule <k> revert ~> (KI:KItem => .K) ... </k>
-       <atomic> #snapshot ( _ , _ , _ ) </atomic>
-  requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
-
-  rule <k> revert ~> (#atomicEnd(_) => .K) ... </k>
-       <accounts> _ => Accounts </accounts>
-       <log> _ => Log </log>
-       <supply> _ => Supply </supply>
-       <atomic> #snapshot ( Accounts , Log , Supply ) => .K </atomic>
 
   syntax KItem ::= "#atomicBegin"
                  | "#atomicEnd" "(" K /*output*/ ")"
                  | #snapshot ( K , EventLog , ValueType )
 
-  rule <k> #atomicBegin => . ... </k>
+  rule <k> #atomicBegin => . ...</k>
        <accounts> Accounts </accounts>
        <log> Log </log>
        <supply> Supply </supply>
-       <atomic> .K => #snapshot ( Accounts , Log , Supply ) </atomic>
+       <atomic> . => #snapshot ( Accounts , Log , Supply ) </atomic>
 
-  rule <k> #atomicEnd(OUT:K) => OUT ... </k>
-       <atomic> _ => .K </atomic>
+  rule <k> #atomicEnd(OUT:K) => OUT ...</k>
+       <atomic> _ => . </atomic>
 
-  //
-  // Utils
-  //
+  rule <k> revert ~> (KI:KItem => .) ...</k>
+       <atomic> #snapshot(_,_,_) </atomic>
+  requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
+
+  rule <k> revert ~> (#atomicEnd(_) => .) ...</k>
+       <accounts> _ => Accounts </accounts>
+       <log> _ => Log </log>
+       <supply> _ => Supply </supply>
+       <atomic> #snapshot ( Accounts , Log , Supply ) => . </atomic>
 
   syntax Stmt ::= #ensure ( BExp ) [strict]
 
@@ -471,8 +455,8 @@ module ERC777
 
   syntax K ::= #ite ( BExp , K , K ) [strict(1)]
 
-  rule #ite ( B:Bool , T , F ) => T  requires B
-  rule #ite ( B:Bool , T , F ) => F  requires notBool B
+  rule #ite ( true , T , F ) => T
+  rule #ite ( false , T , F ) => F
 
   syntax BExp ::= "#and" "(" BExp "," BExp ")"                                     [strict]
                 | "#and" "(" BExp "," BExp "," BExp ")"                            [strict]
@@ -492,3 +476,4 @@ module ERC777
   rule #or  ( A:Bool , B:Bool )                                     => A orBool B
 
 endmodule
+
