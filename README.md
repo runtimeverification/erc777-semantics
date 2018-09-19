@@ -1,4 +1,4 @@
-ERC777-K: Formal Executable Specification of ERC20
+ERC777-K: Formal Executable Specification of ERC777
 =================================================
 
 Author: [Denis Bogdanas and Daejun Park](https://runtimeverification.com/team/)
@@ -41,15 +41,17 @@ and would require significant extra complexity. Instead, we provide
 two builtin implementations for hooks, which are just enough
 to test the standard.
 
-ERC777 also allows the contract to be backwards compatible with the oder ERC20
+ERC777 also allows the contract to be backwards compatible with the older ERC20
 standard, and provides both ERC777 and ERC20 interfaces at the same time.
-Yet ERC777 standard alters the behavior of ERC20 functions. 
-For example, ERC20 transfer operations are required to call the ERC777 hook 
-functions, if they are registered, to make sure that hook mechanism not bypassed,
-regardless of which interface is used.
+Yet, the ERC777 standard alters the behavior of ERC20 functions. 
+For example, the ERC20 transfer functions are required to call the 
+ERC777 hook 
+functions, if they are registered, to make sure that the hook mechanism not 
+bypassed, regardless of which interface is used.
 To capture this, ERC777-K also models the updated ERC20 functions.
 
-During development, we discovered a number of ambiguities in the standard which
+During the development of the ERC777-K semantics, 
+we discovered a number of ambiguities in the standard which
 we documented and delivered to the authors of ERC777:
 https://github.com/runtimeverification/erc777-semantics/wiki/Issues
 
@@ -83,15 +85,15 @@ and is not executable.
 
 ## Structure
 
-The main ERC20-K specification is defined and extensively commented in this
+The main ERC777-K specification is defined and extensively commented in this
 file:
 
 * [erc777.md](erc777.md)
 
 The following folder contains unit tests for the ERC777-K specification,
-that is, small programs that exercise the various ERC20 functions in various
+that is, small programs that exercise the various ERC777 functions in various
 contexts.
-For that, a programming language needs to be first defined on top of ERC20-K:
+For that, a programming language needs to be first defined on top of ERC777-K:
 
 * [tests](tests)
 
@@ -105,7 +107,7 @@ together with their own unit tests.
 It would be nice to cover a variety of language paradigms, such as more
 imperative language, object-oriented, functional, and even logical programming
 languages.
-Finally, you can adopt ERC20-K as *the standard specification of ERC20* when
+Finally, you can adopt ERC777-K as *the standard specification of ERC777* when
 testing and verifying smart contracts and this way:
 (1) we as a community converge on one
 formal standard for token correctness, as opposed to each group having
