@@ -1,3 +1,8 @@
 [submodule "erc20-semantics"]
 	path = erc20-semantics
 	url = https://github.com/runtimeverification/erc20-semantics
+	ignore = untracked
+[submodule ".build/pandoc-tangle"]
+	path = .build/pandoc-tangle
+	url = https://github.com/ehildenb/pandoc-tangle
+	ignore = untracked
