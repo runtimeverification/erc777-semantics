@@ -343,7 +343,7 @@ module ERC777
 
   /*EERC777: RC20 compatibility requirement:
     The decimals of the token MUST always be 18.*/
-  rule <k> decimals() => 18 </k>
+  rule <k> decimals() => 18 ...</k>
 
   rule <k> approve(Spender:Int, Allowance:Int) => true ...</k>
        <caller> Owner </caller>

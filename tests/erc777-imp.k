@@ -1,18 +1,18 @@
-/* Author: Grigore Rosu
-   Date: 2 December 2017
+/* Author: Denis Bogdanas, Daejun Park, Grigore Rosu
+   Date: 18 September 2018
 
    The IMP language defined below is mostly imported from the K Tutorial,
    specifically from its IMP and IMP++ languages:
    https://github.com/kframework/k/blob/master/k-distribution/tutorial/1_k/2_imp/lesson_5/imp.k
    https://github.com/kframework/k/blob/master/k-distribution/tutorial/1_k/4_imp%2B%2B/lesson_8/imp.k
 
-   The goal of this language here is to test the ERC20-K specification.
+   The goal of this language here is to test the ERC777-K specification.
    It therefore adds language extensions to create, initialize, and modify
-   the configuration of ERC20-K.  See inlined comments below, where needed.
+   the configuration of ERC777-K.  See inlined comments below, where needed.
    We assume the reader familiar with K and the K tutorial definitions
    of IMP and IMP++. */
 
-require "erc777.k"
+require "../erc777.k"
 
 module ERC777-IMP-SYNTAX
   imports ERC777-SYNTAX

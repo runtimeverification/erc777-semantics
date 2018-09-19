@@ -1,4 +1,4 @@
-DEF=../../erc777-imp
+DEF=../erc777-imp
 EXT=imp
 TESTDIR=./*
 KOMPILE_FLAGS=--backend java --syntax-module ERC777-IMP

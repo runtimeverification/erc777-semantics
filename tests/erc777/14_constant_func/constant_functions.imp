@@ -7,10 +7,13 @@ Functions to test:
     function totalSupply() public view returns (uint256);
     function granularity() public view returns (uint256);
     function defaultOperators() public view returns (address[]);
+    ERC20: function decimals() view returns (uint8 decimals);
 */
-print("name = ");
+print("name() => ");
 println(name());
-print("symbol = ");
+print("symbol() => ");
 println(symbol());
 test.granularity();
 test.defaultOperators();
+print("decimals() => ");
+println(decimals());
