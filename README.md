@@ -1,7 +1,7 @@
-ERC20-K: Formal Executable Specification of ERC20
+ERC777-K: Formal Executable Specification of ERC20
 =================================================
 
-Author: [Daejun Park and Denis Bogdanas](https://runtimeverification.com/team/)
+Author: [Denis Bogdanas and Daejun Park](https://runtimeverification.com/team/)
 
 Date: 18 September 2018
 
@@ -10,12 +10,10 @@ Date: 18 September 2018
 The [ERC777 standard](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-777.md)
 provides basic functionality to transfer tokens and to be approved so
 they can be spent by another on-chain third party.
-It supersedes the very popular ERC20, by giving account holders more control
-over token transactions.
+It supersedes the very popular [ERC20 standard](https://eips.ethereum.org/EIPS/eip-20), 
+by giving account holders more control over token transactions.
 
-ERC777-K is a complete formal specification of the ERC777 standard,
-that, in a simplified way, supports all the behaviors from the standard.
-
+ERC777-K is a complete formal specification of the ERC777 standard.
 Specifically, it is a *formal executable semantics* of a *refinement of the
 ERC777 standard*, using the [K framework](http://kframework.org).
 
@@ -26,11 +24,16 @@ data.
 ERC777 explicitly allows certain implementation-dependent behaviors.
 For example, in certain conditions the contract can either
 accept or reject a token transfer at its discretion.
-ERC777-K is parametric, in a simplified way, with respect to such choices.
-ERC777-K can be configured, for any choice-dependent operation, to either
-accept or reject it. This is enough for testing purposes.
+Yet deciding when to accept and when to reject is outside the scope of ERC777.
+For this reason ERC777-K is parametric with respect to such choices, 
+at the global scale.
+E.g. it can be configured to either accept all or reject all operations
+where discretion is allowed.
+This is enough to capture all the allowed behaviors and stay confined
+to ERC777 standard.
 
-In addition ERC777 heavily relies on another standard, ERC820, for
+In addition ERC777 heavily relies on another standard, 
+[ERC820](https://eips.ethereum.org/EIPS/eip-820), for
 allowing accounts to register "hooks", e.g. custom functions that are
 triggered once certain operations happen.
 We do not model this hook registration process, as it is orthogonal to ERC777,
@@ -39,10 +42,12 @@ two builtin implementations for hooks, which are just enough
 to test the standard.
 
 ERC777 also allows the contract to be backwards compatible with the oder ERC20
-standard, and provide both ERC777 and ERC20 interfaces at the same time.
-In this case functionality of certain ERC20 functions is different from the
-original ERC20. To capture this functionality, ERC777-K also models the updated
-ERC20 functions.
+standard, and provides both ERC777 and ERC20 interfaces at the same time.
+Yet ERC777 standard alters the behavior of ERC20 functions. 
+For example, ERC20 transfer operations are required to call the ERC777 hook 
+functions, if they are registered, to make sure that hook mechanism not bypassed,
+regardless of which interface is used.
+To capture this, ERC777-K also models the updated ERC20 functions.
 
 During development, we discovered a number of ambiguities in the standard which
 we documented and delivered to the authors of ERC777:
@@ -63,20 +68,18 @@ behaviors uncovered.
 [KEVM](https://github.com/kframework/evm-semantics) makes it possible to
 rigorously verify smart contracts at the Ethereum Virtual Machine (EVM) level
 against higher level specifications.
-Such contracts will be the future ERC777 token implementations, 
+Such contracts can be, for example, the future ERC777 token implementations, 
 written in languages like Solidity or Viper.
-But what does "verify smart contracts" really mean?
+But what does "verify ERC777 smart contracts" really mean?
 When formal verification is sought, a property (or specification) that the
 code must satisfy must be available.
 To our knowledge, there was no such formal specification for ERC777, or
 for ERC777 variants, available at the time of this writing (September 2018).
 
-The existing ERC777 specifications are either too informal to serve as a formal
-specification for verification purposes, or they are not executable.
-For example, the
-[standard](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-777.md)
-is rather informal and imprecise, in spite of being called
-*formalized*.
+The existing 
+[ERC777 standard specification](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-777.md) 
+is too informal to serve as a formal specification for verification purposes, 
+and is not executable.
 
 ## Structure
 
