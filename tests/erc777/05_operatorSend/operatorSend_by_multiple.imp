@@ -1,0 +1,12 @@
+test.preamble();
+
+// authorize 2 non-default operators, send from each and from one default.
+
+test.authorizeOperator(1);
+test.authorizeOperator(2);
+test.makeCaller(1);
+test.operatorSend(7, 3, 10, "", "");
+test.makeCaller(2);
+test.operatorSend(7, 3, 10, "", "");
+test.makeCaller(8);
+test.operatorSend(7, 3, 10, "", "");

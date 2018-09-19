@@ -1,0 +1,14 @@
+test.preamble();
+
+//ERC777TokensRecipient not registered + regular address, rejecting semantics
+//Setting up semantics to revert when tokens are sent ot a regular address with no hooks registered.
+//Test cases:
+//    a. Sender with no hook. Receiver regular address with no receiver hook, sending sufficient balance.
+//    b. Sender with sender hook, accepting. Receiver regular address, no receiver hook, sending sufficient balance.
+
+test.setAcceptRegularNoReceiverHook(false);
+test.registerTokensToSendHook(2, 1); //addr 1 - no hook, addr 2 - accepting sender hook. Addr 3 - receiver.
+
+test.makeCaller(8);
+test.operatorSend(1, 3, 5, "", ""); //from no hook
+test.operatorSend(2, 3, 5, "", ""); //from accepting sender hook

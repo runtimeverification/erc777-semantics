@@ -1,0 +1,8 @@
+One single test, with these parameters:
+===================================
+Functions to test: send, operatorSend, burn, operatorBurn, operatorMint.
+
+Hooks: all allowed, all accepting. Send hooks for senders, receive hooks for receivers.
+
+Other: one single operation for each
+Parameters: non-empty data, operatorData for each operation.

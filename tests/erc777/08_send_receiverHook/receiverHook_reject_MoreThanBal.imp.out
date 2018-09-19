@@ -1,0 +1,15 @@
+Registering receiver 3 with hook 5
+Changing the caller to 10
+10 is sending 200 to 3 (data:)
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+10 is sending 200 from 10 to 3 (data:""),  (operatorData:"")
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+Changing the caller to 8
+8 is sending 200 from 10 to 3 (data:""),  (operatorData:"")
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30

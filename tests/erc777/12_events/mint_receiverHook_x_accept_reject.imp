@@ -1,0 +1,13 @@
+test.preamble();
+
+// 2 receiver addresses, one accepting another rejecting.
+//    Mint by one operator from 1st, then 2nd, then 1st.
+
+test.registerTokensReceivedHook(5, 1); //accepting
+test.registerTokensReceivedHook(6, 3); //rejecting
+test.makeCaller(8);
+test.operatorMint(5, 1000, "", "");
+test.operatorMint(6, 10000, "", "");
+test.operatorMint(5, 100000, "", "");
+
+printLogs;

@@ -1,0 +1,6 @@
+Registering receiver 3 with hook 1
+Changing the caller to 5
+5 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30

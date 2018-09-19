@@ -1,0 +1,11 @@
+test.preamble();
+
+// authorize same operator by 2 accounts. Send from these 2 and from a 3-rd unauthorized.
+
+test.authorizeOperator(1);
+test.makeCaller(6);
+test.authorizeOperator(1);
+test.makeCaller(1);
+test.operatorSend(6, 3, 10, "", ""); //authorized
+test.operatorSend(7, 3, 10, "", ""); //authorized
+test.operatorSend(8, 3, 10, "", ""); //unauthorized

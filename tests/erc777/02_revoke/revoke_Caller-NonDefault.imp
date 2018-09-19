@@ -1,0 +1,8 @@
+test.preamble();
+
+// Testing revokeOperator(Operator) when Operator = caller
+// must revert
+
+test.isOperatorFor(7, 7);
+test.revokeOperator(7);
+test.isOperatorFor(7, 7);

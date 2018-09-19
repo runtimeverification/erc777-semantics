@@ -1,0 +1,75 @@
+Authorize and revoke alone
+================================
+Rules for authorize:
+    - may authorize non-caller
+    - may authorize a default operator
+    - may authorize an already authorized operator
+    - may NOT authorize caller
+    - may have multiple operators
+
+Rules for revoke:
+    - may revoke non-caller
+    - may revoke a default operator
+    - may revoke a non-authorized operator
+    - may NOT revoke caller
+    - may have multiple operators
+
+Scenarios to test, authorize:
+-------------------------------
+    - authorize unauthorized non-caller non-default
+    - authorize unauthorized non-caller default (revoke first)
+    - authorize authorized non-caller non-default (authorize twice)
+    - authorize authorized non-caller default
+    - authorize caller non-default
+    - authorize caller default
+
+Scenarios to test, revoke:
+-------------------------------
+    - revoke unauthorized non-caller non-default
+    - revoke unauthorized non-caller default (revoke first)
+    - revoke authorized non-caller non-default (authorize first)
+    - revoke authorized non-caller default
+    - revoke caller non-default
+    - revoke caller default
+
+Scenarios to test, isOperatorFor, all cases in one test:
+-------------------------------
+State:
+    - 2 token holders - 6 and 7
+    - 2 default operators: 8 and 9. Both authorized for 6, just 9 authorized for 7.
+    - 2 regular operators: 1 and 2. Both authorized for 6, just 2 authorized for 7.
+Test:
+    - isOperatorFor({1,2,8,9}, {6,7})
+
+
+Additional things to log: call test.isOperatorFor after each authorize/revoke event.
+
+Authorize and revoke with operatorSend, in addition to what was tested
+================================
+Scenarios to test, one operator:
+-------------------------------
+    - authorize non-default, send, revoke same, send.
+    - authorize non-default, send, send
+    - (unauthorized non-default) send, authorize, send
+    - revoke default, send, authorize same, send
+
+Scenarios to test, multiple operators:
+-------------------------------
+    - authorize 2 non-default operators, send from each and from one default.
+    - one authorized and one non-authorized, send from each in order
+    - one un-authorized and one authorized, send from each in order
+    - authorize same operator by 2 accounts. Send from these 2 and from a 3-rd unauthorized.
+
+operatorSend involving 0x0
+================================
+    - send to 0x0 - must revert
+
+    - operatorSend from 0x0 - from must be set to 0x0.
+    - operatorSend to 0x0  - must revert.
+        - both in 1 test
+
+    - authorize and revoke 0x0 - both should revert.
+
+Reason: 0x0 is not allowed in from or to address of send/operatorSend operation.
+
+Total: 23 tests.

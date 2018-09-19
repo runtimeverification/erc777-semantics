@@ -1,0 +1,11 @@
+test.preamble();
+
+// burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+// regular holder address with no hook, burning sufficient balance
+
+test.makeCaller(5);
+test.burn(3);
+test.operatorBurn(5, 3, ""); //from caller
+
+test.makeCaller(8);
+test.operatorBurn(5, 3, ""); //through default operator

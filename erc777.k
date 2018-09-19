@@ -9,58 +9,63 @@ module ERC777
   imports MAP
   imports SET
   imports LIST
+  imports KCELLS
 
   configuration
      <ERC777>
+       <caller> 0:Address </caller>
        <k> $PGM:K </k>
-       <balances> .Map </balances> // holder -> balance
-       <operators> .Map </operators> // holder -> 2^operator
-       <senderHooks> .Map </senderHooks> // holder -> senderHook
-       <receiverHooks> .Map </receiverHooks> // holder -> receiverHook
+       <accounts>
+         <account multiplicity="*">
+           <id> 0:Address </id>
+           <balance> 0:ValueType </balance>
+
+           //ERC777 operators
+           <operators> .Set </operators> // Set of approved operators for this account.
+           <senderHook> 0:Address </senderHook> // Address of sender hook, or 0 if not registered.
+           <receiverHook> 0:Address </receiverHook> // Address of receiver hook, or 0 if not registered.
+           <isContract> .K </isContract>
+           //ERC20 allowances. Contains one entry for any known address. For ERC777 operators see <operators>
+           <allowances>
+             <allow multiplicity="*">
+               <spender> 0:Address </spender>
+               <amount> 0:ValueType </amount>
+             </allow>
+           </allowances>
+         </account>
+       </accounts>
+       <supply> 0:ValueType </supply>
+       <nameC> "" </nameC>
+       <symbolC> "" </symbolC>
+       <granularityC> 1 </granularityC>
+       <defaultOperatorsC> .Set </defaultOperatorsC>
+       <ERC20CompatibleC> true </ERC20CompatibleC>
+       // ERC777TokensRecipient not registered + regular address + receiving tokens: whether to accept (true) or reject
+       <acceptRegularNoReceiverHook> true </acceptRegularNoReceiverHook>
+       <burnAllowed> true </burnAllowed>
        <log> Events: </log> // event*
        <atomic> .K </atomic>
      </ERC777>
-
-  //
-  // Configuration initialization -- all addresses should be initialized
-  // - parameterized by: #addresses, #defaultOperators, #senderHook, #receiverHook
-  //
-
-  rule <k> #init ( ) => . ... </k>
-       <balances>      _ => #initBalances      ( #addresses )                     </balances>
-       <operators>     _ => #initOperators     ( #addresses , #defaultOperators ) </operators>
-       <senderHooks>   _ => #initSenderHooks   ( #addresses )                     </senderHooks>
-       <receiverHooks> _ => #initReceiverHooks ( #addresses )                     </receiverHooks>
-
-  syntax Map ::= #initBalances ( Addresses ) [function]
-               | #initOperators ( Addresses , Set ) [function]
-               | #initSenderHooks ( Addresses ) [function]
-               | #initReceiverHooks ( Addresses ) [function]
-
-  rule #initBalances ( Holder Holders ) => Holder |-> 0  #initBalances ( Holders )
-  rule #initBalances ( .Addresses ) => .Map
-
-  rule #initOperators ( Holder Holders , DefaultOperators ) => Holder |-> SetItem(Holder) DefaultOperators  #initOperators ( Holders , DefaultOperators )
-  rule #initOperators ( .Addresses , _ ) => .Map
-
-  rule #initSenderHooks ( Holder Holders ) => Holder |-> #senderHook ( Holder )  #initSenderHooks ( Holders )
-  rule #initSenderHooks ( .Addresses ) => .Map
-
-  rule #initReceiverHooks ( Holder Holders ) => Holder |-> #receiverHook ( Holder )  #initReceiverHooks ( Holders )
-  rule #initReceiverHooks ( .Addresses ) => .Map
 
   //
   // Constant functions
   // - name, symbol, granularity, defaultOperators
   //
 
-  rule name ( ) => #name
+  syntax Int ::= "#MAXVALUE"  [function]
+  rule #MAXVALUE => 2 ^Int 256 -Int 1
 
-  rule symbol ( ) => #symbol
+  rule <k> name ( ) => NAME ...</k>
+       <nameC> NAME </nameC>
 
-  rule granularity ( ) => #granularity
+  rule <k> symbol ( ) => SYMBOL ...</k>
+       <symbolC> SYMBOL </symbolC>
 
-  rule defaultOperators ( ) => #defaultOperators
+  rule <k> granularity ( ) => G ...</k>
+       <granularityC> G </granularityC>
+
+  rule <k> defaultOperators ( ) => DefOps ...</k>
+       <defaultOperatorsC> DefOps </defaultOperatorsC>
 
   //
   // View functions
@@ -69,194 +74,421 @@ module ERC777
   // Simplely defined, but non-trivial properties to be ensured by token implementations
   //
 
-  rule <k> totalSupply ( ) => #sum ( values(Balances) ) ... </k>
-       <balances> Balances </balances>
+  rule <k> totalSupply ( ) => TotalSupply ... </k>
+       <supply> TotalSupply </supply>
 
-  rule <k> balanceOf ( Holder ) => Balance ... </k>
-       <balances> ... Holder |-> Balance ... </balances>
+  rule <k> balanceOf ( Holder:Int  ) => Balance ... </k>
+       <id> Holder </id>
+       <balance> Balance </balance>
+    requires Holder =/=Int 0
 
-  rule <k> isOperatorFor ( Operator , Holder ) => Operator in Operators ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
+  //Required for send/operatorSend revert cases.
+  rule balanceOf(0) => 0
+
+  rule <k> isOperatorFor ( Operator:Int , Holder:Int )
+        => Operator in Operators ... </k>
+       <id> Holder </id>
+       <operators> Operators:Set </operators>
+    requires Holder =/=Int 0
+
+  //aux case for operatorSend
+  rule isOperatorFor(_, 0) => false
 
   //
   // authorizeOperator / revokeOperator
   //
 
-  // Non-deterministically allow to authorize an already-authorized-operator
-  rule <k> Holder : authorizeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators SetItem(Operator) ) ... </operators>
+  rule <k> authorizeOperator ( Operator:Int ) => #void ... </k>
+       <caller> Holder </caller>
+       <id> Holder </id>
+       <operators> Operators => Operators SetItem(Operator) </operators>
        <log> Log => Log AuthorizedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
+       requires Holder =/=Int Operator andBool Operator =/=Int 0
 
-/* FIXME: temporarily disable for quick testing
-  // Non-deterministically reject to authorize an already-authorized-operator
-  rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
-       requires Holder =/=Int Operator
-        andBool Operator in Operators
-*/
-
-  // Reject to authorize itself -- TODO: too strong??
-  rule <k> Holder : authorizeOperator ( Operator ) => #revert ... </k>
-       requires Holder ==Int Operator
+  // Reject to authorize itself
+  rule <k> authorizeOperator ( Operator:Int ) => revert ... </k>
+       <caller> Holder </caller>
+       requires Holder ==Int Operator orBool Operator ==Int 0
 
   ////
 
-  // Non-deterministically allow to revoke a non-authorized-operator
-  rule <k> Holder : revokeOperator ( Operator ) => . ... </k>
-       <operators> ... Holder |-> ( Operators => Operators -Set SetItem(Operator) ) ... </operators>
+  rule <k> revokeOperator ( Operator:Int ) => #void ... </k>
+       <caller> Holder </caller>
+       <id> Holder </id>
+       <operators> Operators => Operators -Set SetItem(Operator) </operators>
        <log> Log => Log RevokedOperator ( Operator , Holder ) </log>
-       requires Holder =/=Int Operator
-
-/* FIXME: temporarily disable for quick testing
-  // Non-deterministically reject to revoke a non-authorized-operator
-  rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
-       <operators> ... Holder |-> Operators:Set ... </operators>
-       requires Holder =/=Int Operator
-        andBool Operator in Operators
-*/
+       requires Holder =/=Int Operator andBool Operator =/=Int 0
 
   // Reject to revoke itself -- an address must be an operator for itself
-  rule <k> Holder : revokeOperator ( Operator ) => #revert ... </k>
-       requires Holder ==Int Operator
+  rule <k> revokeOperator ( Operator:Int ) => revert ... </k>
+       <caller> Holder </caller>
+       requires Holder ==Int Operator orBool Operator ==Int 0
 
   //
   // send / operatorSend
   //
 
-  rule <k> Holder :         send (          To , Value , Data      )
-        => Holder : operatorSend ( Holder , To , Value , Data , "" ) ... </k>
+  rule <k>         send (          To:Int , Value:Int , Data      )
+        => operatorSend ( Holder , To     , Value     , Data , "" ) ... </k>
+       <caller> Holder </caller>
 
-  ////
+  rule <k> operatorSend ( 0 => Caller , _,_,_,_ ) ... </k>
+       <caller> Caller </caller>
+    requires Caller =/=Int 0 //just for safety
 
-  // 'From == 0' implies 'From == Operator' -- TODO: what's the intuition? may be vulnerable
-  rule <k> Operator : operatorSend ( From     , To , Value , Data , OperatorData )
-        => Operator : operatorSend ( Operator , To , Value , Data , OperatorData ) ... </k>
-       requires From ==Int 0
+  rule operatorSend ( From , To , Value , Data , OperatorData )
+       => #operatorSendAux ( From , To , Value , Data , OperatorData , balanceOf(From), balanceOf(To) )
+    requires From =/=Int 0 //just for safety
 
-  rule <k> Operator : operatorSend ( From , To , Value , Data , OperatorData )
+  syntax K ::= "#operatorSendAux" "(" Address "," Address "," ValueType "," Data "," Data "," AExp "," AExp ")" [seqstrict(6,7)]
+
+  rule <k> #operatorSendAux ( From , To , Value , Data , OperatorData , BalanceFrom:Int, BalanceTo:Int )
         => #atomicBegin
-        ~> #ensure ( #check ( Operator , From , To , Value , Data ) )
-//      ~> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        ~> #update ( From , To , Value )
-//      ~> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-        ~> #log ( Operator , From , To , Value , Data , OperatorData )
-        ~> #atomicEnd ... </k>
-       requires From =/=Int 0
+        ~> #ensure( #and(
+              From =/=Int 0,
+              To =/=Int 0,
+              isOperatorFor ( Operator , From ),
+              Value >=Int 0,
+              BalanceFrom >=Int Value,
+              #isMultipleOf ( Value , granularity() ) ))
+        ~> #callSender ( Operator , From , To , Value , Data , OperatorData )
+        ~> #transfer ( From , To , Value )
+        ~> #callRecipient ( Operator , From , To , Value , Data , OperatorData , false )
+        ~> #log( Sent(Operator , From , To , Value , Data , OperatorData) )
+        ~> #logERC20( Transfer(From , To , Value) )
+        ~> #atomicEnd(#void) ... </k>
+       <caller> Operator </caller>
 
-  syntax Exp ::= #check ( Address , Address , Address , Number , Data )
+  syntax Stmt ::= #callSender ( Address , // operator
+                                Address , // from
+                                Address , // to
+                                ValueType ,  // amount
+                                Data ,    // userData
+                                Data      // operatorData
+                              )
 
-  rule #check ( Operator , From , To , Value , Data )
-    => #and ( isOperatorFor ( Operator , From )
-            , To =/=Int 0
-            , #isMultipleOf ( Value , #granularity )
-            )
-
-  syntax Stmt ::= #hookFrom ( Address , Address , Address , Number , Data , Data )
-
-  rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-       <senderHooks> ... From |-> Hook ... </senderHooks>
+  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData )
+        => Hook . tokensToSend ( Operator , From , To , Value , Data , OperatorData ) ... </k>
+       <id> From </id>
+       <senderHook> Hook </senderHook>
        requires Hook =/=Int 0
 
-  rule <k> #hookFrom ( Operator , From , To , Value , Data , OperatorData )
-        => #mayRevert ... </k>
-       <senderHooks> ... From |-> Hook ... </senderHooks>
-       requires Hook ==Int 0
+  // no hook registered
+  rule <k> #callSender ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
+       <id> From </id>
+       <senderHook> 0 </senderHook>
 
-  syntax Stmt ::= #hookTo ( Address , Address , Address , Number , Data , Data )
+  syntax Stmt ::= #callRecipient ( Address , // operator
+                                   Address , // from
+                                   Address , // to
+                                   ValueType ,  // amount
+                                   Data ,    // userData
+                                   Data ,    // operatorData
+                                   Bool      // fromERC20: called by ERC20 functions
+                                 )
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-        => #call ( #this , Hook , Operator , From , To , Value , Data , OperatorData ) ... </k>
-       <receiverHooks> ... To |-> Hook ... </receiverHooks>
+  // If the recipient is a contract, which has not registered an ERC777TokensRecipient implementation; the token contract:
+  // * MUST revert if the tokensReceived hook is called from a mint or send call.
+  // * SHOULD accept if the tokensReceived hook is called from an ERC20 transfer or transferFrom call.
+  rule <k> #callRecipient ( Operator , From , To , Value , Data , OperatorData , _ )
+        => Hook . tokensReceived ( Operator , From , To , Value , Data , OperatorData ) ... </k>
+       <id> To </id>
+       <receiverHook> Hook </receiverHook>
        requires Hook =/=Int 0
 
-  rule <k> #hookTo ( Operator , From , To , Value , Data , OperatorData )
-        => #ite ( #isContractAddress ( To ) , #revert , #mayRevert ) ... </k>
-       <receiverHooks> ... To |-> Hook ... </receiverHooks>
-       requires Hook ==Int 0
+  rule <k> #callRecipient ( Operator , From , To , Value , Data , OperatorData , FromERC20 )
+        => #ite( #or(FromERC20, #and(AcceptRegular, notBool ISCONTRACT) ) , . , revert ) ... </k>
+       <id> To </id>
+       <receiverHook> 0 </receiverHook>
+       <isContract> ISCONTRACT </isContract>
+       <acceptRegularNoReceiverHook> AcceptRegular </acceptRegularNoReceiverHook>
 
-  syntax Stmt ::= #update ( Address , Address , Number )
+  syntax Stmt ::= #transfer ( Address , Address , ValueType )
 
-  rule <k> #update ( From , To , Value ) => . ... </k>
-       <balances> ...
-         From |-> ValueFrom -Int Value
-         To   |-> ValueTo   +Int Value
-       ... </balances>
+  rule <k> #transfer ( From , To , Value ) => . ... </k>
+       <account>
+         <id> From </id>
+         <balance> ValueFrom => ValueFrom -Int Value </balance>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> ValueTo => ValueTo +Int Value </balance>
+         ...
+       </account>
        requires From =/=Int To
-        andBool ValueFrom -Int Value >=Int 0
-        andBool ValueTo   +Int Value  <Int #maxNumber
+     // andBool ValueFrom -Int Value >=Int 0
+     // andBool ValueTo   +Int Value  <=Int #MAXVALUE
+     // already checked
 
-  rule <k> #update ( From , To , Value ) => . ... </k>
+  rule <k> #transfer ( From , To , Value ) => . ... </k>
        requires From ==Int To
 
-  syntax Stmt ::= #log ( Address , Address , Address , Number , Data , Data )
+  syntax BExp ::= #isMultipleOf ( AExp , AExp ) [seqstrict]
 
-  rule <k> #log ( Operator , From , To , Value , Data , OperatorData ) => . ... </k>
-       <log> Log => Log Sent ( Operator , From , To , Value , Data , OperatorData ) </log>
+  rule #isMultipleOf ( Value:Int , Granularity:Int ) => Value /Int Granularity *Int Granularity ==Int Value
 
-  syntax Exp ::= #isMultipleOf ( Number , Number )
 
-  rule #isMultipleOf ( Value , Granularity ) => Value /Int Granularity *Int Granularity ==Int Value
+  syntax Stmt ::= #log ( Event )
+                | #logERC20 ( Event )
 
-  syntax Stmt ::= #call ( Address , Address , Address , Address , Address , Number , Data , Data )
+  rule <k> #log(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
 
-  // TODO: more fine-grained input
-  rule #call ( _ , _ , _ , _ , _ , _ , _ , _ ) => #mayRevert
+  rule <k> #logERC20(Log) => . ... </k>
+       <log> Logs => Logs Log </log>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires ERC20Compatible
+
+  rule <k> #logERC20(Log) => . ... </k>
+       <ERC20CompatibleC> ERC20Compatible </ERC20CompatibleC>
+       requires notBool ERC20Compatible
+
+  //
+  // burn / operatorBurn
+  //
+
+  /* Wording from standard: contract MAY prevent some/all holders from burning for any reason
+  vs Tokens MAY be burned from any holder address.
+
+  We implement this through the cell <burnAllowed>. If it is true, burn operation will proceed according to other rules.
+  If it is false, burn operation is not allowed for the entire contract, and any burn operation will revert.
+  */
+  rule <k>         burn(        Amount:Int   )
+        => operatorBurn(Caller, Amount,    "") ... </k>
+       <caller> Caller </caller>
+
+  rule <k> operatorBurn(0 => Caller, _,_) ... </k>
+       <caller> Caller </caller>
+    requires Caller =/=Int 0 //just for safety
+
+  rule <k> operatorBurn(Holder:Int, Amount:Int, OperatorData)
+        => #atomicBegin
+        ~> #ensure(#and(isOperatorFor(Operator, Holder),
+                        #isMultipleOf(Amount, granularity()),
+                        Amount >=Int 0,
+                        Balance >=Int Amount,
+                        Holder =/=Int 0,
+                        BurnAllowed))
+        ~> #callSender(Operator, Holder, 0, Amount, "", OperatorData)
+        ~> #burn(Holder, Amount)
+        ~> #log(Burned(Operator, Holder, Amount, OperatorData))
+        ~> #logERC20(Transfer(Holder, 0, Amount)) // ERC20
+        ~> #atomicEnd(#void) ... </k>
+       <caller> Operator </caller>
+       <id> Holder </id>
+       <balance> Balance </balance>
+       <burnAllowed> BurnAllowed </burnAllowed>
+    requires Holder =/=Int 0
+
+  syntax Stmt ::= #burn ( Address , ValueType )
+
+  rule <k> #burn(Holder, Amount) => . ... </k>
+       <account>
+         <id> Holder </id>
+         <balance> Balance => Balance -Int Amount </balance>
+         ...
+       </account>
+       <supply> Supply => Supply -Int Amount </supply>
+       requires Balance >=Int Amount andBool Supply >=Int Amount
+
+
+ /* Minting: ERC777 does not define specific functions to mint tokens. Instead,
+   it specifies several rules that MUST be respected when minting tokens.
+   The definition of `mint` below is a minimal example of minting function
+   that conforms to those rules.
+         *  balance of 0x0 MUST NOT be decreased
+ */
+ //====================================================================
+
+  rule operatorMint(0, _,_,_) => revert
+
+  rule <k> operatorMint(Holder, Amount, Data, OperatorData)
+        => #atomicBegin
+        ~> #ensure(#and(Amount >=Int 0,
+                        Supply +Int Amount <=Int #MAXVALUE,
+                        #isMultipleOf(Amount, granularity()),
+                        Holder =/=Int 0,
+                        isOperatorFor( Operator , Holder )))
+        ~> #mint(Holder, Amount)
+        ~> #callRecipient(Operator, 0, Holder, Amount, Data,  OperatorData, false)
+        ~> #log(Minted(Operator, Holder, Amount, Data, OperatorData))
+        ~> #logERC20(Transfer(0, Holder, Amount))
+        ~> #atomicEnd(#void) ... </k>
+       <caller> Operator </caller>
+       <id> Holder </id>
+       <supply> Supply </supply>
+    requires Holder =/=Int 0
+
+  syntax Stmt ::= #mint ( Address , ValueType )
+
+  rule <k> #mint(Holder, Amount) => . ... </k>
+       <account>
+         <id> Holder </id>
+         <balance> Balance => Balance +Int Amount </balance>
+         ...
+       </account>
+       <supply> Supply => Supply +Int Amount </supply>
+
+
+  //
+  // ERC20 compatibility
+  // TODO: Check compatibility on/off?
+  //
+
+  rule <k> allowance(Owner:Int, Spender:Int) => Allowance ...</k>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> Allowance </amount>
+
+  /*EERC777: RC20 compatibility requirement:
+    The decimals of the token MUST always be 18.*/
+  rule <k> decimals() => 18 ...</k>
+
+  rule <k> approve(Spender:Int, Allowance:Int) => true ...</k>
+       <caller> Owner </caller>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> _ => Allowance </amount>
+       <log> Log => Log Approval(Owner, Spender, Allowance) </log>
+       requires Allowance >=Int 0
+
+  rule <k> approve(Spender:Int, Allowance:Int) => revert ...</k>
+       <caller> Owner </caller>
+       <id> Owner </id>
+       <spender> Spender </spender>
+       <amount> _ => Allowance </amount>
+       requires Allowance <Int 0
+
+  rule <k> transfer(To:Int, Value:Int) => #transferAux(To, Value, balanceOf(From), balanceOf(To)) ...</k>
+       <caller> From </caller>
+
+  syntax K ::= "#transferAux" "(" Address "," ValueType "," AExp "," AExp ")" [seqstrict(3,4)]
+  rule <k> #transferAux(To:Int, Value:Int, BalanceFrom:Int, BalanceTo:Int)
+        => #atomicBegin
+        ~> #ensure(#and(Value >=Int 0,
+                        BalanceFrom >=Int Value,
+                        #isMultipleOf(Value, granularity()),
+                        #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE)))
+        ~> #callSender(From, From, To, Value, "", "")
+        ~> #transfer(From, To, Value)
+        ~> #callRecipient(From, From, To, Value, "", "", true) // should accept even if To isn't registered and To is contract )
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
+        ~> #atomicEnd(true) ... </k>
+       <caller> From </caller>
+
+  rule transferFrom(From:Int, To:Int, Value:Int)
+       => #transferFromAux(From, To, Value, balanceOf(From), balanceOf(To))
+
+  syntax K ::= "#transferFromAux" "(" Address "," Address "," ValueType "," AExp "," AExp ")" [seqstrict(4,5)]
+  rule <k> #transferFromAux(From, To, Value, BalanceFrom:Int, BalanceTo:Int)
+        => #atomicBegin
+        ~> #ensure(#and(Value >=Int 0,
+                        BalanceFrom >=Int Value,
+                        #isMultipleOf(Value, granularity()),
+                        #or(From ==Int To, BalanceTo +Int Value <=Int #MAXVALUE),
+                        Allowed >=Int Value))
+        ~> #callSender(Operator, From, To, Value, "", "")
+        ~> #transferWithAllowance(Operator, From, To, Value)
+        ~> #callRecipient(Operator, From, To, Value, "", "", true)
+        ~> #log(Transfer(From, To, Value))
+        ~> #log(Sent(From, From, To, Value, "", ""))
+        ~> #atomicEnd(true) ... </k>
+       <caller> Operator </caller>
+       <id> From </id>
+       <spender> Operator </spender>
+       <amount> Allowed </amount>
+
+  syntax Stmt ::= #transferWithAllowance ( Address , Address , Address , ValueType )
+
+  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ... </k>
+       <account>
+         <id> From </id>
+         <balance> BalanceFrom => BalanceFrom -Int Value </balance>
+         <spender> Operator </spender>
+         <amount> Allowed => Allowed -Int Value </amount>
+         ...
+       </account>
+       <account>
+         <id> To </id>
+         <balance> BalanceTo => BalanceTo +Int Value </balance>
+         ...
+       </account>
+       requires From =/=Int To
+     // andBool BalanceFrom -Int Value >=Int 0
+     // andBool BalanceTo   +Int Value  <=Int #MAXVALUE
+     // andBool Allowed >=Int Value
+     // already checked
+
+  rule <k> #transferWithAllowance(Operator, From, To, Value) => . ... </k>
+       <account>
+         <id> From </id>
+         <balance> Balance </balance>
+         <spender> Operator </spender>
+         <amount> Allowed => Allowed -Int Value </amount>
+         ...
+       </account>
+       requires From ==Int To
+     // andBool Allowed >=Int Value
+     // already checked
+
+  //
+  // #atomicBegin, #atomicEnd and #revert.
+  //
+
+  rule <k> revert ~> (KI:KItem => .K) ... </k>
+       <atomic> #snapshot ( _ , _ , _ ) </atomic>
+  requires (KI =/=K #atomicEnd(#void)) andBool (KI =/=K #atomicEnd(true))
+
+  rule <k> revert ~> (#atomicEnd(_) => .K) ... </k>
+       <accounts> _ => Accounts </accounts>
+       <log> _ => Log </log>
+       <supply> _ => Supply </supply>
+       <atomic> #snapshot ( Accounts , Log , Supply ) => .K </atomic>
+
+  syntax KItem ::= "#atomicBegin"
+                 | "#atomicEnd" "(" K /*output*/ ")"
+                 | #snapshot ( K , EventLog , ValueType )
+
+  rule <k> #atomicBegin => . ... </k>
+       <accounts> Accounts </accounts>
+       <log> Log </log>
+       <supply> Supply </supply>
+       <atomic> .K => #snapshot ( Accounts , Log , Supply ) </atomic>
+
+  rule <k> #atomicEnd(OUT:K) => OUT ... </k>
+       <atomic> _ => .K </atomic>
 
   //
   // Utils
   //
 
-  syntax Int ::= #sum ( List ) [function]
+  syntax Stmt ::= #ensure ( BExp ) [strict]
 
-  rule #sum ( ListItem(I:Int) S ) => I +Int #sum ( S )
-  rule #sum ( .List ) => 0
+  rule #ensure ( B:Bool ) => .       requires B
+  rule #ensure ( B:Bool ) => revert  requires notBool B
 
-  syntax Stmt ::= #ensure ( Exp ) [strict]
-
-  rule #ensure ( B:Bool ) => .        requires B
-  rule #ensure ( B:Bool ) => #revert  requires notBool B
-
-  syntax Stmt ::= #ite ( Exp , Stmt , Stmt ) [strict(1)]
+  syntax K ::= #ite ( BExp , K , K ) [strict(1)]
 
   rule #ite ( B:Bool , T , F ) => T  requires B
   rule #ite ( B:Bool , T , F ) => F  requires notBool B
 
-  syntax Exp ::= "#and" "(" Exp "," Exp ")"         [strict]
-               | "#and" "(" Exp "," Exp "," Exp ")" [strict]
+  syntax BExp ::= "#and" "(" BExp "," BExp ")"                                     [strict]
+                | "#and" "(" BExp "," BExp "," BExp ")"                            [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp ")"                   [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp ")"          [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp "," BExp ")" [strict]
+                | "#and" "(" BExp "," BExp "," BExp "," BExp "," BExp "," BExp "," BExp ")" [strict]
+                | "#or"  "(" BExp "," BExp ")"                                     [strict]
 
-  rule #and ( A:Bool , B:Bool          ) => A andBool B
-  rule #and ( A:Bool , B:Bool , C:Bool ) => A andBool B andBool C
-
-  syntax Stmt ::= "#mayRevert"
-
-  rule #mayRevert => #revert
-  rule #mayRevert => .
-
-  syntax Stmt ::= "#revert"
-
-  rule <k> #revert ... </k>
-       <balances> _ => Balances </balances>
-       <operators> _ => Operators </operators>
-       <senderHooks> _ => SenderHooks </senderHooks>
-       <receiverHooks> _ => ReceiverHooks </receiverHooks>
-       <log> _ => Log </log>
-       <atomic> #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) => .K </atomic>
-
-  syntax KItem ::= "#atomicBegin"
-                 | "#atomicEnd"
-                 | #snapshot ( Map , Map , Map , Map , EventLog )
-
-  rule <k> #atomicBegin => . ... </k>
-       <balances> Balances </balances>
-       <operators> Operators </operators>
-       <senderHooks> SenderHooks </senderHooks>
-       <receiverHooks> ReceiverHooks </receiverHooks>
-       <log> Log </log>
-       <atomic> .K => #snapshot ( Balances , Operators , SenderHooks , ReceiverHooks , Log ) </atomic>
-
-  rule <k> #atomicEnd => . ... </k>
-       <atomic> _ => .K </atomic>
+  rule #and ( A:Bool , B:Bool )                                     => A andBool B
+  rule #and ( A:Bool , B:Bool , C:Bool )                            => A andBool B andBool C
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool )                   => A andBool B andBool C andBool D
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool )          => A andBool B andBool C andBool D andBool E
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool , F:Bool ) => A andBool B andBool C andBool D andBool E andBool F
+  rule #and ( A:Bool , B:Bool , C:Bool , D:Bool , E:Bool , F:Bool , G:Bool )
+       => A andBool B andBool C andBool D andBool E andBool F andBool G
+  rule #or  ( A:Bool , B:Bool )                                     => A orBool B
 
 endmodule

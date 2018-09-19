@@ -1,8 +1,0 @@
-#init();
-#print(isOperatorFor(2,1));
-1 : authorizeOperator(2);
-#print(isOperatorFor(2,1));
-1 : revokeOperator(2);
-#print(isOperatorFor(2,1));
-3 : authorizeOperator(3);
-;;

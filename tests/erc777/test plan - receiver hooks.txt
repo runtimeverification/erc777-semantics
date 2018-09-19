@@ -1,0 +1,121 @@
+Notes from ERC777
+===============================
+Behavior for  	ERC777 Sending And Minting:
+    - ERC777TokensRecipient registered: MUST call tokensReceived
+    - ERC777TokensRecipient not registered
+        - regular address: 	SHOULD accept (e.g. may also chose to revert, parametrize semantics)
+        - contract: MUST revert
+
+Implementation Requirement:
+- The token contract MUST call the tokensToSend hook before updating the state.
+- The token contract MUST call the tokensReceived hook after updating the state.
+- I.e., tokensToSend MUST be called first, then the balances MUST be updated to reflect the send,
+    and finally tokensReceived MUST be called afterward. Thus:
+    - a balanceOf call within tokensToSend
+        returns the balance of the address before the send
+    - a balanceOf call within tokensReceived
+        returns the balance of the address after the send
+
+Role of revert:
+    - The token holder MAY block an increase of its balance by reverting. (I.e., reject the reception of tokens.)
+
+
+Test variables
+=================================
+
+Test variables, a single send operation, just receiver hook:
+--------------------
+    - send(), operatorSend(), operatorSend() to caller.
+    - regular holder with no hook (already tested), contract holder with no hook, accepting hook, reverting hook.
+        - will consider only addresses 9 and 10 as contracts, the rest are regular, for safety.
+        - by default no hooks should be registered
+        - a hook is associated with an address.
+    - sufficient balance/insufficient balance/overflow/unauthorized operator
+
+Test variables, multiple send operations:
+--------------------
+    - send from same address to same destination by multiple operators. Check that same hook is called.
+    - send by one operator from multiple holders that use different hooks, to same destination. Same hook is called.
+    - send by one operator from one holder to multiple destinations. Destinations also has a hook attached.
+        Different hooks called.
+
+In all cases: check that hook is associated with destination, not operator or source.
+
+Test variables, sender and receiver hook together:
+--------------------
+    - accepting or rejecting sender hook
+    - accepting or rejecting receiver hook
+    - send to diff account vs send to same account
+
+Test scenarios
+=================================
+
+A single send operation:
+----------------------------------
+On all tests, 3 operations:
+    - send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+    - the hook prints some message with details about its parameters.
+
+Already tested by other tests:
+- regular holder address with no hook, sending sufficient balance
+- regular holder address with no hook, sending more than balance
+- regular holder address with no hook, sending overflow
+- regular holder address with no hook, sending through unauthorized operator
+
+Tests:
+1. contract holder destination with no hook, sending sufficient balance
+2. contract holder destination with no hook, sending more than balance
+3. contract holder destination with no hook, sending overflow
+4. contract holder destination with no hook, sending through unauthorized operator
+5-8: receiver hook, always accepting
+9-12: receiver hook, always rejecting
+
+Multiple send operations:
+----------------------------------
+Common setup:
+    - 2 holder accounts: accepting and rejecting receiver hook. (yes, right, receiver!)
+    - 2 receiver accounts: accepting and rejecting receiver hook.
+    - 2 default operators: accepting and rejecting receiver hook.
+
+    13. Perform operatorSend() through 2 operators, from same source and same destination (accepting)
+    14. Send by one operator from both holders to accepting sender.
+    15. Send by one operator from one holder to accepting, rejecting, accepting destination.
+
+Sender hook and receiver hook interaction:
+----------------------------------
+Common setup:
+    - 4 holder/receiver accounts:
+        - acc 1: accepting sender, accepting receiver
+        - acc 2: accepting sender, rejecting receiver
+        - acc 3: rejecting sender, accepting receiver
+        - acc 4: rejecting sender, rejecting receiver
+
+16. Send operation:
+    - from 1 to 3
+    - from 1 to 4
+    - from 2 to 3
+    - from 2 to 4
+
+17. Send operation:
+    - from 1 to 1
+    - from 2 to 2
+    - from 3 to 3
+    - from 4 to 4
+
+Sender hook and contract address interaction
+-----------------------------
+18. Setup:
+    - sender 1 has accepting sender hook
+    - sender 2 has rejecting sender hook
+    - receiver is a contract address with no hooks
+Operations: send from both senders to the receiver.
+    - sender hook called in both cases, both revert.
+
+ERC777TokensRecipient not registered + regular address, rejecting semantics
+-----------------------------
+Setup:
+    - call a test.setAcceptRegularNoReceiverHook(false) at the beginning. Parametrizes semantics to reject this case.
+
+19.
+    19a. Receiver regular address with no receiver hook, sending sufficient balance.
+    19b. Sender with sender hook, accepting. Receiver regular address, no receiver hook, sending sufficient balance.

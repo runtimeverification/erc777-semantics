@@ -1,0 +1,59 @@
+Registering holder 10 with hook 1
+Changing the caller to 10
+10 is transferring 1 to 1
+tokensToSend: Hook address = 1, Operator = 10, From = 10, To = 1, Value = 1, Data = , OperatorData = 
+tokensToSend: sender balance: 100
+tokensToSend: receiver balance: 10
+Balance of 10 is 99
+Balance of 1 is 11
+Allowance of 10 for 1 is 0
+10 is approving allowance 200 for 8
+Changing the caller to 8
+8 is transferring 200 from 10 to 1
+REVERT
+Balance of 10 is 99
+Balance of 1 is 11
+Allowance of 10 for 8 is 200
+Changing the caller to 10
+10 is approving allowance 20 for 8
+Changing the caller to 8
+8 is transferring 1 from 10 to 1
+tokensToSend: Hook address = 1, Operator = 8, From = 10, To = 1, Value = 1, Data = , OperatorData = 
+tokensToSend: sender balance: 99
+tokensToSend: receiver balance: 11
+Balance of 10 is 98
+Balance of 1 is 12
+Allowance of 10 for 8 is 19
+8 is transferring 20 from 10 to 1
+REVERT
+Balance of 10 is 98
+Balance of 1 is 12
+Allowance of 10 for 8 is 19
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)
+Transfer(10, 1, 1)
+Sent(10, 10, 1, 1, , )
+Approval(10, 8, 200)
+Approval(10, 8, 20)
+Transfer(10, 1, 1)
+Sent(10, 10, 1, 1, , )

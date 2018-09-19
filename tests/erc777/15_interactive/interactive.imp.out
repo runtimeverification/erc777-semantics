@@ -1,0 +1,25 @@
+--------------------------------
+Caller: 7
+--------------------------------
+ 1 : totalSupply()
+ 2 : balanceOf(Id)
+ 3 : defaultOperators()
+ 4 : authorizeOperator(Operator)
+ 5 : revokeOperator(Operator)
+ 6 : isOperatorFor(Operator,Address)
+ 7 : send(To,Value,"")
+ 8 : operatorSend(From,To,Value,"","")
+ 9 : burn(Value)
+ 10 : operatorBurn(From,Value,"")
+ 11 : operatorMint(From,Value,"","") (custom function)
+--------------------------------
+ 0 : EXIT
+-2 : makeCaller(Id)
+--------------------------------
+Command: 
+
+
+
+
+
+

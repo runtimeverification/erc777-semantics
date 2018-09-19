@@ -1,0 +1,6 @@
+test.setGranularity(10);
+test.preamble();
+
+// Testing mint(To,Value,Data,OperatorData) when To =/= caller and Value is not multiple of granularity().
+test.makeCaller(8);
+test.operatorMint(7, 23, "", "");

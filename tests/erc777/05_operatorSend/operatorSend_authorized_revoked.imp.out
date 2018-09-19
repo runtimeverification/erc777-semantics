@@ -1,0 +1,12 @@
+7 is authorizing 1 as an operator
+Changing the caller to 1
+1 is sending 10 from 7 to 2 (data:""),  (operatorData:"")
+Balance of 7 is 60
+Balance of 2 is 30
+Changing the caller to 7
+7 is revoking operator 1
+Changing the caller to 1
+1 is sending 10 from 7 to 2 (data:""),  (operatorData:"")
+REVERT
+Balance of 7 is 60
+Balance of 2 is 30

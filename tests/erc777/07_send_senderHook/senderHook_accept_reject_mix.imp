@@ -1,0 +1,13 @@
+test.preamble();
+
+// send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+// 2 Holder addresses, one accepting another rejecting. Send by one operator from 1st, then 2nd, then 1st.
+// Hook addresses 1 and 2 are accepting.
+
+test.registerTokensToSendHook(10, 1); //10 has accepting hook
+test.registerTokensToSendHook(7, 7);  //7 has reverting hook
+test.makeCaller(9);
+
+test.operatorSend(10, 3, 10, "", ""); //ok
+test.operatorSend(7, 3, 10, "", "");  //revert
+test.operatorSend(10, 3, 10, "", ""); //ok

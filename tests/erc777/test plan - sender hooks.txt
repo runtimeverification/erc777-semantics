@@ -1,0 +1,70 @@
+Notes from ERC777 semantics
+=================================
+NOTE 1: Multiple token holders MAY use the same implementation of ERC777TokensSender.
+
+ERC777-K interpretation:
+    - cannot implement this in ERC777-K because we don't model EVM accounts that implement contracts
+    - a hook in EVM-K is just some code inside a cell.
+
+NOTE 2: An address can register at most one implementation at any given time for all ERC777 tokens.
+    Hence the ERC777TokensSender MUST expect to be called by different token contracts.
+    The msg.sender of the tokensToSend call is expected to be the address of the token contract.
+ERC777-K interpretation:
+    - also cannot model this in ERC777-K because we only have one ERC777 token in ths semantics.
+    - tokensToSend hook is associated with the token holder address.
+
+When hook not implemented:
+    - There is no particular action to take if tokensToSend is not implemented.
+
+Test variables
+=================================
+
+Test variables, a single send operation:
+--------------------
+    - send(), operatorSend(), operatorSend() to caller.
+    - regular holder with no hook, contract holder with no hook, accepting hook, reverting hook.
+        - will consider only addresses 9 and 10 as contracts, the rest are regular, for safety.
+        - by default no hooks should be registered
+        - a hook is associated with an address.
+    - sufficient balance/insufficient balance/overflow/unauthorized operator
+
+Test variables, multiple send operations:
+--------------------
+    - send from same address by multiple operators. Check that same hook is called.
+    - send by one operator from multiple holders that use different hooks.
+    - send by one operator from one holder to multiple destinations. Destinations also has a hook attached.
+        Checks that hook is not associated with destination.
+
+Test scenarios
+=================================
+
+A single send operation:
+----------------------------------
+On all tests, 3 operations:
+    - send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+    - the hook prints some message with details about its parameters.
+
+Already tested by other tests:
+- regular holder address with no hook, sending sufficient balance
+- regular holder address with no hook, sending more than balance
+- regular holder address with no hook, sending overflow
+- regular holder address with no hook, sending through unauthorized operator
+
+Tests:
+1. contract holder address with no hook, sending sufficient balance
+2. contract holder address with no hook, sending more than balance
+3. contract holder address with no hook, sending overflow
+4. contract holder address with no hook, sending through unauthorized operator
+5-8: sender hook, always accepting
+9-12: sender hook, always rejecting
+
+Multiple send operations:
+----------------------------------
+    13. One holder address with accepting hook. Perform operatorSend() from 2 operators.
+    14. 2 Holder addresses, one accepting another rejecting. Send by one operator
+        from 1st, then 2nd, then 1st.
+    15. One holder and 2 destinations. Holder and one destination has accepting hook, the other destination has
+        rejecting hook. Send to both destinations through operatorSend, through a default operator.
+        Both operations should go through.
+
+Total: 15 tests.

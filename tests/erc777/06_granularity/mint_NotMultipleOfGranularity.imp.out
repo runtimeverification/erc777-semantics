@@ -1,0 +1,6 @@
+granularity: 10
+Changing the caller to 8
+8 is minting 23 for 7 (data:""),  (operatorData:"")
+REVERT
+Balance of 7 is 70
+Total supply is 550

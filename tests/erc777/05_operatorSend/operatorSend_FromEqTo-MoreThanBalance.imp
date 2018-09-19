@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value, "", "") when From = To.
+// Throw: send more than Balance
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 7, 71, "", "");

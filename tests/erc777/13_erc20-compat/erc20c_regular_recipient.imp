@@ -1,0 +1,31 @@
+test.preamble();
+
+/*
+Operations in each test:
+    - transfer
+    - transfer, more than balance
+    - transfer, 0 amount
+    - transferFrom from same address, enough allowance
+    - transferFrom from different address, enough allowance
+    - transferFrom from different address, more than allowance.
+
+regular recipient, no hooks.*/
+
+test.makeCaller(10);
+test.transfer(1, 1);            // regular transfer, 1 is regular recipient
+test.transfer(1, 0);            // 0 amount
+
+test.approve(10, 20);
+test.transferFrom(10, 1, 10);   // transferFrom from same address, enough allowance
+
+test.approve(8, 20);
+test.makeCaller(8);
+test.transferFrom(10, 1, 10);   // from different address, enough allowance
+test.transferFrom(10, 1, 11);   // from different address, more than allowance
+
+test.makeCaller(10);
+test.approve(8, 200);
+test.makeCaller(8);
+test.transferFrom(10, 1, 200);  // more than balance, enough allowance
+
+printLogs;

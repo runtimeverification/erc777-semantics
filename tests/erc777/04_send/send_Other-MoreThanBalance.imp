@@ -1,0 +1,5 @@
+test.preamble();
+
+// Testing send(To, Value, "") when To != caller and Value > BalanceFrom.
+
+test.send(4, 71, "");  // balance of caller is 70

@@ -1,0 +1,10 @@
+test.preamble();
+
+// Testing revokeOperator(Operator) when Operator is an operator of the caller
+// should pass
+
+test.isOperatorFor(1, 7);
+test.authorizeOperator(1);
+test.isOperatorFor(1, 7);
+test.revokeOperator(1);
+test.isOperatorFor(1, 7);

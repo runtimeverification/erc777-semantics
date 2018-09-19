@@ -1,0 +1,32 @@
+Methodology
+=================================
+    - will select a relevant subset of existing tests, and run them with <printLog> enabled.
+
+List of logging events:
+=================================
+    - Sent, Minted, Burned, AuthorizedOperator, RevokedOperator
+
+About ERC20 logs:
+    - we don't test them specifically here, so won't pick separate tests for these hooks.
+
+
+Variables to test
+=================================
+
+ERC777 only for now
+----------------------------------
+All operations that generate logs:
+    - send, operatorSend, burn, operatorBurn, operatorMint, authorizeOperator, revokeOperator
+
+For each operation:
+    - a test with success and a test with failure (no hooks)
+
+For hooks:
+    - for each operation, additionally a test with all hooks enabled, both accepting and rejecting hooks.
+
+For send (most complex) we'll have following cases:
+    - 2 hooks accepting
+    - sender hook rejecting, receiver accepting
+    - sender accepting, receiver rejecting
+
+

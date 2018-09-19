@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value, "", "") when From = To.
+// Throw because Value < 0.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 7, -3, "", "");  // send -3 from 7

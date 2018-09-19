@@ -1,0 +1,59 @@
+Registering holder 5 with hook 1
+Registering holder 6 with hook 5
+Changing the caller to 8
+8 is burning 2 units from 5 (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 5, To = 0, Value = 2, Data = , OperatorData = 
+tokensToSend: sender balance: 50
+tokensToSend: receiver balance: 0
+Balance of 5 is 48
+Total supply is 548
+8 is burning 2 units from 6 (operatorData:"")
+tokensToSend: Hook address = 5, Operator = 8, From = 6, To = 0, Value = 2, Data = , OperatorData = 
+tokensToSend: sender balance: 60
+tokensToSend: receiver balance: 0
+Reverting...
+REVERT
+Balance of 6 is 60
+Total supply is 548
+Changing the caller to 6
+Burning 2 units from 6
+tokensToSend: Hook address = 5, Operator = 6, From = 6, To = 0, Value = 2, Data = , OperatorData = 
+tokensToSend: sender balance: 60
+tokensToSend: receiver balance: 0
+Reverting...
+REVERT
+Balance of 6 is 60
+Total supply is 548
+Changing the caller to 8
+8 is burning 2 units from 5 (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 5, To = 0, Value = 2, Data = , OperatorData = 
+tokensToSend: sender balance: 48
+tokensToSend: receiver balance: 0
+Balance of 5 is 46
+Total supply is 546
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)
+Burned(8, 5, 2, )
+Transfer(5, 0, 2)
+Burned(8, 5, 2, )
+Transfer(5, 0, 2)

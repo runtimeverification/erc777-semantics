@@ -1,0 +1,37 @@
+Registering holder 2 with hook 1
+Burning allowed: false
+Changing the caller to 1
+Burning 2 units from 1
+REVERT
+Balance of 1 is 10
+Total supply is 550
+Burning 0 units from 1
+REVERT
+Balance of 1 is 10
+Total supply is 550
+Changing the caller to 2
+Burning 2 units from 2
+REVERT
+Balance of 2 is 20
+Total supply is 550
+Burning 0 units from 2
+REVERT
+Balance of 2 is 20
+Total supply is 550
+Changing the caller to 8
+8 is burning 2 units from 1 (operatorData:"")
+REVERT
+Balance of 1 is 10
+Total supply is 550
+8 is burning 0 units from 1 (operatorData:"")
+REVERT
+Balance of 1 is 10
+Total supply is 550
+8 is burning 2 units from 2 (operatorData:"")
+REVERT
+Balance of 2 is 20
+Total supply is 550
+8 is burning 0 units from 2 (operatorData:"")
+REVERT
+Balance of 2 is 20
+Total supply is 550

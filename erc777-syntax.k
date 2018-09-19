@@ -1,67 +1,85 @@
-require "erc777-sorts.k"
-
 module ERC777-SYNTAX
-
-  imports ERC777-SORTS
-  imports BOOL-SYNTAX
+  imports DOMAINS
 
   //
-  // Token API
+  // ERC777Token
   //
 
-  syntax Exp ::= name ( )                              // String
-               | symbol ( )                            // String
-               | totalSupply ( )                       // Number
-               | balanceOf ( Address )                 // Number
-               | granularity ( )                       // Number
-               | defaultOperators ( )                  // Addresses
-               | isOperatorFor ( Address , Address )   // Bool
+  syntax Address ::= Int
+  syntax ValueType ::= Int
 
-  syntax Cmd ::= authorizeOperator ( Address )
-               | revokeOperator ( Address )
-               | send ( Address , Number , Data )
-               | operatorSend ( Address , Address , Number , Data , Data )
-               | burn ( Number , Data )
-               | operatorBurn ( Address , Number , Data , Data )
+  syntax Data ::= String
 
-  syntax Event ::= Sent ( Address , Address , Address , Number , Data , Data )
-                 | Minted ( Address , Address , Number , Data )
-                 | Burned ( Address , Address , Number , Data , Data )
+  syntax AExp  ::= ValueType | Address
+  syntax BExp  ::= Bool
+
+  syntax Void ::= "#void"
+
+  syntax Exp ::= AExp | BExp | SetExp | Data | Void
+
+  syntax Exp ::= name ( )
+               | symbol ( )
+
+  syntax AExp ::= totalSupply ( )
+                | balanceOf ( AExp ) [strict]
+                | granularity ( )
+
+  syntax SetExp ::= defaultOperators ( )
+                  | Set
+
+  syntax BExp ::= isOperatorFor ( AExp , AExp ) [strict]
+
+  syntax Exp ::=  authorizeOperator ( AExp )                        [strict]
+                | revokeOperator ( AExp )                           [strict]
+                | send ( AExp , AExp , Data )                       [strict]
+                | operatorSend ( AExp , AExp , AExp , Data , Data ) [strict]
+                | burn ( AExp )                                     [strict]
+                | operatorBurn ( AExp , AExp , Data )               [strict]
+  // Minting: ERC777 does not define specific functions to mint tokens. Instead,
+  // it specifies several rules that MUST be respected when minting tokens.
+  // The definition of `mint` below is a minimal example of minting function
+  // that conforms to those rules.
+                | operatorMint ( AExp , //from
+                                 AExp , //amount
+                                 Data , //data
+                                 Data   //operatorData.
+                               ) [strict]
+
+  syntax Event ::= Sent ( Address , Address , Address , ValueType , Data , Data )
+                 | Minted ( Address , Address , ValueType , Data , Data )
+                 | Burned ( Address , Address , ValueType , Data )
                  | AuthorizedOperator ( Address , Address )
                  | RevokedOperator ( Address , Address )
 
-  //
-  // Token Parameters
-  //
-
-  syntax String ::= "#name"   [function]
-                  | "#symbol" [function]
-
-  syntax Number ::= "#granularity" [function]
-
-  syntax Set ::= "#defaultOperators" [function]
+  syntax EventLog ::= "Events:" | EventLog Event
 
   //
-  // Semantics Internal
+  // ERC777TokensSender
   //
 
-  syntax Exp ::= Event
-               | Number | Address | Data
-               | Bool | String
+  syntax Stmt ::= AExp "." "tokensToSend" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
 
-  syntax Stmt ::= Address ":" Cmd
+  //
+  // ERC777TokensRecipent
+  //
 
-  syntax Addresses ::= "#addresses" [function]
+  syntax Stmt ::= AExp "." "tokensReceived" "(" AExp "," AExp "," AExp "," AExp "," Data "," Data ")" [strict]
 
-  syntax Address ::= #senderHook ( Address ) [function]
-                   | #receiverHook ( Address ) [function]
+  //
+  // ERC20 compatibility
+  //
 
-  syntax Int ::= "#maxNumber" [function]
+  // uint256
+  syntax AExp ::= allowance ( AExp , AExp ) [strict]
+                | decimals ( )
 
-  syntax Address ::= "#this" [function]
+  // bool
+  syntax BExp ::= approve ( AExp , AExp )             [strict]
+                | transfer ( AExp , AExp )            [strict]
+                | transferFrom ( AExp , AExp , AExp ) [strict]
+                | "revert"
 
-  syntax Bool ::= #isContractAddress ( Address ) [function]
-
-  syntax Stmt ::= #init ( )
+  syntax Event ::= Transfer ( Address , Address , ValueType)
+                 | Approval ( Address , Address , ValueType)
 
 endmodule

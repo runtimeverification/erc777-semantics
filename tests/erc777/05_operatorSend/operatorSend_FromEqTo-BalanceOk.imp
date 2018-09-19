@@ -1,0 +1,6 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value, "", "") when From = To.
+
+test.makeCaller(9);           // switch to 9
+test.operatorSend(7, 7, 23, "", "");  // send 23 from 7 to itself

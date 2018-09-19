@@ -1,0 +1,49 @@
+Registering receiver 3 with hook 5
+Changing the caller to 10
+10 is sending 10 to 3 (data:)
+tokensReceived: Hook address = 5, Operator = 10, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+10 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 5, Operator = 10, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+Changing the caller to 8
+8 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 5, Operator = 8, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)

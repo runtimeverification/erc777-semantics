@@ -1,0 +1,97 @@
+Notes from ERC-777 spec
+=====================================
+    - However, the token contract MAY prevent some or all token holders from burning tokens for any reason.
+    - for burn operation, tokensToSend to argument = 0x0
+    - data MUST be empty for a burn.
+
+operatorBurn:
+    - The value of from MAY be 0x0, then the from (token holder) used for the burn MUST be msg.sender (the operator).
+
+Interacting components
+=================================
+    - burn()
+    - operatorBurn()
+    - operators
+    - totalSupply() - just print before and after each burn
+    - balanceOf(holder) - just print before and after each burn.
+    - tokensToSend hook
+    - Burned event (not yet covered)
+    - operatorData (not yet covered)
+    - semantics-wide parameter: burning allowed or disallowed.
+
+Components not relevant for this operation:
+    - send(), operatorSend(), tokensReceived hook, regular address/contract distinction.
+
+Test variables
+=================================
+
+Test variables, a single burn operation:
+--------------------
+    - burn(), operatorBurn(), operatorBurn() to caller.
+    - regular holder with no hook, accepting sender hook, reverting sender hook.
+            - by default no hooks should be registered
+            - a hook is associated with an address.
+        - NEW vs operatorSend: holder is 0x0. operatorBurn() only. Should revert.
+    - sufficient balance/insufficient balance/unauthorized operator
+        - NEW vs operatorSend: 0 balance/negative balance/authorized non-default operator/
+
+
+Test variables, burning disabled in the semantics:
+--------------------
+    - burn(), operatorBurn() (from approved operator)
+    - regular holder with no hook, accepting sender hook
+    - sufficient balance/0 balance
+    - burning disabled from semantics.
+
+Test variables, multiple burn operations:
+--------------------
+    - operatorBurn() from same holder by multiple operators. Check that same hook is called.
+    - operatorBurn() by one operator from multiple holders that use different hooks.
+
+
+Test scenarios
+=================================
+
+A single burn operation:
+----------------------------------
+On all tests, 3 operations:
+    - burn(),  operatorBurn() through default operator (unless otherwise specified), operatorBurn() from caller.
+    - helper functions test.burn() and and test.operatorBurn() print totalSupply() after operation.
+
+Tests:
+1. regular holder address with no hook, burning sufficient balance
+2. regular holder address with no hook, burning insufficient balance
+3. regular holder address with no hook, burning through unauthorized operator
+4. regular holder address with no hook, burning 0 balance
+5. regular holder address with no hook, burning negative balance
+6. regular holder address with no hook, burning through authorized non-default operator
+
+7. sender hook, always accepting, burning sufficient balance
+8. sender hook, always accepting, burning insufficient balance
+9. sender hook, always accepting, burning through unauthorized operator
+
+10. sender hook, always rejecting, burning sufficient balance
+11. sender hook, always rejecting, burning insufficient balance
+12. sender hook, always rejecting, burning through unauthorized operator
+13. sender hook, always rejecting, burning 0 balance
+
+14. holder is 0x0, operatorBurn() from authorized op, burning some balance. Should accept, burning from operator.
+
+Multiple burn operations:
+----------------------------------
+15. One holder address with accepting hook. Perform operatorBurn() from 2 operators.
+16. 2 Holder addresses, one accepting another rejecting. Burn by one operator
+    from 1st, then 2nd, then 1st.
+
+Burning disabled in the semantics:
+----------------------------------
+17. Test disabled burning.
+Setup:
+    - holder 1: no hook
+    - holder 2: accepting sender hook
+    - burning disabled
+Actions:
+    - foreach(burn/operatorBurn: burn some balance/0 balance: from both holders). All should revert.
+        - 8 actions total.
+
+Total: 17 tests.

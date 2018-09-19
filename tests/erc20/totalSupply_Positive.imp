@@ -1,0 +1,5 @@
+test.preamble();
+
+// Testing totalSupply() still works when it's positive.
+
+test.totalSupply();

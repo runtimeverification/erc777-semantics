@@ -1,0 +1,7 @@
+test.preamble();
+
+// Testing operatorSend(From,To,Value,"","") when From = caller
+// Throw because Value > BalanceFrom.
+
+test.makeCaller(8);           // switch to 8
+test.operatorSend(7, 8, 71, "", "");  // send 71 from 7 to 8; balance of 7 is 70

@@ -1,0 +1,75 @@
+Registering holder 1 with hook 1
+Registering receiver 1 with hook 1
+Registering holder 2 with hook 1
+Registering receiver 2 with hook 5
+Registering holder 3 with hook 5
+Registering receiver 3 with hook 1
+Registering holder 4 with hook 5
+Registering receiver 4 with hook 5
+Changing the caller to 8
+8 is sending 5 from 1 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 1, To = 3, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 10
+tokensToSend: receiver balance: 30
+tokensReceived: Hook address = 1, Operator = 8, From = 1, To = 3, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 5
+tokensReceived: receiver balance: 35
+Balance of 1 is 5
+Balance of 3 is 35
+8 is sending 5 from 1 to 4 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 1, To = 4, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 5
+tokensToSend: receiver balance: 40
+tokensReceived: Hook address = 5, Operator = 8, From = 1, To = 4, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 0
+tokensReceived: receiver balance: 45
+Reverting...
+REVERT
+Balance of 1 is 5
+Balance of 4 is 40
+8 is sending 5 from 2 to 3 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 2, To = 3, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 20
+tokensToSend: receiver balance: 35
+tokensReceived: Hook address = 1, Operator = 8, From = 2, To = 3, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 15
+tokensReceived: receiver balance: 40
+Balance of 2 is 15
+Balance of 3 is 40
+8 is sending 5 from 2 to 4 (data:""),  (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 2, To = 4, Value = 5, Data = , OperatorData = 
+tokensToSend: sender balance: 15
+tokensToSend: receiver balance: 40
+tokensReceived: Hook address = 5, Operator = 8, From = 2, To = 4, Value = 5, Data = , OperatorData = 
+tokensReceived: sender balance: 10
+tokensReceived: receiver balance: 45
+Reverting...
+REVERT
+Balance of 2 is 15
+Balance of 4 is 40
+
+Events:
+Minted(8, 10, 100, , init)
+Transfer(0, 10, 100)
+Minted(8, 9, 90, , init)
+Transfer(0, 9, 90)
+Minted(8, 8, 80, , init)
+Transfer(0, 8, 80)
+Minted(8, 7, 70, , init)
+Transfer(0, 7, 70)
+Minted(8, 6, 60, , init)
+Transfer(0, 6, 60)
+Minted(8, 5, 50, , init)
+Transfer(0, 5, 50)
+Minted(8, 4, 40, , init)
+Transfer(0, 4, 40)
+Minted(8, 3, 30, , init)
+Transfer(0, 3, 30)
+Minted(8, 2, 20, , init)
+Transfer(0, 2, 20)
+Minted(8, 1, 10, , init)
+Transfer(0, 1, 10)
+Sent(8, 1, 3, 5, , )
+Transfer(1, 3, 5)
+Sent(8, 2, 3, 5, , )
+Transfer(2, 3, 5)

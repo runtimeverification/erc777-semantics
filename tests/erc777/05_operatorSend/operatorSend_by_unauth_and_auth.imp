@@ -1,0 +1,9 @@
+test.preamble();
+
+// one un-authorized and one authorized, send from each in order
+
+test.authorizeOperator(1);
+test.makeCaller(2);
+test.operatorSend(7, 3, 10, "", "");
+test.makeCaller(1);
+test.operatorSend(7, 3, 10, "", "");

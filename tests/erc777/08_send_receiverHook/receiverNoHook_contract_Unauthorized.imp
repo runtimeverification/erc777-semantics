@@ -1,0 +1,7 @@
+test.preamble();
+
+// send() to other address,  operatorSend() through default operator, operatorSend() from caller.
+// contract holder destination with no hook (account 10), sending through unauthorized operator
+
+test.makeCaller(5);
+test.operatorSend(3, 10, 10, "", ""); //unauthorized send

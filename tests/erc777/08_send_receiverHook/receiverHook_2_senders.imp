@@ -1,0 +1,17 @@
+test.preamble();
+
+//    - 2 holder accounts   (6,7): accepting and rejecting receiver hook. (yes, right, receiver!)
+//    - 2 receiver accounts (1,2): accepting and rejecting receiver hook.
+//    - 2 default operators (8,9): accepting and rejecting receiver hook.
+//  Send by one operator from both holders to accepting sender.
+
+test.registerTokensReceivedHook(1, 1);
+test.registerTokensReceivedHook(2, 5); //rejecting
+test.registerTokensReceivedHook(6, 1);
+test.registerTokensReceivedHook(7, 5); //rejecting
+test.registerTokensReceivedHook(8, 1);
+test.registerTokensReceivedHook(9, 5); //rejecting
+
+test.makeCaller(8);
+test.operatorSend(6, 1, 10, "", "");
+test.operatorSend(7, 1, 10, "", "");

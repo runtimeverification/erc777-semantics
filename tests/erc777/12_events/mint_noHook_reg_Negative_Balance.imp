@@ -1,0 +1,12 @@
+test.preamble();
+
+// operatorMint() through default operator (unless otherwise specified), operatorMint() from caller.
+// regular recipient address with no hook, minting negative balance
+
+test.makeCaller(5);
+test.operatorMint(5, -3, "", ""); //from caller
+
+test.makeCaller(8);
+test.operatorMint(6, -3, "", ""); //through default operator
+
+printLogs;

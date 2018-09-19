@@ -1,0 +1,8 @@
+test.preamble();
+
+// Testing authorizeOperator(Operator) when Operator is neither caller itself nor default operator
+// should pass
+
+test.isOperatorFor(1, 7);
+test.authorizeOperator(1);
+test.isOperatorFor(1, 7);

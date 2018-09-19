@@ -1,0 +1,6 @@
+Registering receiver 5 with hook 1
+Changing the caller to 4
+4 is minting 1000 for 5 (data:""),  (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550

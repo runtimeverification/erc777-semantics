@@ -1,0 +1,5 @@
+test.preamble();
+
+// Testing send(To, Value, "") when To != caller and Value > 0.
+
+test.send(4, 23, "");

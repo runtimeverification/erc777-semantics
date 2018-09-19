@@ -1,0 +1,27 @@
+Registering receiver 3 with hook 5
+Changing the caller to 10
+10 is sending 10 to 3 (data:)
+tokensReceived: Hook address = 5, Operator = 10, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+10 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 5, Operator = 10, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30
+Changing the caller to 8
+8 is sending 10 from 10 to 3 (data:""),  (operatorData:"")
+tokensReceived: Hook address = 5, Operator = 8, From = 10, To = 3, Value = 10, Data = , OperatorData = 
+tokensReceived: sender balance: 90
+tokensReceived: receiver balance: 40
+Reverting...
+REVERT
+Balance of 10 is 100
+Balance of 3 is 30

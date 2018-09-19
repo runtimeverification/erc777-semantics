@@ -1,0 +1,6 @@
+test.preamble();
+
+// authorize and revoke 0x0 - both should revert.
+
+test.authorizeOperator(0);
+test.revokeOperator(0);

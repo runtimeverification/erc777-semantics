@@ -1,0 +1,17 @@
+Registering holder 5 with hook 1
+Registering holder 8 with hook 1
+Registering holder 9 with hook 5
+Changing the caller to 8
+8 is burning 3 units from 5 (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 8, From = 5, To = 0, Value = 3, Data = , OperatorData = 
+tokensToSend: sender balance: 50
+tokensToSend: receiver balance: 0
+Balance of 5 is 47
+Total supply is 547
+Changing the caller to 9
+9 is burning 3 units from 5 (operatorData:"")
+tokensToSend: Hook address = 1, Operator = 9, From = 5, To = 0, Value = 3, Data = , OperatorData = 
+tokensToSend: sender balance: 47
+tokensToSend: receiver balance: 0
+Balance of 5 is 44
+Total supply is 544

@@ -1,0 +1,14 @@
+Changing the caller to 5
+Burning -3 units from 5
+REVERT
+Balance of 5 is 50
+Total supply is 550
+5 is burning -3 units from 5 (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
+Changing the caller to 8
+8 is burning -3 units from 5 (operatorData:"")
+REVERT
+Balance of 5 is 50
+Total supply is 550
