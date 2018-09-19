@@ -1,4 +1,7 @@
 **/.depend*
 *-kompiled
+
+*.pdf
+
 /.build/*
 !/.build/pandoc-tangle
