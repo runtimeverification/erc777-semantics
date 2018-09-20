@@ -93,9 +93,9 @@ file:
 The following folder contains unit tests for the ERC777-K specification,
 that is, small programs that exercise the various ERC777 functions in various
 contexts.
-For that, a programming language needs to be first defined on top of ERC777-K:
+For instructions on how to run the tests please look at 
+[ERC777-K Tests in IMP](tests/README.md).
 
-* [tests](tests)
 
 ## Contribute
 
