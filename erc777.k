@@ -122,6 +122,9 @@ module ERC777
   rule <k> defaultOperators ( ) => DefOps ...</k>
        <defaultOperatorsC> DefOps </defaultOperatorsC>
 
+  rule <k> totalSupply ( ) => TotalSupply ...</k>
+       <supply> TotalSupply </supply>
+
   rule <k> balanceOf ( Holder:Int  ) => Balance ...</k>
        <id> Holder </id>
        <balance> Balance </balance>
