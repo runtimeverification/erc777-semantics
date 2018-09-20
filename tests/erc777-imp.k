@@ -525,7 +525,7 @@ makeRevertAsPrintTrue;
     print(" is authorizing ");
     print(a);
     println(" as an operator");
-    authorizeOperator(Operator);
+    authorizeOperator(a);
 
   syntax AExp ::= "#getCaller"
   rule <k> #getCaller => Caller ... </k>
@@ -537,7 +537,7 @@ makeRevertAsPrintTrue;
     print(#getCaller);
     print(" is revoking operator ");
     println(a);
-    revokeOperator(Operator);
+    revokeOperator(a);
 
   syntax Stmt ::= "test.send" "(" AExp "," AExp "," Data ")" [macro]
   rule test.send(To, Value, Data) =>
