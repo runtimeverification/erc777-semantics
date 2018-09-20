@@ -2,7 +2,6 @@
 *-kompiled
 
 *.pdf
-/erc777.k
 
 /.build/*
 !/.build/pandoc-tangle
