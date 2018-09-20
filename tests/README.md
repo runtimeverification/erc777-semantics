@@ -56,6 +56,9 @@ info.
 
 ## Kompiling IMP and Executing Tests
 
+**IMPORTANT:** All the commands in this section should be run from directory [tests](.), 
+NOT from the project root.
+
 Before you can execute tests, you need to compile the `imp.k` definition with
 the this command:
 * `make kompile`
